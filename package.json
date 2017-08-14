@@ -1,0 +1,21 @@
+{
+  "name": "annotation",
+  "version": "1.0.0",
+  "description": "Annotating text and images with comments",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha-chrome test/test.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "baconjs": "^0.7.95",
+    "chai": "^4.1.1",
+    "i18next": "^8.4.3",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
+    "mocha": "^3.5.0",
+    "mocha-chrome": "^0.1.1",
+    "requirejs": "^2.3.4"
+  }
+}
