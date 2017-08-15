@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/digabi/answer-annotation"
+    "type": "git",
+    "url": "https://github.com/digabi/answer-annotation"
   },
   "description": "Annotating text and images with comments",
   "main": "index.js",
@@ -17,6 +17,12 @@
   "devDependencies": {
     "baconjs": "^0.7.95",
     "chai": "^4.1.1",
+    "eslint": "^4.4.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "handlebars": "^4.0.10",
     "i18next": "^8.4.3",
     "jquery": "^3.2.1",
