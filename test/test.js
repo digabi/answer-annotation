@@ -52,6 +52,15 @@ require([
       assert.equal($annotatedElement.text(), 'answer rich  Text')
     })
 
+    it('All answer nodes can be extracted', () => {
+      const answer = $answerContainer.find('.textAnswer').get(0)
+      annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), annotations)
+      const foundNodes = annotationRendering.allNodesUnder(answer)
+      const extraElementCount = annotations.length * 2 // span includes text & superscript
+
+      assert.equal(foundNodes.length, answer.childNodes.length + extraElementCount)
+    })
+
     it('First annotation should contain correct text', () => {
         annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
