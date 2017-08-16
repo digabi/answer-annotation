@@ -9,7 +9,7 @@
   "description": "Annotating text and images with comments",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha-chrome test/test.html",
+    "test": "nyc ./node_modules/.bin/mocha-chrome test/test.html",
     "browser-test": "open test/test.html"
   },
   "author": "",
@@ -28,6 +28,7 @@
     "lodash": "^4.17.4",
     "mocha": "^3.5.0",
     "mocha-chrome": "^0.1.1",
+    "nyc": "^11.1.0",
     "requirejs": "^2.3.4"
   }
 }
