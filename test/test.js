@@ -41,7 +41,18 @@ require([
 
     beforeEach(() => setAnswer(answerContent, 'textAnswer richTextAnswer is_pregrading'))
 
-    it('first annotation should contain correct text', () => {
+    it('Surrounding range from first three rows contains correct text', () => {
+      const answer = $answerContainer.find('.textAnswer').get(0)
+      const range = document.createRange()
+      range.setStart(answer, 0)
+      range.setEnd(answer, 3)
+
+      const $annotatedElement = annotationRendering.surroundWithAnnotationSpan(range, 'answerAnnotation')
+      assert.equal($annotatedElement.contents().length, 3)
+      assert.equal($annotatedElement.text(), 'answer rich  Text')
+    })
+
+    it('First annotation should contain correct text', () => {
         annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
@@ -51,6 +62,7 @@ require([
       const mergedAnnotation = annotationRendering.mergeAnnotation(annotations, newAnn)
       expect(mergedAnnotation).to.deep.include({startIndex: 0, length: 14, message: newAnn.message})
     })
+
   })
 
   mocha.run()
