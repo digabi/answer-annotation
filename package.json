@@ -9,7 +9,7 @@
   "description": "Annotating text and images with comments",
   "main": "index.js",
   "scripts": {
-    "test": "nyc ./node_modules/.bin/mocha-chrome test/test.html",
+    "test": "source $HOME/.nvm/nvm.sh; nvm exec v8 nyc ./node_modules/.bin/mocha-chrome test/test.html",
     "browser-test": "open test/test.html"
   },
   "author": "",
