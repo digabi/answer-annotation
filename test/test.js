@@ -11,11 +11,13 @@ require([
   const expect = chai.expect
   const assert = chai.assert
   const $answerContainer = $('.testAnswerContainer')
-  const richTextTemplate = (classes, content) => `<div class="${classes}">${content}</div>`
 
-  function setAnswer(content, cssClasses) {
-    const answerHtml = richTextTemplate(cssClasses, content)
-    $answerContainer.html(answerHtml)
+  function setAnswer(content) {
+    const foo = `<div class="answer-text-container">
+    <div class="originalAnswer" style="display: none">${content}</div>
+    <div class="answerText answerRichText is_pregrading">${content}</div>
+    </div>`
+    $answerContainer.html(foo)
     annotationEditing.setupAnnotationEditing($answerContainer.find('.answerText'), '', () => {}, $obj => $obj)
   }
 
@@ -37,12 +39,12 @@ require([
         length: 1
       }
     ]
-    const answerContent = `answer rich <img alt="alt_image_text" src="/screenshot/"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/screenshot/">+<img alt="y" src="/screenshot/"> = y + x`
+    const answerContent = `answer rich <img alt="alt_image_text" src="/screenshot/"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/screenshot/">+<img alt="y" src="/screenshot/"> = y + x<img alt="y" src="/screenshot/"><br><br><br>new paragraph`
 
-    beforeEach(() => setAnswer(answerContent, 'answerText textAnswer answerRichText richTextAnswer is_pregrading'))
+    beforeEach(() => setAnswer(answerContent))
 
     it('Surrounding range from first three rows contains correct text', () => {
-      const answer = $answerContainer.find('.textAnswer').get(0)
+      const answer = $answerContainer.find('.answerRichText').get(0)
       const range = document.createRange()
       range.setStart(answer, 0)
       range.setEnd(answer, 3)
@@ -53,8 +55,8 @@ require([
     })
 
     it('All answer nodes can be extracted', () => {
-      const answer = $answerContainer.find('.textAnswer').get(0)
-      annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), annotations)
+      const answer = $answerContainer.find('.answerRichText').get(0)
+      annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), annotations)
       const foundNodes = annotationRendering.allNodesUnder(answer)
       const extraElementCount = annotations.length * 2 // span includes text & superscript
 
@@ -62,7 +64,7 @@ require([
     })
 
     it('First annotation should contain correct text', () => {
-        annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), [annotations[0]])
+        annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
 
@@ -72,7 +74,7 @@ require([
         {message: 'great2', startIndex: 19, length: 10},
         {message: 'great3', startIndex: 68, length: 1}
       ]
-      annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
+      annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
@@ -81,7 +83,7 @@ require([
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great2', startIndex: 20, length: 9}
       ]
-      annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
+      annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
     })
 
@@ -89,7 +91,7 @@ require([
       const imageAnnotation = [
         {message: 'great1', startIndex: 67, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotation)
+      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), imageAnnotation)
       expect(annFn).to.not.throw()
     })
 
@@ -98,7 +100,7 @@ require([
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great1', startIndex: 67, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
+      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), imageAnnotations)
       expect(annFn).to.not.throw()
     })
 
@@ -108,6 +110,13 @@ require([
       expect(mergedAnnotation).to.deep.include({startIndex: 0, length: 14, message: newAnn.message})
     })
 
+    xit(`Selecting image followed by br shouldn't throw an error`, () => {
+      const imageAnnotation = [
+        {message: 'great1', startIndex: 78, length: 1}
+      ]
+      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.answerRichText'), imageAnnotation)
+      expect(annFn).to.not.throw()
+    })
   })
 
   mocha.run()
