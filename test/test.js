@@ -76,6 +76,15 @@ require([
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
+    it('Selecting text after image should work', () => {
+      const imageAnnotations = [
+        {message: 'great1', startIndex: 11, length: 7},
+        {message: 'great2', startIndex: 20, length: 9}
+      ]
+      annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
+      expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
+    })
+
     it(`Selecting single image shouldn't throw an error`, () => {
       const imageAnnotation = [
         {message: 'great1', startIndex: 67, length: 1}
