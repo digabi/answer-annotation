@@ -11,6 +11,8 @@ require([
   const expect = chai.expect
   const assert = chai.assert
   const $answerContainer = $('.testAnswerContainer')
+  annotationEditing.setupAnnotationDisplaying($answerContainer)
+
   let currentTestIndex = 0
 
   function setAnswer(content) {
