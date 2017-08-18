@@ -55,7 +55,7 @@
             } else {
               const $container = $(range.commonAncestorContainer)
               return !$container.hasClass('add-annotation-popup') &&
-                ($container.hasClass('answerText') || $container.parents('div.answerText').size() > 0)
+                ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0)
             }
           })
           .flatMapLatest(annotationPopup)
