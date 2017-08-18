@@ -66,13 +66,14 @@ require([
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
 
-    it('Annotation between images should be in correct place', () => {
+    it('Multiple annotations should be in correct place', () => {
       const imageAnnotations = [
-        {message: 'great1', startIndex: 11, length: 5},
-        {message: 'great2', startIndex: 69, length: 1}
+        {message: 'great1', startIndex: 11, length: 7},
+        {message: 'great2', startIndex: 19, length: 10},
+        {message: 'great3', startIndex: 68, length: 1}
       ]
       annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
-      expect(getAnnotationContent($answerContainer)).to.include.members(['+'])
+      expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
     it('New annotation overlapping other annotations should be merged', () => {
