@@ -38,9 +38,9 @@ require([
         length: 1
       }
     ]
-    const answerContent = `answer rich <img alt="alt_image_text"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x">+<img alt="y"> = y + x`
+    const answerContent = `answer rich <img alt="alt_image_text" src="/screenshot/"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/screenshot/">+<img alt="y" src="/screenshot/"> = y + x`
 
-    beforeEach(() => setAnswer(answerContent, 'answerText textAnswer richTextAnswer is_pregrading'))
+    beforeEach(() => setAnswer(answerContent, 'answerText textAnswer answerRichText richTextAnswer is_pregrading'))
 
     it('Surrounding range from first three rows contains correct text', () => {
       const answer = $answerContainer.find('.textAnswer').get(0)
