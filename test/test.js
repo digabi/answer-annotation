@@ -3,9 +3,8 @@ require([
   "chai",
   "./dist/annotations-rendering",
   "./dist/annotations-editing",
-  "jquery",
-  "lodash",
-], (mocha, chai, annotationRendering, annotationEditing, $, _) => {
+  "jquery"
+], (mocha, chai, annotationRendering, annotationEditing, $) => {
 
   chai.config.truncateThreshold = 0
   mocha.setup("bdd")
