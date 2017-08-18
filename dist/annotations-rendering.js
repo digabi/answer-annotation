@@ -99,7 +99,7 @@
   }
 
   function findNodeObject(nodes, length) {
-    return _.find(nodes, a => a.length >= length)
+    return _.find(nodes, a => isImg(a) ? a.length > length : a.length >= length)
   }
 
   function findAnnotationListElem($answerText) {
