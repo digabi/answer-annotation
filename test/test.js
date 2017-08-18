@@ -76,6 +76,23 @@ require([
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
+    it(`Selecting single image shouldn't throw an error`, () => {
+      const imageAnnotation = [
+        {message: 'great1', startIndex: 67, length: 1}
+      ]
+      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotation)
+      expect(annFn).to.not.throw()
+    })
+
+    it(`Selecting image after another image shouldn't throw errors`, () => {
+      const imageAnnotations = [
+        {message: 'great1', startIndex: 11, length: 7},
+        {message: 'great1', startIndex: 67, length: 1}
+      ]
+      const annFn = () => annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
+      expect(annFn).to.not.throw()
+    })
+
     it('New annotation overlapping other annotations should be merged', () => {
       const newAnn = {message: 'great3', startIndex: 4, length: 10}
       const mergedAnnotation = annotationRendering.mergeAnnotation(annotations, newAnn)
