@@ -66,6 +66,15 @@ require([
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
 
+    it('Annotation between images should be in correct place', () => {
+      const imageAnnotations = [
+        {message: 'great1', startIndex: 11, length: 5},
+        {message: 'great2', startIndex: 69, length: 1}
+      ]
+      annotationRendering.renderGivenAnnotations($answerContainer.find('.textAnswer'), imageAnnotations)
+      expect(getAnnotationContent($answerContainer)).to.include.members(['+'])
+    })
+
     it('New annotation overlapping other annotations should be merged', () => {
       const newAnn = {message: 'great3', startIndex: 4, length: 10}
       const mergedAnnotation = annotationRendering.mergeAnnotation(annotations, newAnn)
