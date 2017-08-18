@@ -206,7 +206,7 @@
     }
 
     function renderRemovePopup(event) {
-      const $annotation = $(event.target)
+      const $annotation = $(event.currentTarget)
       const $popup = popupWithMessage($annotation, $annotation.attr('data-message'))
       $annotation.append($popup)
       const left = mouseOffsetX(event) - ($popup.outerWidth() / 2)
