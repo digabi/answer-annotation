@@ -13,164 +13,166 @@
   const ENTER = 13
 
   return {
-    setupAnnotationEditing: (
-      $containerElement,
-      gradingUriPrefix,
-      saveAnnotation,
-      localize
-    ) => {
-      setupAnnotationAddition($containerElement, gradingUriPrefix)
-      setupAnnotationRemoval($containerElement, gradingUriPrefix)
+    setupAnnotationEditing,
+    setupAnnotationDisplaying
+  }
 
-      function setupAnnotationRemoval($answers, gradingUriPrefix) {
-        $answers.on('mousedown', '.remove-annotation-area', event => {
-          event.preventDefault()
-          removeAnnotation($(event.target).closest('.answerAnnotation'), gradingUriPrefix)
+  function setupAnnotationEditing($containerElement,
+                                  gradingUriPrefix,
+                                  saveAnnotation,
+                                  localize) {
+    setupAnnotationAddition($containerElement, gradingUriPrefix)
+    setupAnnotationRemoval($containerElement, gradingUriPrefix)
+
+    function setupAnnotationRemoval($answers, gradingUriPrefix) {
+      $answers.on('mousedown', '.remove-annotation-area', event => {
+        event.preventDefault()
+        removeAnnotation($(event.target).closest('.answerAnnotation'), gradingUriPrefix)
+      })
+
+      function removeAnnotation($annotationElem, gradingUriPrefix) { // eslint-disable-line no-shadow
+        const $answerText = $annotationElem.closest('.answerText')
+        const removedAnnotationIndex = $answerText.find('.answerAnnotation').index($annotationElem)
+        deleteIndex(gradingUriPrefix, $answerText, removedAnnotationIndex)
+        answerAnnotationsRendering.renderAnnotationsForElement($answerText)
+      }
+
+      function deleteIndex(gradingUriPrefix, $answerText, idx) { // eslint-disable-line no-shadow
+        const annotations = answerAnnotationsRendering.get($answerText)
+        annotations.splice(idx, 1)
+        saveAnnotation(gradingUriPrefix, getAnswerId($answerText), annotations)
+      }
+    }
+
+    function setupAnnotationAddition($containerElement, gradingUriPrefix) {
+      preventDragSelectionFromOverlappingCensorAnswerText($containerElement)
+      $containerElement.asEventStream('mouseup')
+        .filter(hasTextSelectedInAnswerText)
+        .map(() => {
+          $('.remove-annotation-popup').remove()
+          return getBrowserTextSelection().getRangeAt(0)
+        })
+        .filter(range => {
+          if (selectionHasNothingToUnderline(range)) {
+            return false
+          } else {
+            const $container = $(range.commonAncestorContainer)
+            return !$container.hasClass('add-annotation-popup') &&
+              ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0)
+          }
+        })
+        .flatMapLatest(annotationPopup)
+        .onValue(addAnnotation(gradingUriPrefix))
+
+      $containerElement.asEventStream('mousedown')
+        .filter(e => !$(e.target).closest('.add-annotation-text').length && !$(e.target).closest('.annotation-message').length)
+        .merge($containerElement.asEventStream("keyup").filter(e => e.keyCode === ESC))
+        .onValue(() => {
+          getBrowserTextSelection().removeAllRanges()
+          // Render annotations for all answers that have popup open. This clears the popup and annotation that was merged for rendering before opening popup.
+          $('.add-annotation-popup').each((index, popup) => {
+            answerAnnotationsRendering.renderAnnotationsForElement($(popup).closest(".answerText"))
+          })
         })
 
-        function removeAnnotation($annotationElem, gradingUriPrefix) { // eslint-disable-line no-shadow
-          const $answerText = $annotationElem.closest('.answerText')
-          const removedAnnotationIndex = $answerText.find('.answerAnnotation').index($annotationElem)
-          deleteIndex(gradingUriPrefix, $answerText, removedAnnotationIndex)
-          answerAnnotationsRendering.renderAnnotationsForElement($answerText)
+      function selectionHasNothingToUnderline(range) {
+        const contents = range.cloneContents()
+        const hasImages = _.contains(_.toArray(contents.children).map(x => x.tagName), 'IMG')
+        return contents.textContent.length === 0 && !hasImages
+      }
+
+      function preventDragSelectionFromOverlappingCensorAnswerText($containerElem) {
+        if (isCensor()) {
+          $containerElem.on('mousedown mouseup', e => {
+            $('.answerText.is_censor .answerAnnotation').toggleClass('no-mouse', e.type === 'mousedown')
+          })
+        }
+      }
+
+      function getPopupOffset(range) {
+        const markerElement = document.createElement("span")
+        markerElement.appendChild(document.createTextNode("\ufeff"))
+        range.insertNode(markerElement)
+        const $markerElement = $(markerElement)
+        const offset = $markerElement.position()
+        $markerElement.remove()
+        return offset
+      }
+
+      function annotationPopup(range) {
+        const selectionStartOffset = getPopupOffset(range)
+
+        let $answerText = $(range.startContainer).closest('.answerText')
+        const annotationPos = calculatePosition($answerText, range)
+
+        if (isCensor() && !$answerText.hasClass('is_censor')) {
+          // render annotations to censor answer text element even if event cought via double click
+          $answerText = $(range.startContainer).closest('.answer').find('.answerText.is_censor')
         }
 
-        function deleteIndex(gradingUriPrefix, $answerText, idx) { // eslint-disable-line no-shadow
-          const annotations = answerAnnotationsRendering.get($answerText)
-          annotations.splice(idx, 1)
+        const messages = answerAnnotationsRendering.getOverlappingMessages($answerText, annotationPos.startIndex, annotationPos.length)
+        const renderedMessages = messages.reduceRight((msg, str) => `${str} / ${msg}`, '')
+
+        getBrowserTextSelection().removeAllRanges()
+
+        // Merge and render annotation to show what range it will contain if annotation gets added
+        // Merged annotation not saved yet, so on cancel previous state is rendered
+        const mergedAnnotations = answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), annotationPos)
+        answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
+
+        const $popup = localize($(`<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value="${renderedMessages}"/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>`))
+        $answerText.append($popup)
+        $popup.css({
+          "position": "absolute",
+          "top": selectionStartOffset.top - $popup.outerHeight(),
+          "left": selectionStartOffset.left
+        })
+        $popup.find('input').focus()
+
+        return $popup.find('button').asEventStream('mousedown')
+          .merge($popup.asEventStream("keyup").filter(e => e.keyCode === ENTER))
+          .map(() => ({
+            annotation: annotationPos,
+            $answerText
+          }))
+      }
+
+      function addAnnotation(gradingUriPrefix) { // eslint-disable-line no-shadow
+        return annotationData => {
+          if (annotationData.annotation.length > 0) {
+            add(gradingUriPrefix, annotationData.$answerText, annotationData.annotation.startIndex, annotationData.annotation.length, $('.add-annotation-text').val().trim())
+            answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText)
+          }
+        }
+
+        function add(gradingUriPrefix, $answerText, startIndex, length, message) { // eslint-disable-line no-shadow
+          const newAnnotation = {startIndex, length, message}
+          const annotations = answerAnnotationsRendering.get($answerText) ?
+            answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), newAnnotation) :
+            [newAnnotation]
+          $answerText.data('annotations', annotations)
           saveAnnotation(gradingUriPrefix, getAnswerId($answerText), annotations)
         }
       }
 
-      function setupAnnotationAddition($containerElement, gradingUriPrefix) {
-        preventDragSelectionFromOverlappingCensorAnswerText($containerElement)
-        $containerElement.asEventStream('mouseup')
-          .filter(hasTextSelectedInAnswerText)
-          .map(() => {
-            $('.remove-annotation-popup').remove()
-            return getBrowserTextSelection().getRangeAt(0)
-          })
-          .filter(range => {
-            if(selectionHasNothingToUnderline(range)) {
-              return false
-            } else {
-              const $container = $(range.commonAncestorContainer)
-              return !$container.hasClass('add-annotation-popup') &&
-                ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0)
-            }
-          })
-          .flatMapLatest(annotationPopup)
-          .onValue(addAnnotation(gradingUriPrefix))
-
-        $containerElement.asEventStream('mousedown')
-          .filter(e => !$(e.target).closest('.add-annotation-text').length && !$(e.target).closest('.annotation-message').length)
-          .merge($containerElement.asEventStream("keyup").filter(e => e.keyCode === ESC))
-          .onValue(() => {
-            getBrowserTextSelection().removeAllRanges()
-            // Render annotations for all answers that have popup open. This clears the popup and annotation that was merged for rendering before opening popup.
-            $('.add-annotation-popup').each((index, popup) => {
-              answerAnnotationsRendering.renderAnnotationsForElement($(popup).closest(".answerText"))
-            })
-          })
-
-        function selectionHasNothingToUnderline(range) {
-          const contents = range.cloneContents()
-          const hasImages = _.contains(_.toArray(contents.children).map(x => x.tagName), 'IMG')
-          return contents.textContent.length === 0 && !hasImages
+      function calculatePosition($answerText, range) {
+        const answerNodes = answerAnnotationsRendering.allNodesUnder($answerText.get(0))
+        const charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
+        const charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
+        return {
+          startIndex: charactersBefore,
+          length: charactersUntilEnd - charactersBefore
         }
 
-        function preventDragSelectionFromOverlappingCensorAnswerText($containerElem) {
-          if(isCensor()) {
-            $containerElem.on('mousedown mouseup', e => { $('.answerText.is_censor .answerAnnotation').toggleClass('no-mouse', e.type === 'mousedown') })
-          }
-        }
-
-        function getPopupOffset(range) {
-          const markerElement = document.createElement("span")
-          markerElement.appendChild(document.createTextNode("\ufeff"))
-          range.insertNode(markerElement)
-          const $markerElement = $(markerElement)
-          const offset = $markerElement.position()
-          $markerElement.remove()
-          return offset
-        }
-
-        function annotationPopup(range) {
-          const selectionStartOffset = getPopupOffset(range)
-
-          let $answerText = $(range.startContainer).closest('.answerText')
-          const annotationPos = calculatePosition($answerText, range)
-
-          if(isCensor() && !$answerText.hasClass('is_censor')) {
-            // render annotations to censor answer text element even if event cought via double click
-            $answerText = $(range.startContainer).closest('.answer').find('.answerText.is_censor')
-          }
-
-          const messages = answerAnnotationsRendering.getOverlappingMessages($answerText, annotationPos.startIndex, annotationPos.length)
-          const renderedMessages = messages.reduceRight((msg, str) => `${str} / ${msg}`, '')
-
-          getBrowserTextSelection().removeAllRanges()
-
-          // Merge and render annotation to show what range it will contain if annotation gets added
-          // Merged annotation not saved yet, so on cancel previous state is rendered
-          const mergedAnnotations = answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), annotationPos)
-          answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
-
-          const $popup = localize($(`<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value="${renderedMessages}"/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>`))
-          $answerText.append($popup)
-          $popup.css({
-            "position": "absolute",
-            "top": selectionStartOffset.top - $popup.outerHeight(),
-            "left": selectionStartOffset.left
-          })
-          $popup.find('input').focus()
-
-          return $popup.find('button').asEventStream('mousedown')
-            .merge($popup.asEventStream("keyup").filter(e => e.keyCode === ENTER))
-            .map(() => ({
-              annotation: annotationPos,
-              $answerText
-            }))
-        }
-
-        function addAnnotation(gradingUriPrefix) { // eslint-disable-line no-shadow
-          return annotationData => {
-            if(annotationData.annotation.length > 0) {
-              add(gradingUriPrefix, annotationData.$answerText, annotationData.annotation.startIndex, annotationData.annotation.length, $('.add-annotation-text').val().trim())
-              answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText)
-            }
-          }
-
-          function add(gradingUriPrefix, $answerText, startIndex, length, message) { // eslint-disable-line no-shadow
-            const newAnnotation = {startIndex, length, message}
-            const annotations = answerAnnotationsRendering.get($answerText) ?
-              answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), newAnnotation) :
-              [newAnnotation]
-            $answerText.data('annotations', annotations)
-            saveAnnotation(gradingUriPrefix, getAnswerId($answerText), annotations)
-          }
-        }
-
-        function calculatePosition($answerText, range) {
-          const answerNodes = answerAnnotationsRendering.allNodesUnder($answerText.get(0))
-          const charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
-          const charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
-          return {
-            startIndex: charactersBefore,
-            length: charactersUntilEnd - charactersBefore
-          }
-
-          function charactersBeforeContainer(rangeContainer, offset) {
-            const containerIsImg = rangeContainer === $answerText.get(0)
-            const container = containerIsImg ? rangeContainer.childNodes[offset] : rangeContainer
-            const offsetInside = containerIsImg ? 0 : offset
-            const nodesBeforeContainer = _.takeWhile(answerNodes, node => node !== container)
-            return offsetInside + _.sum(nodesBeforeContainer.map(answerAnnotationsRendering.toNodeLength))
-          }
+        function charactersBeforeContainer(rangeContainer, offset) {
+          const containerIsImg = rangeContainer === $answerText.get(0)
+          const container = containerIsImg ? rangeContainer.childNodes[offset] : rangeContainer
+          const offsetInside = containerIsImg ? 0 : offset
+          const nodesBeforeContainer = _.takeWhile(answerNodes, node => node !== container)
+          return offsetInside + _.sum(nodesBeforeContainer.map(answerAnnotationsRendering.toNodeLength))
         }
       }
-    },
-    setupAnnotationDisplaying
+    }
   }
 
   function setupAnnotationDisplaying($answers) {
