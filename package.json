@@ -25,6 +25,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "i18next": "^8.4.3",
     "jquery": "^3.2.1",
+    "less": "^2.7.2",
     "lodash": "^3.10.1",
     "mocha": "^3.5.0",
     "mocha-chrome": "^0.1.1",
