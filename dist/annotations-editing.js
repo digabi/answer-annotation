@@ -1,10 +1,10 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery', 'lodash', 'bacon', './annotations-rendering', 'i18next'], factory)
+    define(['jquery', 'lodash', 'bacon', './annotations-rendering'], factory)
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'), require('lodash'), require('bacon'), require('./annotations-rendering'), require('i18next'))
+    module.exports = factory(require('jquery'), require('lodash'), require('bacon'), require('./annotations-rendering'))
   } else {
-    root.annotationsEditing = factory(root.jQuery, root._, root.bacon, root.annotationsRendering, root.i18next)
+    root.annotationsEditing = factory(root.jQuery, root._, root.bacon, root.annotationsRendering)
   }
 } (this, function($, _, Bacon, answerAnnotationsRendering) {
   'use strict'
@@ -16,7 +16,8 @@
     setupAnnotationEditing: (
       $containerElement,
       gradingUriPrefix,
-      saveAnnotation
+      saveAnnotation,
+      localize
     ) => {
       setupAnnotationAddition($containerElement, gradingUriPrefix)
       setupAnnotationRemoval($containerElement, gradingUriPrefix)
@@ -115,7 +116,7 @@
           const mergedAnnotations = answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), annotationPos)
           answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
 
-          const $popup = $(`<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value="${renderedMessages}"/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>`).i18n()
+          const $popup = localize($(`<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value="${renderedMessages}"/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>`))
           $answerText.append($popup)
           $popup.css({
             "position": "absolute",

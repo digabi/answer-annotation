@@ -7,8 +7,7 @@ var require = {
     chai: "./node_modules/chai/chai",
     mocha: "./node_modules/mocha/mocha",
     bacon: "./node_modules/baconjs/dist/Bacon.min",
-    lodash: "./node_modules/lodash/index",
-    i18next: "./node_modules/i18next/i18next.min"
+    lodash: "./node_modules/lodash/index"
   },
   shim: {
     "mocha": {
