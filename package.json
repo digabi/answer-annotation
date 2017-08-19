@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "test": "source $HOME/.nvm/nvm.sh; nvm exec v8 nyc ./node_modules/.bin/mocha-chrome test/test.html",
-    "ci-test": "nyc ./node_modules/.bin/mocha-chrome test/test.html",
+    "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --mocha '{\"reporter\":\"xunit\"}'  test/test.html > report.xml",
     "browser-test": "open test/test.html"
   },
   "author": "",
