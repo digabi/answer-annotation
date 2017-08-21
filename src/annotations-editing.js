@@ -1,6 +1,6 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery', 'lodash', 'bacon', './annotations-rendering'], factory)
+    define(['jquery', 'lodash', 'baconjs', './annotations-rendering'], factory)
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'), require('lodash'), require('bacon'), require('./annotations-rendering'))
   } else {

@@ -1,8 +1,8 @@
 require([
   "mocha",
   "chai",
-  "./dist/annotations-rendering",
-  "./dist/annotations-editing",
+  "./src/annotations-rendering",
+  "./src/annotations-editing",
   "jquery"
 ], (mocha, chai, annotationRendering, annotationEditing, $) => {
 

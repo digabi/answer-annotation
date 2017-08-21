@@ -91,7 +91,7 @@
   }
 
   function isImg({node}) {
-    return node.nodeName === 'IMG'
+    return node.nodeName === 'IMG' || node.nodeName === 'BR'
   }
 
   function nodeContentLength(nodeObj) {
