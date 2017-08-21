@@ -11,7 +11,8 @@
   "scripts": {
     "test": "source $HOME/.nvm/nvm.sh; nvm exec v8 nyc ./node_modules/.bin/mocha-chrome test/test.html",
     "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --mocha '{\"reporter\":\"spec\"}'  test/test.html",
-    "browser-test": "open test/test.html"
+    "browser-test": "open test/test.html",
+    "server-test": "python -m SimpleHTTPServer &> /dev/null & open http://localhost:8000/test/test.html"
   },
   "author": "",
   "license": "ISC",
