@@ -26,10 +26,11 @@
     return node.nodeType === Node.TEXT_NODE ? node.textContent.length : node.nodeName === 'IMG' ? 1 : 0;
   }
 
-  function allNodesUnder(el) {
+  function allNodesUnder(el, documentObject) {
+    documentObject = documentObject || document
     var n = void 0;
     var a = [];
-    var walk = document.createTreeWalker(el, NodeFilter.SHOW_ALL, null, false);
+    var walk = documentObject.createTreeWalker(el, NodeFilter.SHOW_ALL, null, false);
     while (n = walk.nextNode()) {
       a.push(n);
     }return a;
@@ -59,8 +60,9 @@
     });
   }
 
-  function createRangeFromMetadata($answerText, annotation) {
-    var nodes = allNodesUnder($answerText.get(0));
+  function createRangeFromMetadata($answerText, annotation, documentObject) {
+    documentObject = documentObject || document
+    var nodes = allNodesUnder($answerText.get(0), documentObject);
     var nodeTextLengths = _.map(nodes, toNodeLength);
     var accumLengths = _.reduce(nodeTextLengths, function (acc, n) {
       acc.push((acc.length > 0 ? acc[acc.length - 1] : 0) + n);
@@ -84,7 +86,7 @@
 
     var endObject = findNodeObject(accumulators, offset + annotation.length);
     var endOffset = isImg(endObject) ? endObject.index : nodeContentLength(endObject) - (endObject.length - (annotation.length + offset));
-    var range = document.createRange();
+    var range = documentObject.createRange();
     range.setStart(getNode(startObject), startOffset);
     range.setEnd(getNode(endObject), endOffset);
 
