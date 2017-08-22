@@ -21,8 +21,8 @@ require([
     <div class="answerText answerRichText is_pregrading">${content}</div>
     </div>`
     currentTestIndex++
-    const $newContainer = $('<div>').attr('id','answer-'+currentTestIndex).html(foo)
-    $answerContainer.append(`<h2>${title}</h2>`)
+    const $newContainer = $('<div>').attr('id','answer-'+currentTestIndex).addClass('answer-wrapper').html(foo)
+    $newContainer.prepend(`<h2>${title}</h2>`)
     $answerContainer.append($newContainer)
     annotationEditing.setupAnnotationEditing($newContainer.find('.answerText'), '', () => {}, $obj => $obj)
   }
