@@ -15,13 +15,14 @@ require([
 
   let currentTestIndex = 0
 
-  function setAnswer(content) {
+  function setAnswer(content, title) {
     const foo = `<div class="answer-text-container">
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     </div>`
     currentTestIndex++
     const $newContainer = $('<div>').attr('id','answer-'+currentTestIndex).html(foo)
+    $answerContainer.append(`<h2>${title}</h2>`)
     $answerContainer.append($newContainer)
     annotationEditing.setupAnnotationEditing($newContainer.find('.answerText'), '', () => {}, $obj => $obj)
   }
@@ -46,13 +47,13 @@ require([
     ]
     const answerContent = `answer rich <img alt="alt_image_text" src="/screenshot/"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/screenshot/">+<img alt="y" src="/screenshot/"> = y + x<img alt="y" src="/screenshot/"><br><br><br>new paragraph`
 
-    const createAndgetContainer = function() {
-      setAnswer(answerContent)
+    const createAndgetContainer = function(ctx) {
+      setAnswer(answerContent, ctx && ctx.test.title)
       return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
     }
 
-    it('Surrounding range from first three rows contains correct text', () => {
-      const answer = createAndgetContainer().get(0)
+    it('Surrounding range from first three rows contains correct text', function() {
+      const answer = createAndgetContainer(this).get(0)
       const range = document.createRange()
       range.setStart(answer, 0)
       range.setEnd(answer, 3)
@@ -62,8 +63,8 @@ require([
       assert.equal($annotatedElement.text(), 'answer rich  Text')
     })
 
-    it('All answer nodes can be extracted', () => {
-      let container = createAndgetContainer()
+    it('All answer nodes can be extracted', function() {
+      let container = createAndgetContainer(this)
       const answer = container.get(0)
       annotationRendering.renderGivenAnnotations(container, annotations)
       const foundNodes = annotationRendering.allNodesUnder(answer)
@@ -72,58 +73,58 @@ require([
       assert.equal(foundNodes.length, answer.childNodes.length + extraElementCount)
     })
 
-    it('First annotation should contain correct text', () => {
-        annotationRendering.renderGivenAnnotations(createAndgetContainer(), [annotations[0]])
+    it('First annotation should contain correct text', function() {
+        annotationRendering.renderGivenAnnotations(createAndgetContainer(this), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
 
-    it('Multiple annotations should be in correct place', () => {
+    it('Multiple annotations should be in correct place', function() {
       const imageAnnotations = [
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great2', startIndex: 19, length: 10},
         {message: 'great3', startIndex: 68, length: 1}
       ]
-      annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotations)
+      annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
-    it('Selecting text after image should work', () => {
+    it('Selecting text after image should work', function() {
       const imageAnnotations = [
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great2', startIndex: 20, length: 9}
       ]
-      annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotations)
+      annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
     })
 
-    it(`Selecting single image shouldn't throw an error`, () => {
+    it(`Selecting single image shouldn't throw an error`, function() {
       const imageAnnotation = [
         {message: 'great1', startIndex: 67, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotation)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotation)
       expect(annFn).to.not.throw()
     })
 
-    it(`Selecting image after another image shouldn't throw errors`, () => {
+    it(`Selecting image after another image shouldn't throw errors`, function() {
       const imageAnnotations = [
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great1', startIndex: 67, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotations)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotations)
       expect(annFn).to.not.throw()
     })
 
-    it('New annotation overlapping other annotations should be merged', () => {
+    it('New annotation overlapping other annotations should be merged', function() {
       const newAnn = {message: 'great3', startIndex: 4, length: 10}
       const mergedAnnotation = annotationRendering.mergeAnnotation(annotations, newAnn)
       expect(mergedAnnotation).to.deep.include({startIndex: 0, length: 14, message: newAnn.message})
     })
 
-    xit(`Selecting image followed by br shouldn't throw an error`, () => {
+    xit(`Selecting image followed by br shouldn't throw an error`, function() {
       const imageAnnotation = [
         {message: 'great1', startIndex: 78, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotation)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotation)
       expect(annFn).to.not.throw()
     })
   })
