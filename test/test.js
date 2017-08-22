@@ -46,11 +46,13 @@ require([
     ]
     const answerContent = `answer rich <img alt="alt_image_text" src="/screenshot/"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/screenshot/">+<img alt="y" src="/screenshot/"> = y + x<img alt="y" src="/screenshot/"><br><br><br>new paragraph`
 
-    const getContainer = () => $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
-    beforeEach(() => setAnswer(answerContent))
+    const createAndgetContainer = function() {
+      setAnswer(answerContent)
+      return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
+    }
 
     it('Surrounding range from first three rows contains correct text', () => {
-      const answer = getContainer().get(0)
+      const answer = createAndgetContainer().get(0)
       const range = document.createRange()
       range.setStart(answer, 0)
       range.setEnd(answer, 3)
@@ -61,8 +63,9 @@ require([
     })
 
     it('All answer nodes can be extracted', () => {
-      const answer = getContainer().get(0)
-      annotationRendering.renderGivenAnnotations(getContainer(), annotations)
+      let container = createAndgetContainer()
+      const answer = container.get(0)
+      annotationRendering.renderGivenAnnotations(container, annotations)
       const foundNodes = annotationRendering.allNodesUnder(answer)
       const extraElementCount = annotations.length * 2 // span includes text & superscript
 
@@ -70,7 +73,7 @@ require([
     })
 
     it('First annotation should contain correct text', () => {
-        annotationRendering.renderGivenAnnotations(getContainer(), [annotations[0]])
+        annotationRendering.renderGivenAnnotations(createAndgetContainer(), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
 
@@ -80,7 +83,7 @@ require([
         {message: 'great2', startIndex: 19, length: 10},
         {message: 'great3', startIndex: 68, length: 1}
       ]
-      annotationRendering.renderGivenAnnotations(getContainer(), imageAnnotations)
+      annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
@@ -89,7 +92,7 @@ require([
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great2', startIndex: 20, length: 9}
       ]
-      annotationRendering.renderGivenAnnotations(getContainer(), imageAnnotations)
+      annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
     })
 
@@ -97,7 +100,7 @@ require([
       const imageAnnotation = [
         {message: 'great1', startIndex: 67, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(getContainer(), imageAnnotation)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotation)
       expect(annFn).to.not.throw()
     })
 
@@ -106,7 +109,7 @@ require([
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great1', startIndex: 67, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(getContainer(), imageAnnotations)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotations)
       expect(annFn).to.not.throw()
     })
 
@@ -120,7 +123,7 @@ require([
       const imageAnnotation = [
         {message: 'great1', startIndex: 78, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(getContainer(), imageAnnotation)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(), imageAnnotation)
       expect(annFn).to.not.throw()
     })
   })
