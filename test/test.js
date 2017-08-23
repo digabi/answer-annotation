@@ -45,7 +45,7 @@ require([
         length: 1
       }
     ]
-    const answerContent = `answer rich <img alt="alt_image_text" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/test/math.svg">+<img alt="y" src="/test/math.svg"> = y + x<img alt="y" src="/test/math.svg"><br><br><br>new paragraph<img alt="y" src="/test/math.svg"><br><img alt="y" src="/test/math.svg"><br><img alt="y" src="/test/math.svg"><br>`
+    const answerContent = `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg"> = y + x<img alt="math4" src="/test/math.svg"><br><br><br>new paragraph<img alt="math5" src="/test/math.svg"><br><img alt="math6" src="/test/math.svg"><br><img alt="math7" src="/test/math.svg"><br>`
 
     const createAndgetContainer = function(ctx) {
       setAnswer(answerContent, ctx && ctx.test.title)
@@ -120,12 +120,19 @@ require([
       expect(mergedAnnotation).to.deep.include({startIndex: 0, length: 14, message: newAnn.message})
     })
 
-    xit(`Selecting image followed by br shouldn't throw an error`, function() {
-      const imageAnnotation = [
-        {message: 'great1', startIndex: 78, length: 1}
-      ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotation)
-      expect(annFn).to.not.throw()
+    xit(`Selecting correct image`, function() {
+      const $container = createAndgetContainer(this)
+      const range = document.createRange()
+      range.setStart($container.get(0), 28)
+      range.setEnd($container.get(0), 29)
+      const selection = window.getSelection()
+      selection.removeAllRanges()
+      selection.addRange(range)
+      $container.mouseup()
+      $container.find('button').mousedown()
+      const expectedSelectedImg = $container.find('img:eq(5)').get(0)
+      const imgInsideSpan = $container.find('.answerAnnotation:last img').get(0)
+      expect(expectedSelectedImg).to.equal(imgInsideSpan)
     })
   })
 
