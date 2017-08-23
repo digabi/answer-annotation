@@ -83,10 +83,10 @@
     var offset = annotation.startIndex
     var startObject = findNodeObject(accumulators, offset)
     var container = $answerText.get(0)
-    var startOffset = isImg(startObject) ? startObject.index : nodeContentLength(startObject) - (startObject.length - offset)
+    var startOffset = isTag(startObject) ? startObject.index : nodeContentLength(startObject) - (startObject.length - offset)
 
     var endObject = findNodeObject(accumulators, offset + annotation.length)
-    var endOffset = isImg(endObject) ? endObject.index : nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
+    var endOffset = isTag(endObject) ? endObject.index : nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
     var range = documentObject.createRange()
     range.setStart(getNode(startObject), startOffset)
     range.setEnd(getNode(endObject), endOffset)
@@ -94,14 +94,12 @@
     return range
 
     function getNode(nodeObject) {
-      return isImg(nodeObject) ? container : nodeObject.node
+      return isTag(nodeObject) ? container : nodeObject.node
     }
   }
 
-  function isImg(_ref) {
-    var node = _ref.node
-
-    return node.nodeName === 'IMG' || node.nodeName === 'BR'
+  function isTag(nodeObj) {
+    return nodeObj.node.nodeName === 'IMG' || nodeObj.node.nodeName === 'BR'
   }
 
   function nodeContentLength(nodeObj) {
@@ -110,7 +108,7 @@
 
   function findNodeObject(nodes, length) {
     return _.find(nodes, function (a) {
-      return isImg(a) ? a.length > length : a.length >= length
+      return isTag(a) ? a.length > length : a.length >= length
     })
   }
 
