@@ -16,7 +16,7 @@
     get: getAnnotations,
     getOverlappingMessages: getOverlappingMessages,
     mergeAnnotation: mergeAnnotation,
-    allContentNodesUnder: allContentNodesUnder,
+    allNodesUnder: allNodesUnder,
     toNodeLength: toNodeLength,
     renderAbittiAnnotations: renderAbittiAnnotations,
     createRangeFromMetadata: createRangeFromMetadata
@@ -26,7 +26,7 @@
     return node.nodeType === Node.TEXT_NODE ? node.textContent.length : node.nodeName === 'IMG' ? 1 : 0
   }
 
-  function allContentNodesUnder(el, documentObject) {
+  function allNodesUnder(el, documentObject) {
     documentObject = documentObject || document
     var n = void 0
     var a = []
@@ -34,9 +34,7 @@
     while (n = walk.nextNode()) {
       a.push(n)
     }
-    return a.filter(function (el) {
-      return el.nodeType === Node.TEXT_NODE || el.nodeName === 'IMG' || el.nodeName === 'BR'
-    })
+    return a
   }
 
   function renderAnnotationsForElement($answerText) {
@@ -65,7 +63,7 @@
 
   function createRangeFromMetadata($answerText, annotation, documentObject) {
     documentObject = documentObject || document
-    var nodes = allContentNodesUnder($answerText.get(0), documentObject)
+    var nodes = allNodesUnder($answerText.get(0), documentObject)
     var topLevelNodes = $answerText.contents().toArray()
     var nodeTextLengths = _.map(nodes, toNodeLength)
     var accumLengths = _.reduce(nodeTextLengths, function (acc, n) {

@@ -112,20 +112,28 @@ require([
 
     it(`Selecting correct image`, function() {
       const $container = createAndgetContainer(this)
-      const range = document.createRange()
-      range.setStart($container.get(0), 28)
-      range.setEnd($container.get(0), 29)
-      const selection = window.getSelection()
-      selection.removeAllRanges()
-      selection.addRange(range)
-      $container.mouseup()
-      $container.find('button').mousedown()
+      const container = $container.get(0)
+      createAnnotation($container, container, container, 28, 29)
       const expectedSelectedImg = $container.find('img:eq(5)').get(0)
       const imgInsideSpan = $container.find('.answerAnnotation:last img').get(0)
       expect(expectedSelectedImg).to.equal(imgInsideSpan)
+
+      createAnnotation($container, container, container, 26, 27)
+      expect($container.find('.answerAnnotation:last img').length).to.equal(2)
     })
   })
 
   mocha.run()
 
 })
+
+function createAnnotation($container, startContainer, endContainer, startOffset, endOffset) {
+  const range = document.createRange()
+  range.setStart(startContainer, startOffset)
+  range.setEnd(endContainer, endOffset)
+  const selection = window.getSelection()
+  selection.removeAllRanges()
+  selection.addRange(range)
+  $container.mouseup()
+  $container.find('button').mousedown()
+}

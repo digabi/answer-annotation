@@ -156,7 +156,7 @@
       }
 
       function calculatePosition($answerText, range) {
-        var answerNodes = answerAnnotationsRendering.allContentNodesUnder($answerText.get(0))
+        var answerNodes = answerAnnotationsRendering.allNodesUnder($answerText.get(0))
         var charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
         var charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
         return {
