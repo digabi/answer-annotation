@@ -63,16 +63,6 @@ require([
       assert.equal($annotatedElement.text(), 'answer rich  Text')
     })
 
-    it('All answer nodes can be extracted', function() {
-      let container = createAndgetContainer(this)
-      const answer = container.get(0)
-      annotationRendering.renderGivenAnnotations(container, annotations)
-      const foundNodes = annotationRendering.allNodesUnder(answer)
-      const extraElementCount = annotations.length * 2 // span includes text & superscript
-
-      assert.equal(foundNodes.length, answer.childNodes.length + extraElementCount)
-    })
-
     it('First annotation should contain correct text', function() {
         annotationRendering.renderGivenAnnotations(createAndgetContainer(this), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
@@ -120,7 +110,7 @@ require([
       expect(mergedAnnotation).to.deep.include({startIndex: 0, length: 14, message: newAnn.message})
     })
 
-    xit(`Selecting correct image`, function() {
+    it(`Selecting correct image`, function() {
       const $container = createAndgetContainer(this)
       const range = document.createRange()
       range.setStart($container.get(0), 28)

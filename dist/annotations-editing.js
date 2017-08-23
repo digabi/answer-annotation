@@ -156,7 +156,7 @@
       }
 
       function calculatePosition($answerText, range) {
-        var answerNodes = answerAnnotationsRendering.allNodesUnder($answerText.get(0))
+        var answerNodes = answerAnnotationsRendering.allContentNodesUnder($answerText.get(0))
         var charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
         var charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
         return {
@@ -165,9 +165,9 @@
         }
 
         function charactersBeforeContainer(rangeContainer, offset) {
-          var containerIsImg = rangeContainer === $answerText.get(0)
-          var container = containerIsImg ? rangeContainer.childNodes[offset] : rangeContainer
-          var offsetInside = containerIsImg ? 0 : offset
+          var containerIsTag = rangeContainer === $answerText.get(0)
+          var container = containerIsTag ? rangeContainer.childNodes[offset] : rangeContainer
+          var offsetInside = containerIsTag ? 0 : offset
           var nodesBeforeContainer = _.takeWhile(answerNodes, function (node) {
             return node !== container
           })

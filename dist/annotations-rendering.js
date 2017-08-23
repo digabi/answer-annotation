@@ -16,7 +16,7 @@
     get: getAnnotations,
     getOverlappingMessages: getOverlappingMessages,
     mergeAnnotation: mergeAnnotation,
-    allNodesUnder: allNodesUnder,
+    allContentNodesUnder: allContentNodesUnder,
     toNodeLength: toNodeLength,
     renderAbittiAnnotations: renderAbittiAnnotations,
     createRangeFromMetadata: createRangeFromMetadata
@@ -26,7 +26,7 @@
     return node.nodeType === Node.TEXT_NODE ? node.textContent.length : node.nodeName === 'IMG' ? 1 : 0
   }
 
-  function allNodesUnder(el, documentObject) {
+  function allContentNodesUnder(el, documentObject) {
     documentObject = documentObject || document
     var n = void 0
     var a = []
@@ -34,7 +34,9 @@
     while (n = walk.nextNode()) {
       a.push(n)
     }
-    return a
+    return a.filter(function (el) {
+      return el.nodeType === Node.TEXT_NODE || el.nodeName === 'IMG' || el.nodeName === 'BR'
+    })
   }
 
   function renderAnnotationsForElement($answerText) {
@@ -63,7 +65,8 @@
 
   function createRangeFromMetadata($answerText, annotation, documentObject) {
     documentObject = documentObject || document
-    var nodes = allNodesUnder($answerText.get(0), documentObject)
+    var nodes = allContentNodesUnder($answerText.get(0), documentObject)
+    var topLevelNodes = $answerText.contents().toArray()
     var nodeTextLengths = _.map(nodes, toNodeLength)
     var accumLengths = _.reduce(nodeTextLengths, function (acc, n) {
       acc.push((acc.length > 0 ? acc[acc.length - 1] : 0) + n)
@@ -72,27 +75,25 @@
 
     var accumulators = _.zipWith(nodes, accumLengths, function (node, length) {
       return {node: node, length: length}
-    }).map(function (node, index) {
-      return {
-        node: node.node,
-        length: node.length,
-        index: index + 1
-      }
     })
 
     var offset = annotation.startIndex
     var startObject = findNodeObject(accumulators, offset)
     var container = $answerText.get(0)
-    var startOffset = isTag(startObject) ? startObject.index : nodeContentLength(startObject) - (startObject.length - offset)
-
+    var startOffset = isTag(startObject) ? getTopLevelIndex(startObject.node): nodeContentLength(startObject) - (startObject.length - offset)
     var endObject = findNodeObject(accumulators, offset + annotation.length)
-    var endOffset = isTag(endObject) ? endObject.index : nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
+    var endOffset = isTag(endObject) ? getTopLevelIndex(endObject.node): nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
     var range = documentObject.createRange()
     range.setStart(getNode(startObject), startOffset)
     range.setEnd(getNode(endObject), endOffset)
 
     return range
 
+    function getTopLevelIndex(node) {
+      return _.findIndex(topLevelNodes, function (el) {
+        return el === node
+      }) + 1
+    }
     function getNode(nodeObject) {
       return isTag(nodeObject) ? container : nodeObject.node
     }
@@ -108,7 +109,7 @@
 
   function findNodeObject(nodes, length) {
     return _.find(nodes, function (a) {
-      return isTag(a) ? a.length > length : a.length >= length
+      return a.length >= length
     })
   }
 
