@@ -45,7 +45,7 @@ require([
         length: 1
       }
     ]
-    const answerContent = `answer rich <img alt="alt_image_text" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/test/math.svg">+<img alt="y" src="/test/math.svg"> = y + x<img alt="y" src="/test/math.svg"><br><br><br>new paragraph`
+    const answerContent = `answer rich <img alt="alt_image_text" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="x" src="/test/math.svg">+<img alt="y" src="/test/math.svg"> = y + x<img alt="y" src="/test/math.svg"><br><br><br>new paragraph<img alt="y" src="/test/math.svg"><br><img alt="y" src="/test/math.svg"><br><img alt="y" src="/test/math.svg"><br>`
 
     const createAndgetContainer = function(ctx) {
       setAnswer(answerContent, ctx && ctx.test.title)
