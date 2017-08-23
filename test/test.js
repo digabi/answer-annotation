@@ -45,9 +45,11 @@ require([
         length: 1
       }
     ]
-    const answerContent = `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg"> = y + x<img alt="math4" src="/test/math.svg"><br><br><br>new paragraph<img alt="math5" src="/test/math.svg"><br><img alt="math6" src="/test/math.svg"><br><img alt="math7" src="/test/math.svg"><br>`
+    const defaultAnswerContent = `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg"> = y + x<img alt="math4" src="/test/math.svg"><br><br><br>new paragraph<img alt="math5" src="/test/math.svg"><br><img alt="math6" src="/test/math.svg"><br><img alt="math7" src="/test/math.svg"><br>`
 
-    const createAndgetContainer = function(ctx) {
+    const createAndgetContainer = function(ctx, answerContent) {
+      answerContent = answerContent || defaultAnswerContent
+
       setAnswer(answerContent, ctx && ctx.test.title)
       return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
     }
@@ -120,6 +122,13 @@ require([
 
       createAnnotation($container, container, container, 26, 27)
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
+    })
+
+    xit(`Selecting image when it is first in answer`, function() {
+      const $container = createAndgetContainer(this, `<img alt="math1" src="/test/math.svg">`)
+      const container = $container.get(0)
+      createAnnotation($container, container, container, 0, 1)
+      expect($container.find('.answerAnnotation:last img').length).to.equal(1)
     })
   })
 
