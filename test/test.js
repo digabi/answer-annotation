@@ -137,6 +137,14 @@ require([
       createAnnotation($container, container, container, 0, 2)
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
     })
+
+    xit(`Merges correctly`, function() {
+      const $container = createAndgetContainer(this, `ABCD<br><img alt="math1" src="/test/math.svg"><img alt="math2" src="/test/math.svg"><br>XYZ`)
+      const container = $container.get(0)
+      createAnnotation($container, container, container, 2, 4)
+      createAnnotation($container, container.childNodes[0], container.querySelector('.answerAnnotation'), 3, 3)
+      expect($container.find('.answerAnnotation:last').text()).to.equal('D')
+    })
   })
 
   mocha.run()
