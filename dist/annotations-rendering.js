@@ -78,12 +78,12 @@
     var offset = annotation.startIndex
     var startObject = findNodeObject(accumulators, offset)
     var container = $answerText.get(0)
-    var startOffset = isTag(startObject) ? getTopLevelIndex(startObject.node): nodeContentLength(startObject) - (startObject.length - offset)
+    var startOffset = isContentTag(startObject) ? getTopLevelIndex(startObject.node): nodeContentLength(startObject) - (startObject.length - offset)
     var endObject = findNodeObject(accumulators, offset + annotation.length)
-    var endOffset = isTag(endObject) ? getTopLevelIndex(endObject.node): nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
+    var endOffset = isContentTag(endObject) ? getTopLevelIndex(endObject.node): nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
     var range = documentObject.createRange()
-    range.setStart(getNode(startObject), startOffset)
-    range.setEnd(getNode(endObject), endOffset)
+    range.setStart(getNodeOrContainer(startObject), startOffset)
+    range.setEnd(getNodeOrContainer(endObject), endOffset)
 
     return range
 
@@ -92,12 +92,12 @@
         return el === node
       }) + 1
     }
-    function getNode(nodeObject) {
-      return isTag(nodeObject) ? container : nodeObject.node
+    function getNodeOrContainer(nodeObject) {
+      return isContentTag(nodeObject) ? container : nodeObject.node
     }
   }
 
-  function isTag(nodeObj) {
+  function isContentTag(nodeObj) {
     return nodeObj.node.nodeName === 'IMG' || nodeObj.node.nodeName === 'BR'
   }
 
