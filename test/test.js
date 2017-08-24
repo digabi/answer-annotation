@@ -45,17 +45,13 @@ require([
         length: 1
       }
     ]
-    const defaultAnswerContent = `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>Vivamus venenatis<br><br><br>Phasellus tempus<br><br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg"> = y + x<img alt="math4" src="/test/math.svg"><br><br><br>new paragraph<img alt="math5" src="/test/math.svg"><br><img alt="math6" src="/test/math.svg"><br><img alt="math7" src="/test/math.svg"><br>`
-
     const createAndgetContainer = function(ctx, answerContent) {
-      answerContent = answerContent || defaultAnswerContent
-
       setAnswer(answerContent, ctx && ctx.test.title)
       return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
     }
 
     it('Surrounding range from first three rows contains correct text', function() {
-      const answer = createAndgetContainer(this).get(0)
+      const answer = createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`).get(0)
       const range = document.createRange()
       range.setStart(answer, 0)
       range.setEnd(answer, 3)
@@ -66,7 +62,7 @@ require([
     })
 
     it('First annotation should contain correct text', function() {
-        annotationRendering.renderGivenAnnotations(createAndgetContainer(this), [annotations[0]])
+        annotationRendering.renderGivenAnnotations(createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`), [annotations[0]])
         expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
 
@@ -74,9 +70,9 @@ require([
       const imageAnnotations = [
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great2', startIndex: 19, length: 10},
-        {message: 'great3', startIndex: 68, length: 1}
+        {message: 'great3', startIndex: 30, length: 1}
       ]
-      annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotations)
+      annotationRendering.renderGivenAnnotations(createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
@@ -85,24 +81,24 @@ require([
         {message: 'great1', startIndex: 11, length: 7},
         {message: 'great2', startIndex: 20, length: 9}
       ]
-      annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotations)
+      annotationRendering.renderGivenAnnotations(createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br>`), imageAnnotations)
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
     })
 
     it(`Selecting single image shouldn't throw an error`, function() {
       const imageAnnotation = [
-        {message: 'great1', startIndex: 67, length: 1}
+        {message: 'great1', startIndex: 2, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotation)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this, `bi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`), imageAnnotation)
       expect(annFn).to.not.throw()
     })
 
     it(`Selecting image after another image shouldn't throw errors`, function() {
       const imageAnnotations = [
         {message: 'great1', startIndex: 11, length: 7},
-        {message: 'great1', startIndex: 67, length: 1}
+        {message: 'great1', startIndex: 23, length: 1}
       ]
-      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this), imageAnnotations)
+      const annFn = () => annotationRendering.renderGivenAnnotations(createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`), imageAnnotations)
       expect(annFn).to.not.throw()
     })
 
@@ -113,14 +109,14 @@ require([
     })
 
     it(`Selecting correct image`, function() {
-      const $container = createAndgetContainer(this)
+      const $container = createAndgetContainer(this, `X<img alt="math5" src="/test/math.svg"><br><img alt="math6" src="/test/math.svg"><br><img alt="math7" src="/test/math.svg"><br>`)
       const container = $container.get(0)
-      createAnnotation($container, container, container, 28, 29)
-      const expectedSelectedImg = $container.find('img:eq(5)').get(0)
+      createAnnotation($container, container, container, 3, 4)
+      const expectedSelectedImg = $container.find('img:eq(1)').get(0)
       const imgInsideSpan = $container.find('.answerAnnotation:last img').get(0)
       expect(expectedSelectedImg).to.equal(imgInsideSpan)
 
-      createAnnotation($container, container, container, 26, 27)
+      createAnnotation($container, container, container, 1, 2)
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
     })
 
