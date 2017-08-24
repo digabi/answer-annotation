@@ -16,7 +16,7 @@ require([
   let currentTestIndex = 0
 
   function setAnswer(content, title) {
-    const foo = `<div class="answer-text-container">
+    const foo = `<div class="answer-text-container answer selected hasComment">
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     </div>`

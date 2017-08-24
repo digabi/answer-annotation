@@ -21,10 +21,13 @@ body #mocha .test a.replay {
   position: static;
   display: inline-block;
 }
+.fa-comment:after {
+  content: '💬';
+}
 .testAnswerContainer h2 { font: 15px/10px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #000;}
 img[src^="/test/math.svg"] { padding: 2px;}
 .testAnswerContainer { flex-wrap: wrap; }
-.answer-text-container { background: @background-highlight-color; margin: 10px; color: #333; padding: 5px;}
+.answer-text-container { margin: 10px; }
 .answer-wrapper { width: 450px;}
 
 .popup-glow() { box-shadow: 0 0 7px 0 rgba(74, 144, 226, 0.5); }
