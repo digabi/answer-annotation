@@ -120,25 +120,25 @@ require([
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
     })
 
-    xit(`Selecting image when it is first in answer`, function() {
+    it(`Selecting image when it is first in answer`, function() {
       const $container = createAndgetContainer(this, `<img alt="math1" src="/test/math.svg">`)
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 1)
       expect($container.find('.answerAnnotation:last img').length).to.equal(1)
     })
 
-    xit(`Selecting first and second image `, function() {
+    it(`Selecting first and second image `, function() {
       const $container = createAndgetContainer(this, `<img alt="math1" src="/test/math.svg"><img alt="math2" src="/test/math.svg"><img alt="math3" src="/test/math.svg">`)
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 2)
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
     })
 
-    xit(`Merges correctly`, function() {
+    it(`Merges correctly`, function() {
       const $container = createAndgetContainer(this, `ABCD<br><img alt="math1" src="/test/math.svg"><img alt="math2" src="/test/math.svg"><br>XYZ`)
       const container = $container.get(0)
       createAnnotation($container, container, container, 2, 4)
-      createAnnotation($container, container.childNodes[0], container.querySelector('.answerAnnotation'), 3, 3)
+      createAnnotation($container, container.childNodes[0], container.querySelector('.answerAnnotation'), 3, 1)
       expect($container.find('.answerAnnotation:last').text()).to.equal('D')
     })
   })

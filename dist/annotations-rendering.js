@@ -76,11 +76,11 @@
     })
 
     var offset = annotation.startIndex
-    var startObject = findNodeObject(accumulators, offset)
+    var startObject = findStartNodeObject(accumulators, offset)
     var container = $answerText.get(0)
     var startOffset = isContentTag(startObject) ? getTopLevelIndex(startObject.node): nodeContentLength(startObject) - (startObject.length - offset)
-    var endObject = findNodeObject(accumulators, offset + annotation.length)
-    var endOffset = isContentTag(endObject) ? getTopLevelIndex(endObject.node): nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
+    var endObject = findEndNodeObject(accumulators, offset + annotation.length)
+    var endOffset = isContentTag(endObject) ? getTopLevelIndex(endObject.node) + 1: nodeContentLength(endObject) - (endObject.length - (annotation.length + offset))
     var range = documentObject.createRange()
     range.setStart(getNodeOrContainer(startObject), startOffset)
     range.setEnd(getNodeOrContainer(endObject), endOffset)
@@ -90,7 +90,7 @@
     function getTopLevelIndex(node) {
       return _.findIndex(topLevelNodes, function (el) {
         return el === node
-      }) + 1
+      })
     }
     function getNodeOrContainer(nodeObject) {
       return isContentTag(nodeObject) ? container : nodeObject.node
@@ -105,7 +105,13 @@
     return nodeObj.node.textContent.length
   }
 
-  function findNodeObject(nodes, length) {
+  function findStartNodeObject(nodes, length) {
+    return _.find(nodes, function (a) {
+      return a.length > length
+    })
+  }
+
+  function findEndNodeObject(nodes, length) {
     return _.find(nodes, function (a) {
       return a.length >= length
     })
