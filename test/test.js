@@ -130,6 +130,13 @@ require([
       createAnnotation($container, container, container, 0, 1)
       expect($container.find('.answerAnnotation:last img').length).to.equal(1)
     })
+
+    xit(`Selecting first and second image `, function() {
+      const $container = createAndgetContainer(this, `<img alt="math1" src="/test/math.svg"><img alt="math2" src="/test/math.svg"><img alt="math3" src="/test/math.svg">`)
+      const container = $container.get(0)
+      createAnnotation($container, container, container, 0, 2)
+      expect($container.find('.answerAnnotation:last img').length).to.equal(2)
+    })
   })
 
   mocha.run()
