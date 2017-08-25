@@ -71,7 +71,7 @@
 
       function selectionHasNothingToUnderline(range) {
         var contents = range.cloneContents()
-        var hasImages = _.contains(_.toArray(contents.children).map(function (x) {
+        var hasImages = _.contains(_.toArray(contents.childNodes).map(function (x) {
           return x.tagName
         }), 'IMG')
         return contents.textContent.length === 0 && !hasImages
@@ -281,7 +281,7 @@
     return selection && selectionInAnswerText(selection) && (isRangeSelection(selection) || textSelectedInRange(selection))
 
     function selectionInAnswerText(sel) {
-      if (sel.type === 'None') return false
+      if (sel.type === 'None' || sel.rangeCount === 0) return false
       var $startContainer = $(sel.getRangeAt(0).startContainer)
       return sel.rangeCount && $startContainer.closest('.answerText').length === 1 && $startContainer.closest('.remove-annotation-popup').length === 0
     }
@@ -291,7 +291,11 @@
     }
 
     function textSelectedInRange(sel) {
-      return _.get(sel, 'rangeCount', 0) > 0 && sel.getRangeAt(0).toString().length > 0
+      var range = sel.getRangeAt(0)
+      return _.get(sel, 'rangeCount', 0) > 0 && (range.toString().length > 0 || isParentContainer(range.startContainer) || isParentContainer(range.endContainer))
+    }
+    function isParentContainer(container) {
+      return container && container.classList && container.classList.contains('answerText')
     }
   }
 }));
