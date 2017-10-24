@@ -179,10 +179,10 @@
 
     if (parted.overlapping.length > 0) {
       parted.overlapping.push(newAnnotation)
-      var mergedStart = _.min(parted.overlapping, function (range) {
+      var mergedStart = _.minBy(parted.overlapping, function (range) {
         return range.startIndex
       })
-      var mergedEnd = _.max(parted.overlapping, function (range) {
+      var mergedEnd = _.maxBy(parted.overlapping, function (range) {
         return range.startIndex + range.length
       })
       var mergedRange = {

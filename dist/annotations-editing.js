@@ -71,7 +71,7 @@
 
       function selectionHasNothingToUnderline(range) {
         var contents = range.cloneContents()
-        var hasImages = _.contains(_.toArray(contents.childNodes).map(function (x) {
+        var hasImages = _.includes(_.toArray(contents.childNodes).map(function (x) {
           return x.tagName
         }), 'IMG')
         return contents.textContent.length === 0 && !hasImages
