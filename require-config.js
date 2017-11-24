@@ -1,5 +1,4 @@
-var require = {
-  // eslint-disable-line no-unused-vars
+var require = { // eslint-disable-line no-unused-vars
   waitSeconds: 0,
   baseUrl: "..",
   paths: {
