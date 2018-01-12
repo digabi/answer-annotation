@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "es5"
+  ],
+  "extends": [
+    "plugin:es5/no-es2015"
+  ],
+  "rules": {
+    "no-cond-assign": 1
+  }
+}
