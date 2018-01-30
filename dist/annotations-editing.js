@@ -53,7 +53,9 @@
           return false
         } else {
           var $container = $(range.commonAncestorContainer)
-          return !$container.hasClass('add-annotation-popup') && ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0)
+          return !$container.hasClass('add-annotation-popup')
+            && ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0)
+            && !$container.parents('.answer').hasClass('autograded')
         }
       }).flatMapLatest(annotationPopup).onValue(addAnnotation(gradingUriPrefix))
 
@@ -294,6 +296,7 @@
       var range = sel.getRangeAt(0)
       return _.get(sel, 'rangeCount', 0) > 0 && (range.toString().length > 0 || isParentContainer(range.startContainer) || isParentContainer(range.endContainer))
     }
+
     function isParentContainer(container) {
       return container && container.classList && container.classList.contains('answerText')
     }

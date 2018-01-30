@@ -15,8 +15,8 @@ require([
 
   let currentTestIndex = 0
 
-  function setAnswer(content, title) {
-    const foo = `<div class="answer-text-container answer selected hasComment">
+  function setAnswer(content, title, isAutograded) {
+    const foo = `<div class="answer-text-container answer selected hasComment ${isAutograded ? 'autograded' : ''}">
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     </div>`
@@ -45,8 +45,8 @@ require([
         length: 1
       }
     ]
-    const createAndgetContainer = function(ctx, answerContent) {
-      setAnswer(answerContent, ctx && ctx.test.title)
+    const createAndgetContainer = function(ctx, answerContent, isAutograded = false) {
+      setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
       return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
     }
 
@@ -140,6 +140,20 @@ require([
       createAnnotation($container, container, container, 2, 4)
       createAnnotation($container, container.childNodes[0], container.querySelector('.answerAnnotation'), 3, 1)
       expect($container.find('.answerAnnotation:last').text()).to.equal('D')
+    })
+
+    it(`Annotates normal text`, function() {
+      const $container = createAndgetContainer(this, `ABCD XYZ`)
+      const container = $container.get(0)
+      createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4)
+      expect($container.find('.answerAnnotation').text()).to.equal('CD')
+    })
+
+    it(`Ignores autograded answers`, function() {
+      const $container = createAndgetContainer(this, `ABCD XYZ`, true)
+      const container = $container.get(0)
+      createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4)
+      expect($container.find('.answerAnnotation').text()).to.equal('')
     })
   })
 
