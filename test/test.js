@@ -7,6 +7,8 @@ require([
 ], (mocha, chai, annotationRendering, annotationEditing, $) => {
 
   chai.config.truncateThreshold = 0
+  chai.config.includeStack = true
+  chai.config.showDiff = true
   mocha.setup("bdd")
   const expect = chai.expect
   const assert = chai.assert
@@ -15,16 +17,19 @@ require([
 
   let currentTestIndex = 0
 
+  let saves = []
   function setAnswer(content, title, isAutograded) {
-    const foo = `<div class="answer-text-container answer selected hasComment ${isAutograded ? 'autograded' : ''}">
+    currentTestIndex++
+    const foo = `<div data-answer-id="${currentTestIndex}" class="answer-text-container answer selected hasComment ${isAutograded ? 'autograded' : ''}">
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     </div>`
-    currentTestIndex++
     const $newContainer = $('<div>').attr('id','answer-'+currentTestIndex).addClass('answer-wrapper').html(foo)
     $newContainer.prepend(`<h2>${title}</h2>`)
     $answerContainer.append($newContainer)
-    annotationEditing.setupAnnotationEditing($newContainer.find('.answerText'), () => {}, $obj => $obj)
+    annotationEditing.setupAnnotationEditing($newContainer.find('.answerText'), (answerId, annotations) => {
+      saves.push({answerId, annotations})
+    }, $obj => $obj)
   }
 
   function getAnnotationContent($answer) {
@@ -46,6 +51,7 @@ require([
       }
     ]
     const createAndgetContainer = function(ctx, answerContent, isAutograded = false) {
+      saves = []
       setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
       return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
     }
@@ -118,6 +124,10 @@ require([
 
       createAnnotation($container, container, container, 1, 2)
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
+      expect(saves).to.eql([
+        { answerId: String(currentTestIndex), annotations: [ { startIndex: 2, length: 1, message: '' } ] },
+        { answerId: String(currentTestIndex), annotations: [ { startIndex: 1, length: 2, message: '' } ] }
+        ])
     })
 
     it(`Selecting image when it is first in answer`, function() {
@@ -125,6 +135,7 @@ require([
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 1)
       expect($container.find('.answerAnnotation:last img').length).to.equal(1)
+      expect(saves).to.eql([{ answerId: String(currentTestIndex), annotations: [ { startIndex: 0, length: 1, message: '' } ] }])
     })
 
     it(`Selecting first and second image `, function() {
@@ -132,6 +143,7 @@ require([
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 2)
       expect($container.find('.answerAnnotation:last img').length).to.equal(2)
+      expect(saves).to.eql([{ answerId: String(currentTestIndex), annotations: [ { startIndex: 0, length: 2, message: '' } ] }])
     })
 
     it(`Merges correctly`, function() {
@@ -140,6 +152,10 @@ require([
       createAnnotation($container, container, container, 2, 4)
       createAnnotation($container, container.childNodes[0], container.querySelector('.answerAnnotation'), 3, 1)
       expect($container.find('.answerAnnotation:last').text()).to.equal('D')
+      expect(saves).to.eql([
+        { answerId: String(currentTestIndex), annotations: [ { startIndex: 4, length: 2, message: '' } ] },
+        { answerId: String(currentTestIndex), annotations: [ { startIndex: 3, length: 3, message: '' } ] }
+        ])
     })
 
     it(`Annotates normal text`, function() {
@@ -147,6 +163,7 @@ require([
       const container = $container.get(0)
       createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4)
       expect($container.find('.answerAnnotation').text()).to.equal('CD')
+      expect(saves).to.eql([{ answerId: String(currentTestIndex), annotations: [ { startIndex: 2, length: 2, message: '' } ] }])
     })
 
     it(`Ignores autograded answers`, function() {
@@ -154,6 +171,7 @@ require([
       const container = $container.get(0)
       createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4)
       expect($container.find('.answerAnnotation').text()).to.equal('')
+      expect(saves).to.eql([])
     })
   })
 
