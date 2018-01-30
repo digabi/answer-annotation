@@ -17,33 +17,33 @@
     setupAnnotationDisplaying: setupAnnotationDisplaying
   }
 
-  function setupAnnotationEditing($containerElement, gradingUriPrefix, saveAnnotation, localize) {
-    setupAnnotationAddition($containerElement, gradingUriPrefix)
-    setupAnnotationRemoval($containerElement, gradingUriPrefix)
+  function setupAnnotationEditing($containerElement, saveAnnotation, localize) {
+    setupAnnotationAddition($containerElement)
+    setupAnnotationRemoval($containerElement)
 
-    function setupAnnotationRemoval($answers, gradingUriPrefix) {
+    function setupAnnotationRemoval($answers) {
       $answers.on('mousedown', '.remove-annotation-area', function (event) {
         event.preventDefault()
-        removeAnnotation($(event.target).closest('.answerAnnotation'), gradingUriPrefix)
+        removeAnnotation($(event.target).closest('.answerAnnotation'))
       })
 
-      function removeAnnotation($annotationElem, gradingUriPrefix) {
+      function removeAnnotation($annotationElem) {
         // eslint-disable-line no-shadow
         var $answerText = $annotationElem.closest('.answerText')
         var removedAnnotationIndex = $answerText.find('.answerAnnotation').index($annotationElem)
-        deleteIndex(gradingUriPrefix, $answerText, removedAnnotationIndex)
+        deleteIndex($answerText, removedAnnotationIndex)
         answerAnnotationsRendering.renderAnnotationsForElement($answerText)
       }
 
-      function deleteIndex(gradingUriPrefix, $answerText, idx) {
+      function deleteIndex($answerText, idx) {
         // eslint-disable-line no-shadow
         var annotations = answerAnnotationsRendering.get($answerText)
         annotations.splice(idx, 1)
-        saveAnnotation(gradingUriPrefix, getAnswerId($answerText), annotations)
+        saveAnnotation(getAnswerId($answerText), annotations)
       }
     }
 
-    function setupAnnotationAddition($containerElement, gradingUriPrefix) {
+    function setupAnnotationAddition($containerElement) {
       preventDragSelectionFromOverlappingCensorAnswerText($containerElement)
       $containerElement.asEventStream('mouseup').filter(hasTextSelectedInAnswerText).map(function () {
         $('.remove-annotation-popup').remove()
@@ -57,7 +57,7 @@
             && ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0)
             && !$container.parents('.answer').hasClass('autograded')
         }
-      }).flatMapLatest(annotationPopup).onValue(addAnnotation(gradingUriPrefix))
+      }).flatMapLatest(annotationPopup).onValue(addAnnotation)
 
       $containerElement.asEventStream('mousedown').filter(function (e) {
         return !$(e.target).closest('.add-annotation-text').length && !$(e.target).closest('.annotation-message').length
@@ -139,22 +139,19 @@
         })
       }
 
-      function addAnnotation(gradingUriPrefix) {
-        // eslint-disable-line no-shadow
-        return function (annotationData) {
-          if (annotationData.annotation.length > 0) {
-            add(gradingUriPrefix, annotationData.$answerText, annotationData.annotation.startIndex, annotationData.annotation.length, $('.add-annotation-text').val().trim())
-            answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText)
-          }
+      function addAnnotation(annotationData) {
+        if (annotationData.annotation.length > 0) {
+          add(annotationData.$answerText, annotationData.annotation.startIndex, annotationData.annotation.length, $('.add-annotation-text').val().trim())
+          answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText)
         }
+      }
 
-        function add(gradingUriPrefix, $answerText, startIndex, length, message) {
-          // eslint-disable-line no-shadow
-          var newAnnotation = {startIndex: startIndex, length: length, message: message}
-          var annotations = answerAnnotationsRendering.get($answerText) ? answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), newAnnotation) : [newAnnotation]
-          $answerText.data('annotations', annotations)
-          saveAnnotation(gradingUriPrefix, getAnswerId($answerText), annotations)
-        }
+      function add($answerText, startIndex, length, message) {
+        // eslint-disable-line no-shadow
+        var newAnnotation = {startIndex: startIndex, length: length, message: message}
+        var annotations = answerAnnotationsRendering.get($answerText) ? answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), newAnnotation) : [newAnnotation]
+        $answerText.data('annotations', annotations)
+        saveAnnotation(getAnswerId($answerText), annotations)
       }
 
       function calculatePosition($answerText, range) {
