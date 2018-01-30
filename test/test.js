@@ -173,13 +173,21 @@ require([
       expect($container.find('.answerAnnotation').text()).to.equal('')
       expect(saves).to.eql([])
     })
+
+    it(`Saves comment`, function() {
+      const $container = createAndgetContainer(this, `ABCD XYZ`)
+      const container = $container.get(0)
+      createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4, 'comment text')
+      expect($container.find('.answerAnnotation').text()).to.equal('CD')
+      expect(saves).to.eql([{ answerId: String(currentTestIndex), annotations: [ { startIndex: 2, length: 2, message: 'comment text' } ] }])
+    })
   })
 
   mocha.run()
 
 })
 
-function createAnnotation($container, startContainer, endContainer, startOffset, endOffset) {
+function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
   const range = document.createRange()
   range.setStart(startContainer, startOffset)
   range.setEnd(endContainer, endOffset)
@@ -187,5 +195,8 @@ function createAnnotation($container, startContainer, endContainer, startOffset,
   selection.removeAllRanges()
   selection.addRange(range)
   $container.mouseup()
+  if(comment) {
+    $container.find('.add-annotation-text').val(comment).keyup()
+  }
   $container.find('button').mousedown()
 }
