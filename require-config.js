@@ -9,6 +9,7 @@ var require = { // eslint-disable-line no-unused-vars
     lodash: "./node_modules/lodash/lodash.min"
   },
   shim: {
+    "bacon": ["jquery"],
     "mocha": {
       exports: "mocha"
     }
