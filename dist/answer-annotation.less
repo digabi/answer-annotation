@@ -1,21 +1,21 @@
-@background-highlight-color: #E1F0FF;
+@background-highlight-color: #e1f0ff;
 @text-color-on-highlight: #000;
 @body-line-height: 25px;
 @popup-background: #fff;
-@pregrading-annotation-color: #F12228;
-@censor-annotation-color: #1C87B1;
-@SaBackground: #FAFAFA;
+@pregrading-annotation-color: #f12228;
+@censor-annotation-color: #1c87b1;
+@SaBackground: #fafafa;
 @base-brand-blue: rgb(53, 155, 183);
-@text-font: "Source Sans Pro", sans-serif;
+@text-font: 'Source Sans Pro', sans-serif;
 @clickable-color: @base-blue-button;
 @base-blue-button: @base-brand-blue;
 @clickable-hover-color: @base-blue-button-hover;
 @base-blue-button-hover: @base-link-font-blue-hover;
-@base-link-font-blue-hover: #217D96;
-@text-color: #263D43;
+@base-link-font-blue-hover: #217d96;
+@text-color: #263d43;
 @base-error-text: rgb(194, 0, 25);
 .fa-times-circle:before {
-  content: "×";
+  content: '×';
 }
 body #mocha .test a.replay {
   position: static;
@@ -24,15 +24,40 @@ body #mocha .test a.replay {
 .fa-comment:after {
   content: '💬';
 }
-.testAnswerContainer h2 { font: 15px/10px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #000;}
-img[src^="/test/math.svg"] { padding: 2px;}
-.testAnswerContainer { flex-wrap: wrap; }
-.answer-text-container { margin: 10px; }
-.answer-wrapper { width: 450px;}
+.testAnswerContainer h2 {
+  font: 15px/10px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #000;
+}
+img[src^='/test/math.svg'] {
+  padding: 2px;
+}
+.testAnswerContainer {
+  flex-wrap: wrap;
+}
+.answer-text-container {
+  margin: 10px;
+}
+.answer-wrapper {
+  width: 450px;
+}
 
-.popup-glow() { box-shadow: 0 0 7px 0 rgba(74, 144, 226, 0.5); }
-.popup() { .popup-glow(); position: absolute; padding: 3px; background: @popup-background; color: @text-color; border-radius: 5px; z-index: 300; }
-.fa-icon() { font-size: 16px; padding-left: 3px; opacity: 0.9; }
+.popup-glow() {
+  box-shadow: 0 0 7px 0 rgba(74, 144, 226, 0.5);
+}
+.popup() {
+  .popup-glow();
+  position: absolute;
+  padding: 3px;
+  background: @popup-background;
+  color: @text-color;
+  border-radius: 5px;
+  z-index: 300;
+}
+.fa-icon() {
+  font-size: 16px;
+  padding-left: 3px;
+  opacity: 0.9;
+}
 
 .abitti-small-font() {
   font-size: 14px;
@@ -59,7 +84,9 @@ img[src^="/test/math.svg"] { padding: 2px;}
   line-height: 32px;
   text-decoration: underline;
   color: @clickable-color;
-  i { padding-right: 6px; }
+  i {
+    padding-right: 6px;
+  }
   &:hover {
     color: @clickable-hover-color;
   }
@@ -67,10 +94,12 @@ img[src^="/test/math.svg"] { padding: 2px;}
 
 .answer {
   counter-reset: annotation-counter annotation-messages-counter;
-  padding: 26px; position: relative;
+  padding: 26px;
+  position: relative;
   display: flex;
   &.is_score_visible {
-    .scoreRow.pregradingScore, .scoreRow.censoringScore:not(.current) {
+    .scoreRow.pregradingScore,
+    .scoreRow.censoringScore:not(.current) {
       visibility: visible;
     }
     .scoreRow.pregradingScore.smallDifference::after {
@@ -79,60 +108,149 @@ img[src^="/test/math.svg"] { padding: 2px;}
     .scoreRow.pregradingScore.bigDifference::after {
       display: inline-block;
     }
-
   }
-  &.hasComment { .comment { display: block; } .addCommentToAnswer { display: none; } }
+  &.hasComment {
+    .comment {
+      display: block;
+    }
+    .addCommentToAnswer {
+      display: none;
+    }
+  }
   &.selected {
-    background: @background-highlight-color; color: @text-color-on-highlight;
+    background: @background-highlight-color;
+    color: @text-color-on-highlight;
     .answerText > .fa-comment,
-    .answerRichText > .fa-comment { background-color: @background-highlight-color; }
+    .answerRichText > .fa-comment {
+      background-color: @background-highlight-color;
+    }
     .additional-censoring-controls {
       button {
-        background-color: #EDF5FF;
-        color: #5282B3;
-        border-color: #99BCDE;
-        &:hover { background-color: #D7E9FF; color: #3C6A98; border-color: #81A5C8;}
-        &[disabled], &[disabled]:hover { background-color: #D4DAE3; color: #999; border-color: #D4D4E3; }
+        background-color: #edf5ff;
+        color: #5282b3;
+        border-color: #99bcde;
+        &:hover {
+          background-color: #d7e9ff;
+          color: #3c6a98;
+          border-color: #81a5c8;
+        }
+        &[disabled],
+        &[disabled]:hover {
+          background-color: #d4dae3;
+          color: #999;
+          border-color: #d4d4e3;
+        }
       }
     }
   }
 
-  h3 { margin: 0; }
-  h4 { margin: 0; }
+  h3 {
+    margin: 0;
+  }
+  h4 {
+    margin: 0;
+  }
   .score {
-    font-weight: 400; font-size: 18px; line-height: @body-line-height; color: #333333;
-    min-width: 184px; right: 30px; top: 30px;
-    border-left: 1px solid #C8C8C8;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: @body-line-height;
+    color: #333333;
+    min-width: 184px;
+    right: 30px;
+    top: 30px;
+    border-left: 1px solid #c8c8c8;
     padding-left: 16px;
-    .value { display: inline-block; min-width: 20px; text-align: right; }
+    .value {
+      display: inline-block;
+      min-width: 20px;
+      text-align: right;
+    }
 
     &.needs_next .scoreRow.censoringScore::after,
     &.undecided .scoreRow.censoringScore::after,
-    &.handled .scoreRow.censoringScore::after { font-family: "FontAwesome"; display: inline-block; position: absolute; top: 2px; font-size: 12px; background: #fff; line-height: 8px; border-radius: 27px; }
+    &.handled .scoreRow.censoringScore::after {
+      font-family: 'FontAwesome';
+      display: inline-block;
+      position: absolute;
+      top: 2px;
+      font-size: 12px;
+      background: #fff;
+      line-height: 8px;
+      border-radius: 27px;
+    }
 
-    &.needs_next .scoreRow:first-child::after { content: "\f06a"; color: #419CB5; }
-    &.undecided .scoreRow.censoringScore:first-child + .scoreRow.censoringScore::after { content: "\f06a"; color: #419CB5; }
+    &.needs_next .scoreRow:first-child::after {
+      content: '\f06a';
+      color: #419cb5;
+    }
+    &.undecided .scoreRow.censoringScore:first-child + .scoreRow.censoringScore::after {
+      content: '\f06a';
+      color: #419cb5;
+    }
     &.handled .scoreRow:first-child.censoringScore::after,
-    &.handled .scoreRow:first-child:not(.censoringScore) + .scoreRow::after { content: "\f058"; color: #7EC23F; }
+    &.handled .scoreRow:first-child:not(.censoringScore) + .scoreRow::after {
+      content: '\f058';
+      color: #7ec23f;
+    }
   }
   .scoreRow:first-child .scoreCell:first-child {
     color: #333333;
     font-weight: 600;
   }
-  .scoringRound { font-size: 16px; color: #9B9B9B; text-align: left }
-  .shortCode { text-align: left }
-  .answerQuestion { margin-bottom: 1em; }
-  .answerNumber { padding-right: 16px; }
-  .answerText { width: 100%; padding-bottom: 10px; white-space: pre-wrap; position: relative; }
-  .answerRichText {
-    img { max-width: 100%; max-height: 1000px; }
-    img[src="/math.svg?latex="], img[src=""] { display: none; }
-    img[src^="/math.svg"] { vertical-align: middle; margin: 4px; padding: 3px 10px; border: 1px solid transparent; }
-    img[src^="/screenshot"] { margin: 4px; }
+  .scoringRound {
+    font-size: 16px;
+    color: #9b9b9b;
+    text-align: left;
   }
-  .answerAnnotation { pointer-events: all; position: relative; }
-  .annotationMessageIndex { position: absolute; top: 100%; margin-top: -23px; margin-left: -0.3em; }
-  .annotationMessageIndex::after { counter-increment: annotation-counter; content: counter(annotation-counter) ")"; font-size: 10px; }
+  .shortCode {
+    text-align: left;
+  }
+  .answerQuestion {
+    margin-bottom: 1em;
+  }
+  .answerNumber {
+    padding-right: 16px;
+  }
+  .answerText {
+    width: 100%;
+    padding-bottom: 10px;
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .answerRichText {
+    img {
+      max-width: 100%;
+      max-height: 1000px;
+    }
+    img[src='/math.svg?latex='],
+    img[src=''] {
+      display: none;
+    }
+    img[src^='/math.svg'] {
+      vertical-align: middle;
+      margin: 4px;
+      padding: 3px 10px;
+      border: 1px solid transparent;
+    }
+    img[src^='/screenshot'] {
+      margin: 4px;
+    }
+  }
+  .answerAnnotation {
+    pointer-events: all;
+    position: relative;
+  }
+  .annotationMessageIndex {
+    position: absolute;
+    top: 100%;
+    margin-top: -23px;
+    margin-left: -0.3em;
+  }
+  .annotationMessageIndex::after {
+    counter-increment: annotation-counter;
+    content: counter(annotation-counter) ')';
+    font-size: 10px;
+  }
   .unselectable {
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -140,49 +258,117 @@ img[src^="/test/math.svg"] { padding: 2px;}
     -o-user-select: none;
     user-select: none;
   }
-  .fa-comment { position: absolute; right: -12px; line-height: 25px; font-size: 13px; background-color: @SaBackground; color: @base-brand-blue; }
-  .is_pregrading .answerAnnotation { border-bottom: 1px solid @pregrading-annotation-color; }
-  .is_pregrading .annotationMessageIndex { color: @pregrading-annotation-color; }
-  .is_censor .answerAnnotation { border-bottom: 1px solid @censor-annotation-color; }
-  .is_censor .annotationMessageIndex {color: @censor-annotation-color;}
-  .annotationPlaceholder { background: lightsteelblue; }
+  .fa-comment {
+    position: absolute;
+    right: -12px;
+    line-height: 25px;
+    font-size: 13px;
+    background-color: @SaBackground;
+    color: @base-brand-blue;
+  }
+  .is_pregrading .answerAnnotation {
+    border-bottom: 1px solid @pregrading-annotation-color;
+  }
+  .is_pregrading .annotationMessageIndex {
+    color: @pregrading-annotation-color;
+  }
+  .is_censor .answerAnnotation {
+    border-bottom: 1px solid @censor-annotation-color;
+  }
+  .is_censor .annotationMessageIndex {
+    color: @censor-annotation-color;
+  }
+  .annotationPlaceholder {
+    background: lightsteelblue;
+  }
   .annotation-messages {
     margin-top: 8px;
     margin-bottom: 10px;
-    &:empty:after { content: '-'; }
-    td { .abitti-small-font(); padding-bottom: 5px; line-height: 17px; margin: 0; }
+    &:empty:after {
+      content: '-';
+    }
+    td {
+      .abitti-small-font();
+      padding-bottom: 5px;
+      line-height: 17px;
+      margin: 0;
+    }
     .index {
       text-align: right;
       vertical-align: top;
       padding-right: 6px;
       &::before {
         counter-increment: annotation-messages-counter;
-        content: counter(annotation-messages-counter) ") ";
+        content: counter(annotation-messages-counter) ') ';
       }
     }
   }
   .answerMultiChoice {
-    h4 { font-size: 18px; font-weight: 300; }
+    h4 {
+      font-size: 18px;
+      font-weight: 300;
+    }
     .question {
       margin-top: 15px;
-      .index { display: inline-block; margin-right: 1px; }
-      input { margin-right: 3px; }
-      .choice {margin-left: 28px; }
+      .index {
+        display: inline-block;
+        margin-right: 1px;
+      }
+      input {
+        margin-right: 3px;
+      }
+      .choice {
+        margin-left: 28px;
+      }
     }
-    .choice.correctChoice { font-weight: 400; }
-    .choice:not(.correctChoice) { font-weight: 300; }
-    .choice-score { display: inline-block; width: 26px; text-align: center; }
+    .choice.correctChoice {
+      font-weight: 400;
+    }
+    .choice:not(.correctChoice) {
+      font-weight: 300;
+    }
+    .choice-score {
+      display: inline-block;
+      width: 26px;
+      text-align: center;
+    }
   }
-  &.selected { .gapAnswerCorrect { background-color: #fff; } }
-  .comment {
-    display: none; vertical-align: top; position: relative;
-    .scoreComment { margin-top: 15px; height: 100px; width: 100%; padding: 13px 20px; line-height: 1.5; }
-    .removeComment {
-      .button-as-link(); position: absolute; right: 0; top: -4px; font-size: 16px;
-      i { .fa-icon(); }
+  &.selected {
+    .gapAnswerCorrect {
+      background-color: #fff;
     }
-    .printComment { display: none; white-space: pre-wrap; }
-    .savedIndicator { position: absolute; font-size: 10px; right: 0; display: none; }
+  }
+  .comment {
+    display: none;
+    vertical-align: top;
+    position: relative;
+    .scoreComment {
+      margin-top: 15px;
+      height: 100px;
+      width: 100%;
+      padding: 13px 20px;
+      line-height: 1.5;
+    }
+    .removeComment {
+      .button-as-link();
+      position: absolute;
+      right: 0;
+      top: -4px;
+      font-size: 16px;
+      i {
+        .fa-icon();
+      }
+    }
+    .printComment {
+      display: none;
+      white-space: pre-wrap;
+    }
+    .savedIndicator {
+      position: absolute;
+      font-size: 10px;
+      right: 0;
+      display: none;
+    }
   }
   .comment-for-reading {
     display: block;
@@ -193,29 +379,82 @@ img[src^="/test/math.svg"] { padding: 2px;}
       font-weight: 400;
     }
   }
-  .comment.saved .savedIndicator { display: block; }
+  .comment.saved .savedIndicator {
+    display: block;
+  }
 
   .annotation-popup() {
     .popup();
-    font-size: 16px; font-weight: 400; white-space: nowrap; overflow: hidden;
+    font-size: 16px;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .add-annotation-popup {
     pointer-events: all;
-    .annotation-popup(); padding: 8px 0 8px 12px;
-    span { border-bottom: 1px solid @base-error-text; line-height: 15px; display: block; }
-    input { position: relative; left: 0; padding-left: 24px; width: 280px; }
-    button { margin: 0; width: 90px; height: 30px; line-height: 30px; position: relative; left: -12px; }
-    .fa-comment { position: relative; top: -1px; left:-273px; }
+    .annotation-popup();
+    padding: 8px 0 8px 12px;
+    span {
+      border-bottom: 1px solid @base-error-text;
+      line-height: 15px;
+      display: block;
+    }
+    input {
+      position: relative;
+      left: 0;
+      padding-left: 24px;
+      width: 280px;
+    }
+    button {
+      margin: 0;
+      width: 90px;
+      height: 30px;
+      line-height: 30px;
+      position: relative;
+      left: -12px;
+    }
+    .fa-comment {
+      position: relative;
+      top: -1px;
+      left: -273px;
+    }
   }
   .remove-annotation-popup {
     .annotation-popup();
-    display: none; position: absolute; top: -36px; padding-left: 12px; padding-right: 12px; font-style: italic; line-height: 15px;
-    i { .fa-icon(); opacity: 0.7; display: inline-block; vertical-align: middle; width: 16px;}
+    display: none;
+    position: absolute;
+    top: -36px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-style: italic;
+    line-height: 15px;
+    i {
+      .fa-icon();
+      opacity: 0.7;
+      display: inline-block;
+      vertical-align: middle;
+      width: 16px;
+    }
   }
-  .remove-annotation-area { cursor: pointer; font-style: normal; }
+  .remove-annotation-area {
+    cursor: pointer;
+    font-style: normal;
+  }
   .annotation-message {
-    padding: 8px 0; vertical-align: middle;  display: inline-block; white-space: nowrap; overflow: hidden; max-width: 360px; text-overflow: ellipsis;
+    padding: 8px 0;
+    vertical-align: middle;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 360px;
+    text-overflow: ellipsis;
     .unselectable;
   }
-  .annotation-remove { padding: 8px 0 8px 6px; vertical-align: middle;  display: inline-block; white-space: nowrap; overflow: hidden; }
+  .annotation-remove {
+    padding: 8px 0 8px 6px;
+    vertical-align: middle;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
