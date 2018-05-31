@@ -47,17 +47,33 @@
     clearExistingAnnotations($answerText, $annotationList)
 
     annotations.forEach(function(annotation) {
-      var annotationRange = createRangeFromMetadata($answerText, annotation)
-
-      var $annotationElement = surroundWithAnnotationSpan(annotationRange, 'answerAnnotation')
-      $annotationElement.attr('data-message', annotation.message)
+      var $annotationElement = createAnnotation(annotation, $answerText)
 
       if (annotation.message && annotation.message.length > 0) {
-        appendAnnotationIndexSpan($annotationElement)
         appendAnnotationMessage($annotationList, annotation.message)
       }
       appendSidebarCommentIcon($annotationElement)
     })
+  }
+
+  function createAnnotation(annotation, $answerText) {
+    switch (annotation.type) {
+      case 'line':
+      case 'rect': {
+        var image = $answerText.find('img').get(annotation.imageIndex)
+        var $imageWrapper = wrapElement(image, 'imageWrapper')
+        var $shape = createShape(annotation)
+          .attr('data-message', annotation.message)
+          .append(createAnnotationIndex())
+        return $imageWrapper.append($shape)
+      }
+      default: {
+        var annotationRange = createRangeFromMetadata($answerText, annotation)
+        return surroundWithAnnotationSpan(annotationRange, 'answerAnnotation')
+          .attr('data-message', annotation.message)
+          .append(createAnnotationIndex())
+      }
+    }
   }
 
   function createRangeFromMetadata($answerText, annotation, documentObject) {
@@ -164,10 +180,58 @@
     return $(annotationElement)
   }
 
-  function appendAnnotationIndexSpan($annotationElement) {
-    var annotationIndexElement = document.createElement('sup')
-    $(annotationIndexElement).addClass('annotationMessageIndex unselectable')
-    $annotationElement.append(annotationIndexElement)
+  function wrapElement(element, spanClass) {
+    var $annotationElement = $('<span />').addClass(spanClass)
+    return $(element)
+      .wrap($annotationElement)
+      .parent()
+  }
+
+  function createShape(shape) {
+    var type = shape.type
+    var style
+
+    if (type === 'rect') {
+      style = {
+        left: pct(shape.x),
+        top: pct(shape.y),
+        width: pct(shape.width),
+        height: pct(shape.height)
+      }
+    } else if (type === 'line') {
+      var x1 = shape.x1
+      var x2 = shape.x2
+      var y1 = shape.y1
+      var y2 = shape.y2
+      var strokeWidth = 4
+
+      style = {
+        left: pct(shape.x1),
+        top: pct(shape.y1),
+        width: x1 === x2 ? px(strokeWidth) : pct(Math.abs(shape.x1 - shape.x2)),
+        height: y1 === y2 ? px(strokeWidth) : pct(Math.abs(shape.y1 - shape.y2)),
+        'margin-left': x1 === x2 ? px(-strokeWidth / 2) : undefined,
+        'margin-top': y1 === y2 ? px(-strokeWidth / 2) : undefined
+      }
+    } else {
+      throw new Error('Invalid shape: ' + type)
+    }
+
+    return $('<div />')
+      .addClass('rect answerAnnotation')
+      .css(style)
+  }
+
+  function px(n) {
+    return n + 'px'
+  }
+
+  function pct(n) {
+    return n * 100 + '%'
+  }
+
+  function createAnnotationIndex() {
+    return $('<sup />').addClass('annotationMessageIndex unselectable')
   }
 
   function appendAnnotationMessage($annotationList, message) {

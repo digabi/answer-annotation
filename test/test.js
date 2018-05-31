@@ -40,11 +40,22 @@ require(['mocha', 'chai', './dist/annotations-rendering', './dist/annotations-ed
     )
   }
 
+  function getAnswerElem($answer) {
+    return $answer.find('#answer-' + currentTestIndex)
+  }
+
   function getAnnotationContent($answer) {
-    return $answer
-      .find('#answer-' + currentTestIndex + ' .answerAnnotation')
+    return getAnswerElem($answer)
+      .find('.answerAnnotation')
       .toArray()
       .map(e => e.textContent)
+  }
+
+  function getAnnotationDimensions($answer) {
+    return getAnswerElem($answer)
+      .find('.rect')
+      .toArray()
+      .map(e => _.pick(e.style, 'left', 'top', 'width', 'height'))
   }
 
   describe('When selecting richText', () => {
@@ -89,6 +100,78 @@ require(['mocha', 'chai', './dist/annotations-rendering', './dist/annotations-ed
         [annotations[0]]
       )
       expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
+    })
+
+    it('should render rect annotation on an image', function() {
+      const annotation = {
+        type: 'rect',
+        imageIndex: 0,
+        x: 0.25,
+        y: 0.25,
+        height: 0.5,
+        width: 0.5,
+        message: 'msg'
+      }
+      annotationRendering.renderGivenAnnotations(
+        createAndgetContainer(this, `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg">`),
+        [annotation]
+      )
+      expect(getAnnotationDimensions($answerContainer)).to.eql([
+        {
+          left: '25%',
+          top: '25%',
+          width: '50%',
+          height: '50%'
+        }
+      ])
+    })
+
+    it('should render a horizontal line annotation on an image', function() {
+      const annotation = {
+        type: 'line',
+        imageIndex: 0,
+        x1: 0.25,
+        y1: 0.5,
+        x2: 0.75,
+        y2: 0.5,
+        message: 'Horizontal line annotation'
+      }
+      annotationRendering.renderGivenAnnotations(
+        createAndgetContainer(this, `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg">`),
+        [annotation]
+      )
+      expect(getAnnotationDimensions($answerContainer)).to.eql([
+        {
+          left: '25%',
+          top: '50%',
+          width: '50%',
+          height: '4px'
+        }
+      ])
+    })
+
+    it('should render a vertical line annotation on an image', function() {
+      const annotation = {
+        type: 'line',
+        imageIndex: 0,
+        x1: 0.5,
+        y1: 0.25,
+        x2: 0.5,
+        y2: 0.75,
+        message: 'Vertical line annotation'
+      }
+      annotationRendering.renderGivenAnnotations(
+        createAndgetContainer(this, `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg">`),
+        [annotation]
+      )
+      expect(getAnnotationDimensions($answerContainer)).to.eql([
+        {
+          left: '50%',
+          top: '25%',
+          width: '4px',
+          height: '50%'
+        }
+      ])
     })
 
     it('First annotation should contain correct text', function() {

@@ -240,6 +240,24 @@ img[src^='/test/math.svg'] {
     pointer-events: all;
     position: relative;
   }
+  .imageWrapper {
+    display: inline-block;
+    position: relative;
+  }
+  .rect {
+    position: absolute;
+    background-color: rgba(255, 0, 0, 0.25);
+    transform-origin: 0 0;
+    .annotationMessageIndex {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin-top: -1em;
+    }
+    .remove-annotation-popup {
+      top: -44px;
+    }
+  }
   .annotationMessageIndex {
     position: absolute;
     top: 100%;
