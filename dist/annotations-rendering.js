@@ -60,12 +60,12 @@
     switch (annotation.type) {
       case 'line':
       case 'rect': {
-        var image = $answerText.find('img').get(annotation.imageIndex)
-        var $imageWrapper = wrapElement(image, 'imageWrapper')
+        var attachment = $answerText.find('img').get(annotation.attachmentIndex)
+        var $attachmentWrapper = wrapElement(attachment, 'attachmentWrapper')
         var $shape = createShape(annotation)
           .attr('data-message', annotation.message)
           .append(createAnnotationIndex())
-        return $imageWrapper.append($shape)
+        return $attachmentWrapper.append($shape)
       }
       default: {
         var annotationRange = createRangeFromMetadata($answerText, annotation)

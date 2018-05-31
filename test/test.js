@@ -105,7 +105,7 @@ require(['mocha', 'chai', './dist/annotations-rendering', './dist/annotations-ed
     it('should render rect annotation on an image', function() {
       const annotation = {
         type: 'rect',
-        imageIndex: 0,
+        attachmentIndex: 0,
         x: 0.25,
         y: 0.25,
         height: 0.5,
@@ -129,7 +129,7 @@ require(['mocha', 'chai', './dist/annotations-rendering', './dist/annotations-ed
     it('should render a horizontal line annotation on an image', function() {
       const annotation = {
         type: 'line',
-        imageIndex: 0,
+        attachmentIndex: 0,
         x1: 0.25,
         y1: 0.5,
         x2: 0.75,
@@ -153,7 +153,7 @@ require(['mocha', 'chai', './dist/annotations-rendering', './dist/annotations-ed
     it('should render a vertical line annotation on an image', function() {
       const annotation = {
         type: 'line',
-        imageIndex: 0,
+        attachmentIndex: 0,
         x1: 0.5,
         y1: 0.25,
         x2: 0.5,
