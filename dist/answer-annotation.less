@@ -236,9 +236,39 @@ img[src^='/test/math.svg'] {
       margin: 4px;
     }
   }
+  .attachmentWrapper {
+    position: relative;
+    .rect {
+      position: absolute;
+    }
+  }
   .answerAnnotation {
     pointer-events: all;
     position: relative;
+  }
+  .attachmentWrapper {
+    display: inline-block;
+    position: relative;
+    @lineWidth: 4px;
+
+    .rect,
+    .line {
+      position: absolute;
+      background-color: rgba(255, 0, 0, 0.25);
+      border: 0 !important;
+      min-width: @lineWidth;
+      min-height: @lineWidth;
+    }
+
+    .annotationMessageIndex {
+      color: #f12228;
+      top: 0;
+      right: 0;
+      margin-top: -1.25em;
+      margin-right: -1.25em;
+      line-height: 1em;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+    }
   }
   .annotationMessageIndex {
     position: absolute;

@@ -11,6 +11,7 @@
   $.fn.asEventStream = Bacon.$.asEventStream
   var ESC = 27
   var ENTER = 13
+  var isMouseDown = false
 
   return {
     setupAnnotationEditing: setupAnnotationEditing,
@@ -30,16 +31,12 @@
       function removeAnnotation($annotationElem) {
         // eslint-disable-line no-shadow
         var $answerText = $annotationElem.closest('.answerText')
-        var removedAnnotationIndex = $answerText.find('.answerAnnotation').index($annotationElem)
-        deleteIndex($answerText, removedAnnotationIndex)
-        answerAnnotationsRendering.renderAnnotationsForElement($answerText)
-      }
-
-      function deleteIndex($answerText, idx) {
-        // eslint-disable-line no-shadow
+        var annotationIndex = Number($annotationElem.data('index'))
         var annotations = answerAnnotationsRendering.get($answerText)
-        annotations.splice(idx, 1)
-        saveAnnotation(getAnswerId($answerText), annotations)
+        var updatedAnnotations = _.without(annotations, annotations[annotationIndex])
+        $answerText.data('annotations', updatedAnnotations)
+        saveAnnotation(getAnswerId($answerText), updatedAnnotations)
+        answerAnnotationsRendering.renderAnnotationsForElement($answerText)
       }
     }
 
@@ -64,7 +61,7 @@
             )
           }
         })
-        .flatMapLatest(annotationPopup)
+        .flatMapLatest(openPopupFromRange)
         .onValue(addAnnotation)
 
       $containerElement
@@ -86,6 +83,88 @@
             answerAnnotationsRendering.renderAnnotationsForElement($(popup).closest('.answerText'))
           })
         })
+
+      $containerElement
+        .asEventStream('mousedown', 'img')
+        .doAction(function() {
+          isMouseDown = true
+        })
+        .flatMapLatest(function(se) {
+          var $image = $(se.currentTarget).on('dragstart', _.stubFalse)
+          var $answerText = $image.closest('.answerText')
+          var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment($image)
+          var attachmentIndex = $answerText.find('img').index($image)
+          var $shape
+
+          var bbox = $attachmentWrapper[0].getBoundingClientRect()
+          var startX = clamp((se.clientX - bbox.left) / bbox.width)
+          var startY = clamp((se.clientY - bbox.top) / bbox.height)
+
+          var lineThresholdPx = 10
+
+          var mouseUpE = $(window)
+            .asEventStream('mouseup')
+            .doAction(function() {
+              isMouseDown = false
+            })
+
+          return $(window)
+            .asEventStream('mousemove')
+            .takeUntil(mouseUpE)
+            .flatMapLatest(function(e) {
+              var currentX = clamp((e.clientX - bbox.left) / bbox.width)
+              var currentY = clamp((e.clientY - bbox.top) / bbox.height)
+              var isVerticalLine = Math.abs(se.clientX - e.clientX) <= lineThresholdPx
+              var isHorizontalLine = Math.abs(se.clientY - e.clientY) <= lineThresholdPx
+              var type = isVerticalLine || isHorizontalLine ? 'line' : 'rect'
+
+              switch (type) {
+                case 'rect': {
+                  return {
+                    type: 'rect',
+                    attachmentIndex: attachmentIndex,
+                    x: Math.min(startX, currentX),
+                    y: Math.min(startY, currentY),
+                    width: Math.abs(currentX - startX),
+                    height: Math.abs(currentY - startY)
+                  }
+                }
+                case 'line': {
+                  return {
+                    type: 'line',
+                    attachmentIndex: attachmentIndex,
+                    x1: isVerticalLine ? startX : Math.min(startX, currentX),
+                    y1: isHorizontalLine ? startY : Math.min(startY, currentY),
+                    x2: isVerticalLine ? startX : Math.max(startX, currentX),
+                    y2: isHorizontalLine ? startY : Math.max(startY, currentY)
+                  }
+                }
+              }
+            })
+            .doAction(function(shape) {
+              var doAppend = $shape == null
+              $shape = answerAnnotationsRendering.renderShape(shape, $shape)
+              if (doAppend) {
+                $attachmentWrapper.append($shape)
+              }
+            })
+            .last()
+            .flatMapLatest(function(shape) {
+              var $answerText = $attachmentWrapper.closest('.answerText')
+              var attachmentWrapperPosition = $attachmentWrapper.position()
+              var shapePosition = $shape.position()
+              var position = {
+                left: attachmentWrapperPosition.left + shapePosition.left,
+                top: attachmentWrapperPosition.top + shapePosition.top
+              }
+              return openPopup($answerText, shape, '', position)
+            })
+        })
+        .onValue(addAnnotation)
+
+      function clamp(n) {
+        return _.clamp(n, 0, 1)
+      }
 
       function selectionHasNothingToUnderline(range) {
         var contents = range.cloneContents()
@@ -116,7 +195,7 @@
         return offset
       }
 
-      function annotationPopup(range) {
+      function openPopupFromRange(range) {
         var selectionStartOffset = getPopupOffset(range)
 
         var $answerText = $(range.startContainer).closest('.answerText')
@@ -148,18 +227,22 @@
         )
         answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
 
+        return openPopup($answerText, annotationPos, renderedMessages, selectionStartOffset)
+      }
+
+      function openPopup($answerText, annotation, message, offset) {
         var $popup = localize(
           $(
             '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value="' +
-              renderedMessages +
+              message +
               '"/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>'
           )
         )
         $answerText.append($popup)
         $popup.css({
           position: 'absolute',
-          top: selectionStartOffset.top - $popup.outerHeight(),
-          left: selectionStartOffset.left
+          top: offset.top - $popup.outerHeight() - 4,
+          left: offset.left
         })
         $popup.find('input').focus()
 
@@ -172,30 +255,24 @@
             })
           )
           .map(function() {
+            var message = $('.add-annotation-text')
+              .val()
+              .trim()
             return {
-              annotation: annotationPos,
-              $answerText: $answerText
+              $answerText: $answerText,
+              annotation: _.assign({}, annotation, { message: message })
             }
           })
       }
 
       function addAnnotation(annotationData) {
-        if (annotationData.annotation.length > 0) {
-          add(
-            annotationData.$answerText,
-            annotationData.annotation.startIndex,
-            annotationData.annotation.length,
-            $('.add-annotation-text')
-              .val()
-              .trim()
-          )
+        if (annotationData.annotation.length > 0 || annotationData.annotation.type != null) {
+          add(annotationData.$answerText, annotationData.annotation)
           answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText)
         }
       }
 
-      function add($answerText, startIndex, length, message) {
-        // eslint-disable-line no-shadow
-        var newAnnotation = { startIndex: startIndex, length: length, message: message }
+      function add($answerText, newAnnotation) {
         var annotations = answerAnnotationsRendering.get($answerText)
           ? answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), newAnnotation)
           : [newAnnotation]
@@ -229,7 +306,7 @@
     var fadeOutDelayTimeout = void 0
     $answers.on('mouseenter', '.answerAnnotation', function(event) {
       var $annotation = $(event.target)
-      if (addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
+      if (isMouseDown || addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
         return
       }
       clearTimeout(fadeOutDelayTimeout)
@@ -343,7 +420,7 @@
     )
 
     function selectionInAnswerText(sel) {
-      if (sel.type === 'None' || sel.rangeCount === 0) return false
+      if (sel.type === 'None' || sel.type === 'Caret' || sel.rangeCount === 0) return false
       var $startContainer = $(sel.getRangeAt(0).startContainer)
       return (
         sel.rangeCount &&

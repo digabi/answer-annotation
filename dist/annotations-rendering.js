@@ -19,7 +19,9 @@
     allNodesUnder: allNodesUnder,
     toNodeLength: toNodeLength,
     renderAbittiAnnotations: renderAbittiAnnotations,
-    createRangeFromMetadata: createRangeFromMetadata
+    createRangeFromMetadata: createRangeFromMetadata,
+    renderShape: renderShape,
+    wrapAttachment: wrapAttachment
   }
 
   function toNodeLength(node) {
@@ -46,18 +48,44 @@
     removeAllAnnotationPopups()
     clearExistingAnnotations($answerText, $annotationList)
 
-    annotations.forEach(function(annotation) {
-      var annotationRange = createRangeFromMetadata($answerText, annotation)
-
-      var $annotationElement = surroundWithAnnotationSpan(annotationRange, 'answerAnnotation')
-      $annotationElement.attr('data-message', annotation.message)
+    annotations.forEach(function(annotation, index) {
+      var $annotationElement = renderAnnotation(annotation, index, $answerText)
 
       if (annotation.message && annotation.message.length > 0) {
-        appendAnnotationIndexSpan($annotationElement)
         appendAnnotationMessage($annotationList, annotation.message)
       }
       appendSidebarCommentIcon($annotationElement)
     })
+  }
+
+  function renderAnnotation(annotation, index, $answerText) {
+    var message = annotation.message
+    switch (annotation.type) {
+      case 'line':
+      case 'rect': {
+        var $wrappedAttachment = wrapAttachment(findAttachment($answerText, annotation.attachmentIndex))
+        var $shape = appendAnnotationIndex(renderShape(annotation), message)
+          .attr('data-message', message)
+          .attr('data-index', index)
+        return $wrappedAttachment.append($shape)
+      }
+      default: {
+        var annotationRange = createRangeFromMetadata($answerText, annotation)
+        return appendAnnotationIndex(surroundWithAnnotationSpan(annotationRange, 'answerAnnotation'), message)
+          .attr('data-message', message)
+          .attr('data-index', index)
+      }
+    }
+  }
+
+  function findAttachment($answerText, attachmentIndex) {
+    return $($answerText.find('img').get(attachmentIndex))
+  }
+
+  function wrapAttachment($attachment) {
+    return $attachment.parent().hasClass('attachmentWrapper')
+      ? $attachment.parent()
+      : $attachment.wrap('<span class="attachmentWrapper"/>').parent()
   }
 
   function createRangeFromMetadata($answerText, annotation, documentObject) {
@@ -164,10 +192,46 @@
     return $(annotationElement)
   }
 
-  function appendAnnotationIndexSpan($annotationElement) {
-    var annotationIndexElement = document.createElement('sup')
-    $(annotationIndexElement).addClass('annotationMessageIndex unselectable')
-    $annotationElement.append(annotationIndexElement)
+  function renderShape(shape, $element) {
+    // Note: Render as SVG if we start needing anything more complicated.
+    var type = shape.type
+    var style
+
+    if (type === 'rect') {
+      style = {
+        left: pct(shape.x),
+        top: pct(shape.y),
+        right: pct(1 - (shape.x + shape.width)),
+        bottom: pct(1 - (shape.y + shape.height))
+      }
+    } else if (type === 'line') {
+      style = {
+        left: pct(shape.x1),
+        top: pct(shape.y1),
+        right: pct(1 - shape.x2),
+        bottom: pct(1 - shape.y2)
+      }
+    } else {
+      throw new Error('Invalid shape: ' + type)
+    }
+
+    return ($element || $('<div class="answerAnnotation" />'))
+      .css(style)
+      .toggleClass('line', type === 'line')
+      .toggleClass('rect', type === 'rect')
+  }
+
+  function pct(n) {
+    return n * 100 + '%'
+  }
+
+  function appendAnnotationIndex($element, message) {
+    if (message) {
+      var $annotationIndex = $('<sup />').addClass('annotationMessageIndex unselectable')
+      return $element.append($annotationIndex)
+    } else {
+      return $element
+    }
   }
 
   function appendAnnotationMessage($annotationList, message) {
@@ -217,9 +281,18 @@
     } else {
       parted.nonOverlapping.push(newAnnotation)
     }
-    return _.sortBy(parted.nonOverlapping, function(a) {
-      return a.startIndex
-    })
+    return _.sortBy(
+      parted.nonOverlapping,
+      function(a) {
+        return a.startIndex
+      },
+      function(a) {
+        return a.y || a.y1
+      },
+      function(a) {
+        return a.x || a.x1
+      }
+    )
   }
 
   function getOverlappingAnnotations(annotations, newAnnotation) {
