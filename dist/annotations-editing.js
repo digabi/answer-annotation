@@ -30,16 +30,12 @@
       function removeAnnotation($annotationElem) {
         // eslint-disable-line no-shadow
         var $answerText = $annotationElem.closest('.answerText')
-        var removedAnnotationIndex = $answerText.find('.answerAnnotation').index($annotationElem)
-        deleteIndex($answerText, removedAnnotationIndex)
-        answerAnnotationsRendering.renderAnnotationsForElement($answerText)
-      }
-
-      function deleteIndex($answerText, idx) {
-        // eslint-disable-line no-shadow
+        var annotationIndex = Number($annotationElem.data('index'))
         var annotations = answerAnnotationsRendering.get($answerText)
-        annotations.splice(idx, 1)
-        saveAnnotation(getAnswerId($answerText), annotations)
+        var updatedAnnotations = _.without(annotations, annotations[annotationIndex])
+        $answerText.data('annotations', updatedAnnotations)
+        saveAnnotation(getAnswerId($answerText), updatedAnnotations)
+        answerAnnotationsRendering.renderAnnotationsForElement($answerText)
       }
     }
 

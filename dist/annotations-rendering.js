@@ -47,8 +47,8 @@
     var $annotationList = findAnnotationListElem($answerText)
     clearExistingAnnotations($answerText, $annotationList)
 
-    annotations.forEach(function(annotation) {
-      var $annotationElement = renderAnnotation(annotation, $answerText)
+    annotations.forEach(function(annotation, index) {
+      var $annotationElement = renderAnnotation(annotation, index, $answerText)
 
       if (annotation.message && annotation.message.length > 0) {
         appendAnnotationMessage($annotationList, annotation.message)
@@ -57,13 +57,14 @@
     })
   }
 
-  function renderAnnotation(annotation, $answerText) {
+  function renderAnnotation(annotation, index, $answerText) {
     switch (annotation.type) {
       case 'line':
       case 'rect': {
         var $wrappedAttachment = wrapAttachment(findAttachment($answerText, annotation.attachmentIndex))
         var $shape = renderShape(annotation)
           .attr('data-message', annotation.message)
+          .attr('data-index', index)
           .append(createAnnotationIndex())
         return $wrappedAttachment.append($shape)
       }
@@ -71,6 +72,7 @@
         var annotationRange = createRangeFromMetadata($answerText, annotation)
         return surroundWithAnnotationSpan(annotationRange, 'answerAnnotation')
           .attr('data-message', annotation.message)
+          .attr('data-index', index)
           .append(createAnnotationIndex())
       }
     }
