@@ -102,7 +102,7 @@
 
           var lineThresholdPx = 10
 
-          var mouseUpE = Bacon.fromEvent(window, 'mouseup')
+          var mouseUpE = $(window).asEventStream('mouseup')
 
           return $containerElement
             .asEventStream('mousemove')
