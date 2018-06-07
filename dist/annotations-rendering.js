@@ -45,6 +45,7 @@
 
   function renderGivenAnnotations($answerText, annotations) {
     var $annotationList = findAnnotationListElem($answerText)
+    removeAllAnnotationPopups()
     clearExistingAnnotations($answerText, $annotationList)
 
     annotations.forEach(function(annotation, index) {
