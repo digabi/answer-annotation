@@ -19,7 +19,9 @@
     allNodesUnder: allNodesUnder,
     toNodeLength: toNodeLength,
     renderAbittiAnnotations: renderAbittiAnnotations,
-    createRangeFromMetadata: createRangeFromMetadata
+    createRangeFromMetadata: createRangeFromMetadata,
+    renderShape: renderShape,
+    wrapAttachment: wrapAttachment
   }
 
   function toNodeLength(node) {
@@ -43,11 +45,10 @@
 
   function renderGivenAnnotations($answerText, annotations) {
     var $annotationList = findAnnotationListElem($answerText)
-    removeAllAnnotationPopups()
     clearExistingAnnotations($answerText, $annotationList)
 
     annotations.forEach(function(annotation) {
-      var $annotationElement = createAnnotation(annotation, $answerText)
+      var $annotationElement = renderAnnotation(annotation, $answerText)
 
       if (annotation.message && annotation.message.length > 0) {
         appendAnnotationMessage($annotationList, annotation.message)
@@ -56,16 +57,15 @@
     })
   }
 
-  function createAnnotation(annotation, $answerText) {
+  function renderAnnotation(annotation, $answerText) {
     switch (annotation.type) {
       case 'line':
       case 'rect': {
-        var attachment = $answerText.find('img').get(annotation.attachmentIndex)
-        var $attachmentWrapper = wrapElement(attachment, 'attachmentWrapper')
-        var $shape = createShape(annotation)
+        var $wrappedAttachment = wrapAttachment(findAttachment($answerText, annotation.attachmentIndex))
+        var $shape = renderShape(annotation)
           .attr('data-message', annotation.message)
           .append(createAnnotationIndex())
-        return $attachmentWrapper.append($shape)
+        return $wrappedAttachment.append($shape)
       }
       default: {
         var annotationRange = createRangeFromMetadata($answerText, annotation)
@@ -74,6 +74,22 @@
           .append(createAnnotationIndex())
       }
     }
+  }
+
+  function findAttachment($answerText, attachmentIndex) {
+    return $($answerText.find('img').get(attachmentIndex))
+  }
+
+  function wrapAttachment($attachment) {
+    return $attachment.parent().hasClass('attachmentWrapper')
+      ? $attachment.parent()
+      : $attachment.wrap('<span class="attachmentWrapper"/>').parent()
+  }
+
+  function wrapAttachment($attachment) {
+    return $attachment.parent().hasClass('attachmentWrapper')
+      ? $attachment.parent()
+      : $attachment.wrap('<span class="attachmentWrapper"/>').parent()
   }
 
   function createRangeFromMetadata($answerText, annotation, documentObject) {
@@ -180,14 +196,8 @@
     return $(annotationElement)
   }
 
-  function wrapElement(element, spanClass) {
-    var $annotationElement = $('<span />').addClass(spanClass)
-    return $(element)
-      .wrap($annotationElement)
-      .parent()
-  }
-
-  function createShape(shape) {
+  function renderShape(shape, $element) {
+    // Note: Render as SVG if we start needing anything more complicated.
     var type = shape.type
     var style
 
@@ -195,35 +205,24 @@
       style = {
         left: pct(shape.x),
         top: pct(shape.y),
-        width: pct(shape.width),
-        height: pct(shape.height)
+        right: pct(1 - (shape.x + shape.width)),
+        bottom: pct(1 - (shape.y + shape.height))
       }
     } else if (type === 'line') {
-      var x1 = shape.x1
-      var x2 = shape.x2
-      var y1 = shape.y1
-      var y2 = shape.y2
-      var strokeWidth = 4
-
       style = {
         left: pct(shape.x1),
         top: pct(shape.y1),
-        width: x1 === x2 ? px(strokeWidth) : pct(Math.abs(shape.x1 - shape.x2)),
-        height: y1 === y2 ? px(strokeWidth) : pct(Math.abs(shape.y1 - shape.y2)),
-        'margin-left': x1 === x2 ? px(-strokeWidth / 2) : undefined,
-        'margin-top': y1 === y2 ? px(-strokeWidth / 2) : undefined
+        right: pct(1 - shape.x2),
+        bottom: pct(1 - shape.y2)
       }
     } else {
       throw new Error('Invalid shape: ' + type)
     }
 
-    return $('<div />')
-      .addClass('rect answerAnnotation')
+    return ($element || $('<div class="answerAnnotation" />'))
       .css(style)
-  }
-
-  function px(n) {
-    return n + 'px'
+      .toggleClass('line', type === 'line')
+      .toggleClass('rect', type === 'rect')
   }
 
   function pct(n) {

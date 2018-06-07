@@ -221,6 +221,11 @@ img[src^='/test/math.svg'] {
     img {
       max-width: 100%;
       max-height: 1000px;
+      -moz-user-drag: -moz-none;
+      -khtml-user-drag: none;
+      -webkit-user-drag: none;
+      -o-user-drag: none;
+      user-drag: none;
     }
     img[src='/math.svg?latex='],
     img[src=''] {
@@ -236,26 +241,38 @@ img[src^='/test/math.svg'] {
       margin: 4px;
     }
   }
+  .attachmentWrapper {
+    position: relative;
+    .rect {
+      position: absolute;
+    }
+  }
   .answerAnnotation {
     pointer-events: all;
     position: relative;
   }
-  .inlineAttachmentWrapper {
+  .attachmentWrapper {
     display: inline-block;
     position: relative;
-  }
-  .rect {
-    position: absolute;
-    background-color: rgba(255, 0, 0, 0.25);
-    transform-origin: 0 0;
-    .annotationMessageIndex {
+    @lineWidth: 4px;
+
+    .rect,
+    .line {
       position: absolute;
+      background-color: rgba(255, 0, 0, 0.25);
+      border: 0 !important;
+      min-width: @lineWidth;
+      min-height: @lineWidth;
+    }
+
+    .annotationMessageIndex {
+      color: #f12228;
       top: 0;
       right: 0;
-      margin-top: -1em;
-    }
-    .remove-annotation-popup {
-      top: -44px;
+      margin-top: -1.25em;
+      margin-right: -1.25em;
+      line-height: 1em;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
     }
   }
   .annotationMessageIndex {
