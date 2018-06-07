@@ -282,9 +282,18 @@
     } else {
       parted.nonOverlapping.push(newAnnotation)
     }
-    return _.sortBy(parted.nonOverlapping, function(a) {
-      return a.startIndex
-    })
+    return _.sortBy(
+      parted.nonOverlapping,
+      function(a) {
+        return a.startIndex
+      },
+      function(a) {
+        return a.y || a.y1
+      },
+      function(a) {
+        return a.x || a.x1
+      }
+    )
   }
 
   function getOverlappingAnnotations(annotations, newAnnotation) {
