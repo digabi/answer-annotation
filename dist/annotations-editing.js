@@ -233,7 +233,7 @@
         $answerText.append($popup)
         $popup.css({
           position: 'absolute',
-          top: offset.top - $popup.outerHeight(),
+          top: offset.top - $popup.outerHeight() - 4,
           left: offset.left
         })
         $popup.find('input').focus()
