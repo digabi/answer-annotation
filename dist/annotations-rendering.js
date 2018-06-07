@@ -88,12 +88,6 @@
       : $attachment.wrap('<span class="attachmentWrapper"/>').parent()
   }
 
-  function wrapAttachment($attachment) {
-    return $attachment.parent().hasClass('attachmentWrapper')
-      ? $attachment.parent()
-      : $attachment.wrap('<span class="attachmentWrapper"/>').parent()
-  }
-
   function createRangeFromMetadata($answerText, annotation, documentObject) {
     documentObject = documentObject || document
     var nodes = allNodesUnder($answerText.get(0), documentObject)
