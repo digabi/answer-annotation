@@ -143,7 +143,13 @@
             .last()
             .flatMapLatest(function(shape) {
               var $answerText = $attachmentWrapper.closest('.answerText')
-              return openPopup($answerText, shape, '', $shape.position())
+              var attachmentWrapperPosition = $attachmentWrapper.position()
+              var shapePosition = $shape.position()
+              var position = {
+                left: attachmentWrapperPosition.left + shapePosition.left,
+                top: attachmentWrapperPosition.top + shapePosition.top
+              }
+              return openPopup($answerText, shape, '', position)
             })
         })
         .onValue(addAnnotation)
