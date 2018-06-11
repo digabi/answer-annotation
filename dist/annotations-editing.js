@@ -100,7 +100,7 @@
 
           var mouseUpE = $(window).asEventStream('mouseup')
 
-          return $containerElement
+          return $(window)
             .asEventStream('mousemove')
             .takeUntil(mouseUpE)
             .flatMapLatest(function(e) {
