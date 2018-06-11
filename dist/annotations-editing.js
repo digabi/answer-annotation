@@ -11,6 +11,7 @@
   $.fn.asEventStream = Bacon.$.asEventStream
   var ESC = 27
   var ENTER = 13
+  var isMouseDown = false
 
   return {
     setupAnnotationEditing: setupAnnotationEditing,
@@ -85,6 +86,9 @@
 
       $containerElement
         .asEventStream('mousedown', 'img')
+        .doAction(function() {
+          isMouseDown = true
+        })
         .flatMapLatest(function(se) {
           var $image = $(se.currentTarget).on('dragstart', _.stubFalse)
           var $answerText = $image.closest('.answerText')
@@ -98,7 +102,11 @@
 
           var lineThresholdPx = 10
 
-          var mouseUpE = $(window).asEventStream('mouseup')
+          var mouseUpE = $(window)
+            .asEventStream('mouseup')
+            .doAction(function() {
+              isMouseDown = false
+            })
 
           return $(window)
             .asEventStream('mousemove')
@@ -298,7 +306,7 @@
     var fadeOutDelayTimeout = void 0
     $answers.on('mouseenter', '.answerAnnotation', function(event) {
       var $annotation = $(event.target)
-      if (isMouseDown(event) || addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
+      if (isMouseDown || addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
         return
       }
       clearTimeout(fadeOutDelayTimeout)
@@ -438,9 +446,5 @@
     function isParentContainer(container) {
       return container && container.classList && container.classList.contains('answerText')
     }
-  }
-
-  function isMouseDown(event) {
-    return _.isNumber(event.buttons) && event.buttons !== 0
   }
 })
