@@ -298,7 +298,7 @@
     var fadeOutDelayTimeout = void 0
     $answers.on('mouseenter', '.answerAnnotation', function(event) {
       var $annotation = $(event.target)
-      if (addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
+      if (isMouseDown(event) || addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
         return
       }
       clearTimeout(fadeOutDelayTimeout)
@@ -438,5 +438,9 @@
     function isParentContainer(container) {
       return container && container.classList && container.classList.contains('answerText')
     }
+  }
+
+  function isMouseDown(event) {
+    return event.buttons !== 0
   }
 })
