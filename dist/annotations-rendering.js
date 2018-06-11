@@ -79,12 +79,7 @@
   }
 
   function findAttachment($answerText, attachmentIndex) {
-    return $(
-      $answerText
-        .find('img')
-        .on('dragstart', _.stubFalse)
-        .get(attachmentIndex)
-    )
+    return $($answerText.find('img').get(attachmentIndex))
   }
 
   function wrapAttachment($attachment) {

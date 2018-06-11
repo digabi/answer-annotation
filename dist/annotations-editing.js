@@ -86,7 +86,7 @@
       $containerElement
         .asEventStream('mousedown', 'img')
         .flatMapLatest(function(se) {
-          var $image = $(se.currentTarget)
+          var $image = $(se.currentTarget).on('dragstart', _.stubFalse)
           var $answerText = $image.closest('.answerText')
           var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment($image)
           var attachmentIndex = $answerText.find('img').index($image)
