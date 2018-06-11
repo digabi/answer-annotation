@@ -59,22 +59,21 @@
   }
 
   function renderAnnotation(annotation, index, $answerText) {
+    var message = annotation.message
     switch (annotation.type) {
       case 'line':
       case 'rect': {
         var $wrappedAttachment = wrapAttachment(findAttachment($answerText, annotation.attachmentIndex))
-        var $shape = renderShape(annotation)
-          .attr('data-message', annotation.message)
+        var $shape = appendAnnotationIndex(renderShape(annotation), message)
+          .attr('data-message', message)
           .attr('data-index', index)
-          .append(createAnnotationIndex())
         return $wrappedAttachment.append($shape)
       }
       default: {
         var annotationRange = createRangeFromMetadata($answerText, annotation)
-        return surroundWithAnnotationSpan(annotationRange, 'answerAnnotation')
-          .attr('data-message', annotation.message)
+        return appendAnnotationIndex(surroundWithAnnotationSpan(annotationRange, 'answerAnnotation'), message)
+          .attr('data-message', message)
           .attr('data-index', index)
-          .append(createAnnotationIndex())
       }
     }
   }
@@ -231,8 +230,13 @@
     return n * 100 + '%'
   }
 
-  function createAnnotationIndex() {
-    return $('<sup />').addClass('annotationMessageIndex unselectable')
+  function appendAnnotationIndex($element, message) {
+    if (message) {
+      var $annotationIndex = $('<sup />').addClass('annotationMessageIndex unselectable')
+      return $element.append($annotationIndex)
+    } else {
+      return $element
+    }
   }
 
   function appendAnnotationMessage($annotationList, message) {
