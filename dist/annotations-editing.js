@@ -441,6 +441,6 @@
   }
 
   function isMouseDown(event) {
-    return event.buttons !== 0
+    return _.isNumber(event.buttons) && event.buttons !== 0
   }
 })
