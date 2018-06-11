@@ -420,7 +420,7 @@
     )
 
     function selectionInAnswerText(sel) {
-      if (sel.type === 'None' || sel.rangeCount === 0) return false
+      if (sel.type === 'None' || sel.type === 'Caret' || sel.rangeCount === 0) return false
       var $startContainer = $(sel.getRangeAt(0).startContainer)
       return (
         sel.rangeCount &&
