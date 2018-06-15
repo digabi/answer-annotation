@@ -1,6 +1,6 @@
 {
   "name": "annotation",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "mocha": "^3.5.0",
     "mocha-chrome": "^0.1.1",
     "nyc": "^11.1.0",
+    "prettier": "1.13.2",
     "requirejs": "^2.3.4"
   }
 }
