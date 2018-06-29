@@ -1,10 +1,18 @@
-require(['mocha', 'chai', './dist/annotations-rendering', './dist/annotations-editing', 'jquery'], (
-  mocha,
-  chai,
-  annotationRendering,
-  annotationEditing,
-  $
-) => {
+;(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['mocha', 'chai', '../dist/annotations-rendering', '../dist/annotations-editing', 'jquery'], factory)
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('mocha'), require('chai'), require('./dist/annotations-rendering'), require('./dist/annotations-editing'), require('jquery'))
+  } else {
+    root.annotationsRendering = factory(root.mocha, root.chai, root.annotationRendering, root.annotationEditing, root.jQuery)
+  }
+})(this, function (mocha,
+                   chai,
+                   annotationRendering,
+                   annotationEditing,
+                   $) {
+  'use strict'
+
   chai.config.truncateThreshold = 0
   chai.config.includeStack = true
   chai.config.showDiff = true
