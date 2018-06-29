@@ -2,10 +2,6 @@
 
 Utils for annotating answers for Finnish Matriculation Examination Board.
 
-# Samples
-
-https://digabi.github.io/answer-annotation/test.html
-
 # License
 
 This work is double licensed under:
