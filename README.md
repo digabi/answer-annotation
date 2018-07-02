@@ -6,7 +6,7 @@ Utils for annotating answers for Finnish Matriculation Examination Board.
 
 # Tests
 
-http://digabi.github.io/answer-annotation/
+http://digabi.github.io/answer-annotation/test/static-test.html
 
 # Change log
 
