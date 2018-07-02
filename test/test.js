@@ -88,7 +88,7 @@
     it('Surrounding range from first three rows contains correct text', function() {
       const answer = createAndgetContainer(
         this,
-        `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`
+        `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       ).get(0)
       const range = document.createRange()
       range.setStart(answer, 0)
@@ -103,7 +103,7 @@
       annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
-          `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`
+          `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
         ),
         [annotations[0]]
       )
@@ -114,7 +114,7 @@
       annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
-          `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`
+          `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
         ),
         [annotations[0]]
       )
@@ -130,7 +130,7 @@
       annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
-          `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`
+          `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
         ),
         imageAnnotations
       )
@@ -143,7 +143,7 @@
         { message: 'great2', startIndex: 20, length: 9 }
       ]
       annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br>`),
+        createAndgetContainer(this, `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`),
         imageAnnotations
       )
       expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
@@ -155,7 +155,7 @@
         annotationsRendering.renderGivenAnnotations(
           createAndgetContainer(
             this,
-            `bi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`
+            `bi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
           ),
           imageAnnotation
         )
@@ -171,7 +171,7 @@
         annotationsRendering.renderGivenAnnotations(
           createAndgetContainer(
             this,
-            `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`
+            `answer rich <img alt="math1" src="math.svg"> Text<br>Morbi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
           ),
           imageAnnotations
         )
@@ -191,7 +191,7 @@
     it(`Selecting correct image`, function() {
       const $container = createAndgetContainer(
         this,
-        `X<img alt="math5" src="/test/math.svg"><br><img alt="math6" src="/test/math.svg"><br><img alt="math7" src="/test/math.svg"><br>`
+        `X<img alt="math5" src="math.svg"><br><img alt="math6" src="math.svg"><br><img alt="math7" src="math.svg"><br>`
       )
       const container = $container.get(0)
       createAnnotation($container, container, container, 3, 4)
@@ -214,7 +214,7 @@
     })
 
     it(`Selecting image when it is first in answer`, function() {
-      const $container = createAndgetContainer(this, `<img alt="math1" src="/test/math.svg">`)
+      const $container = createAndgetContainer(this, `<img alt="math1" src="math.svg">`)
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 1)
       expect($container.find('.answerAnnotation:last img').length).to.equal(1)
@@ -229,7 +229,7 @@
     it(`Selecting first and second image `, function() {
       const $container = createAndgetContainer(
         this,
-        `<img alt="math1" src="/test/math.svg"><img alt="math2" src="/test/math.svg"><img alt="math3" src="/test/math.svg">`
+        `<img alt="math1" src="math.svg"><img alt="math2" src="math.svg"><img alt="math3" src="math.svg">`
       )
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 2)
@@ -245,7 +245,7 @@
     it(`Merges correctly`, function() {
       const $container = createAndgetContainer(
         this,
-        `ABCD<br><img alt="math1" src="/test/math.svg"><img alt="math2" src="/test/math.svg"><br>XYZ`
+        `ABCD<br><img alt="math1" src="math.svg"><img alt="math2" src="math.svg"><br>XYZ`
       )
       const container = $container.get(0)
       createAnnotation($container, container, container, 2, 4)
@@ -310,7 +310,7 @@
       annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
-          `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg"></br> More text on another line.`
+          `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`
         ),
         [annotation]
       )
@@ -337,7 +337,7 @@
       annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
-          `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg"></br> More text on another line.`
+          `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`
         ),
         [annotation]
       )
@@ -364,7 +364,7 @@
       annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
-          `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg"></br> More text on another line.`
+          `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`
         ),
         [annotation]
       )
