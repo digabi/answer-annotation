@@ -8,8 +8,8 @@
   }
 })(this, function (mocha,
                    chai,
-                   annotationRendering,
-                   annotationEditing,
+                   annotationsRendering,
+                   annotationsEditing,
                    $) {
   'use strict'
 
@@ -20,7 +20,7 @@
   const expect = chai.expect
   const assert = chai.assert
   const $answerContainer = $('.testAnswerContainer')
-  annotationEditing.setupAnnotationDisplaying($answerContainer)
+  annotationsEditing.setupAnnotationDisplaying($answerContainer)
 
   let currentTestIndex = 0
 
@@ -39,7 +39,7 @@
       .html(foo)
     $newContainer.prepend(`<h2>${title}</h2>`)
     $answerContainer.append($newContainer)
-    annotationEditing.setupAnnotationEditing(
+    annotationsEditing.setupAnnotationEditing(
       $newContainer.find('.answerText'),
       (answerId, annotations) => {
         saves.push({ answerId, annotations })
@@ -94,13 +94,13 @@
       range.setStart(answer, 0)
       range.setEnd(answer, 3)
 
-      const $annotatedElement = annotationRendering.surroundWithAnnotationSpan(range, 'answerAnnotation')
+      const $annotatedElement = annotationsRendering.surroundWithAnnotationSpan(range, 'answerAnnotation')
       assert.equal($annotatedElement.contents().length, 3)
       assert.equal($annotatedElement.text(), 'answer rich  Text')
     })
 
     it('First annotation should contain correct text', function() {
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
           `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`
@@ -111,7 +111,7 @@
     })
 
     it('First annotation should contain correct text', function() {
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
           `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><br><br>`
@@ -127,7 +127,7 @@
         { message: 'great2', startIndex: 19, length: 10 },
         { message: 'great3', startIndex: 30, length: 1 }
       ]
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
           `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`
@@ -142,7 +142,7 @@
         { message: 'great1', startIndex: 11, length: 7 },
         { message: 'great2', startIndex: 20, length: 9 }
       ]
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(this, `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Lorem ipsum<br>`),
         imageAnnotations
       )
@@ -152,7 +152,7 @@
     it(`Selecting single image shouldn't throw an error`, function() {
       const imageAnnotation = [{ message: 'great1', startIndex: 2, length: 1 }]
       const annFn = () =>
-        annotationRendering.renderGivenAnnotations(
+        annotationsRendering.renderGivenAnnotations(
           createAndgetContainer(
             this,
             `bi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`
@@ -168,7 +168,7 @@
         { message: 'great1', startIndex: 23, length: 1 }
       ]
       const annFn = () =>
-        annotationRendering.renderGivenAnnotations(
+        annotationsRendering.renderGivenAnnotations(
           createAndgetContainer(
             this,
             `answer rich <img alt="math1" src="/test/math.svg"> Text<br>Morbi<br><img alt="math2" src="/test/math.svg">+<img alt="math3" src="/test/math.svg">`
@@ -180,7 +180,7 @@
 
     it('New annotation overlapping other annotations should be merged', function() {
       const newAnn = { message: 'great3', startIndex: 4, length: 10 }
-      const mergedAnnotation = annotationRendering.mergeAnnotation(annotations, newAnn)
+      const mergedAnnotation = annotationsRendering.mergeAnnotation(annotations, newAnn)
       expect(mergedAnnotation).to.deep.include({
         startIndex: 0,
         length: 14,
@@ -307,7 +307,7 @@
         width: 0.5,
         message: 'msg'
       }
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
           `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg"></br> More text on another line.`
@@ -334,7 +334,7 @@
         y2: 0.5,
         message: 'Horizontal line annotation'
       }
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
           `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg"></br> More text on another line.`
@@ -361,7 +361,7 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      annotationRendering.renderGivenAnnotations(
+      annotationsRendering.renderGivenAnnotations(
         createAndgetContainer(
           this,
           `Lorem ipsum dolor sit amet. </br> <img src="/test/sample_screenshot.jpg"></br> More text on another line.`
