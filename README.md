@@ -1,6 +1,16 @@
-# answer-annotation
+# Answer annotation
 
 Utils for annotating answers for Finnish Matriculation Examination Board.
+
+![example](sample-image.png)
+
+# Tests
+
+http://digabi.github.io/answer-annotation/
+
+# Change log
+
+https://github.com/digabi/answer-annotation/releases
 
 # License
 
