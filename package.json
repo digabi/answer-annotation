@@ -9,7 +9,7 @@
   "description": "Annotating text and images with comments",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha-chrome test/test.html",
+    "test": "eslint . && mocha-chrome test/test.html",
     "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --mocha '{\"reporter\":\"spec\"}'  test/test.html",
     "browser-test": "open test/test.html",
     "server-test": "python -m SimpleHTTPServer &> /dev/null & open http://localhost:8000/test/test.html"
