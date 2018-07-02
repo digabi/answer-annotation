@@ -4,7 +4,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'), require('lodash'), require('bacon'), require('./annotations-rendering'))
   } else {
-    root.annotationsEditing = factory(root.jQuery, root._, root.bacon, root.annotationsRendering)
+    root.annotationsEditing = factory(root.jQuery, root._, root.Bacon, root.annotationsRendering)
   }
 })(this, function($, _, Bacon, answerAnnotationsRendering) {
   'use strict'

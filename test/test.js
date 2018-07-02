@@ -4,7 +4,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(require('mocha'), require('chai'), require('./dist/annotations-rendering'), require('./dist/annotations-editing'), require('jquery'))
   } else {
-    root.annotationsRendering = factory(root.mocha, root.chai, root.annotationRendering, root.annotationEditing, root.jQuery)
+    factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery)
   }
 })(this, function (mocha,
                    chai,
@@ -380,21 +380,22 @@
   })
 
   mocha.run()
+
+  function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
+    const range = document.createRange()
+    range.setStart(startContainer, startOffset)
+    range.setEnd(endContainer, endOffset)
+    const selection = window.getSelection()
+    selection.removeAllRanges()
+    selection.addRange(range)
+    $container.mouseup()
+    if (comment) {
+      $container
+        .find('.add-annotation-text')
+        .val(comment)
+        .keyup()
+    }
+    $container.find('button').mousedown()
+  }
 })
 
-function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
-  const range = document.createRange()
-  range.setStart(startContainer, startOffset)
-  range.setEnd(endContainer, endOffset)
-  const selection = window.getSelection()
-  selection.removeAllRanges()
-  selection.addRange(range)
-  $container.mouseup()
-  if (comment) {
-    $container
-      .find('.add-annotation-text')
-      .val(comment)
-      .keyup()
-  }
-  $container.find('button').mousedown()
-}
