@@ -31,7 +31,7 @@
     "less": "^2.7.2",
     "lodash": "^4.14.4",
     "mocha": "^3.5.0",
-    "mocha-chrome": "^0.1.1",
+    "mocha-chrome": "^1.1.0",
     "nyc": "^11.1.0",
     "prettier": "1.13.2",
     "requirejs": "^2.3.4"
