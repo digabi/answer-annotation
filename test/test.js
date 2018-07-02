@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-extra-semi
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['mocha', 'chai', '../dist/annotations-rendering', '../dist/annotations-editing', 'jquery'], factory)

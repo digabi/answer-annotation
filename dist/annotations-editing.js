@@ -1,3 +1,5 @@
+/* eslint-disable es5/no-es6-methods */
+// eslint-disable-next-line no-extra-semi
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery', 'lodash', 'bacon', './annotations-rendering'], factory)

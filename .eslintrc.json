@@ -1,16 +1,18 @@
 {
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-        }
-    },
-    "extends": "eslint:recommended",
-    "env": {
-        "mocha": true
-    },
-    "rules": {
-        "no-undef": "off"
+  "parserOptions": {
+    "ecmaVersion": 5,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
     }
+  },
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+    "mocha": true,
+    "jquery": true
+  },
+  "rules": {
+    "no-undef": "off"
+  }
 }
