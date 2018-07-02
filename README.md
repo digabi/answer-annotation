@@ -6,7 +6,7 @@ Utils for annotating answers for Finnish Matriculation Examination Board.
 
 ![example](sample-image.png)
 
-# Tests
+# Tests & playground
 
 http://digabi.github.io/answer-annotation/test/static-test.html
 
