@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/digabi/answer-annotation.svg?branch=master)](https://travis-ci.org/digabi/answer-annotation)
+
 # Answer annotation
 
 Utils for annotating answers for Finnish Matriculation Examination Board.

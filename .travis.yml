@@ -1,0 +1,8 @@
+dist: trusty
+addons:
+  chrome: stable
+group: beta
+language: node_js
+node_js:
+  - stable
+sudo: required
