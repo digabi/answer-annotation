@@ -28,16 +28,20 @@
   let saves = []
   function setAnswer(content, title, isAutograded) {
     currentTestIndex++
-    const foo = `<div data-answer-id="${currentTestIndex}" class="answer-text-container answer selected hasComment ${
-      isAutograded ? 'autograded' : ''
-    }">
-    <div class="originalAnswer" style="display: none">${content}</div>
-    <div class="answerText answerRichText is_pregrading">${content}</div>
-    </div>`
     const $newContainer = $('<div>')
       .attr('id', 'answer-' + currentTestIndex)
       .addClass('answer-wrapper')
-      .html(foo)
+      .html(`
+<div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${ isAutograded ? 'autograded' : '' }">
+  <div class="answer-text-container">
+    <div class="originalAnswer" style="display: none">${content}</div>
+    <div class="answerText answerRichText is_pregrading">${content}</div>
+    <div class="answer-annotations">
+    <div class="is_pregrading">
+      <table class="annotation-messages"></table>
+    </div>
+  </div>
+</div>`)
     $newContainer.prepend(`<h2>${title}</h2>`)
     $answerContainer.append($newContainer)
     annotationsEditing.setupAnnotationEditing(
