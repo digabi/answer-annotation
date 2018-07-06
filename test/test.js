@@ -3,15 +3,17 @@
   if (typeof define === 'function' && define.amd) {
     define(['mocha', 'chai', '../dist/annotations-rendering', '../dist/annotations-editing', 'jquery'], factory)
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('mocha'), require('chai'), require('./dist/annotations-rendering'), require('./dist/annotations-editing'), require('jquery'))
+    module.exports = factory(
+      require('mocha'),
+      require('chai'),
+      require('./dist/annotations-rendering'),
+      require('./dist/annotations-editing'),
+      require('jquery')
+    )
   } else {
     factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery)
   }
-})(this, function (mocha,
-                   chai,
-                   annotationsRendering,
-                   annotationsEditing,
-                   $) {
+})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $) {
   'use strict'
 
   chai.config.truncateThreshold = 0
@@ -45,14 +47,13 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      setDataAndRenderAnnotations(
-        $container,
-        [{
-        message: 'great1',
-        startIndex: 0,
-        length: 5
-      }]
-      )
+      setDataAndRenderAnnotations($container, [
+        {
+          message: 'great1',
+          startIndex: 0,
+          length: 5
+        }
+      ])
       expect(getAnnotationContent($container)).to.include.members(['answe'])
     })
 
@@ -61,14 +62,13 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      setDataAndRenderAnnotations(
-        $container,
-        [{
-        message: 'great1',
-        startIndex: 0,
-        length: 5
-      }]
-      )
+      setDataAndRenderAnnotations($container, [
+        {
+          message: 'great1',
+          startIndex: 0,
+          length: 5
+        }
+      ])
       expect(getAnnotationContent($container)).to.include.members(['answe'])
     })
 
@@ -82,10 +82,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
       )
-      setDataAndRenderAnnotations(
-        $container,
-        imageAnnotations
-      )
+      setDataAndRenderAnnotations($container, imageAnnotations)
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
@@ -94,11 +91,11 @@
         { message: 'great1', startIndex: 11, length: 7 },
         { message: 'great2', startIndex: 20, length: 9 }
       ]
-      const $container = createAndgetContainer(this, `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`)
-      setDataAndRenderAnnotations(
-        $container,
-        imageAnnotations
+      const $container = createAndgetContainer(
+        this,
+        `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`
       )
+      setDataAndRenderAnnotations($container, imageAnnotations)
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'rem ipsum'])
     })
 
@@ -106,10 +103,7 @@
       const imageAnnotation = [{ message: 'great1', startIndex: 2, length: 1 }]
       const annFn = () =>
         setDataAndRenderAnnotations(
-          createAndgetContainer(
-            this,
-            `bi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
-          ),
+          createAndgetContainer(this, `bi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`),
           imageAnnotation
         )
       expect(annFn).to.not.throw()
@@ -133,18 +127,21 @@
 
     it('New annotation overlapping other annotations should be merged', function() {
       const newAnn = { message: 'great3', startIndex: 4, length: 10 }
-      const mergedAnnotation = annotationsRendering.mergeAnnotation([
-      {
-        message: 'great1',
-        startIndex: 0,
-        length: 5
-      },
-      {
-        message: 'great2',
-        startIndex: 7,
-        length: 1
-      }
-    ], newAnn)
+      const mergedAnnotation = annotationsRendering.mergeAnnotation(
+        [
+          {
+            message: 'great1',
+            startIndex: 0,
+            length: 5
+          },
+          {
+            message: 'great2',
+            startIndex: 7,
+            length: 1
+          }
+        ],
+        newAnn
+      )
       expect(mergedAnnotation).to.deep.include({
         startIndex: 0,
         length: 14,
@@ -263,7 +260,6 @@
   })
 
   describe('When annotating image', () => {
-
     it('should render rect annotation on an image', function() {
       const annotation = {
         type: 'rect',
@@ -275,7 +271,11 @@
         message: 'msg'
       }
 
-      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      const $wrapper = createAndgetWrapper(
+        this,
+        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
+        false
+      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -297,7 +297,11 @@
         y2: 0.5,
         message: 'Horizontal line annotation'
       }
-      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      const $wrapper = createAndgetWrapper(
+        this,
+        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
+        false
+      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -319,7 +323,11 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      const $wrapper = createAndgetWrapper(
+        this,
+        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
+        false
+      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -341,7 +349,11 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      const $wrapper = createAndgetWrapper(
+        this,
+        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
+        false
+      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -351,9 +363,7 @@
           bottom: '25%'
         }
       ])
-      expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([
-        [ '', 'Vertical line annotation' ]
-      ])
+      expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([['', 'Vertical line annotation']])
     })
   })
 
@@ -363,9 +373,8 @@
     currentTestIndex++
     const $newContainer = $('<div>')
       .attr('id', 'answer-' + currentTestIndex)
-      .addClass('answer-wrapper')
-      .html(`
-<div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${ isAutograded ? 'autograded' : '' }">
+      .addClass('answer-wrapper').html(`
+<div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${isAutograded ? 'autograded' : ''}">
   <div class="answer-text-container">
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
@@ -436,4 +445,3 @@
     return Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.innerText))
   }
 })
-
