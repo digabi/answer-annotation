@@ -39,6 +39,7 @@ img[src^='/test/math.svg'] {
 }
 .answer-wrapper {
   width: 450px;
+  margin: 10px;
 }
 
 .popup-glow() {
@@ -95,8 +96,8 @@ img[src^='/test/math.svg'] {
 .answer {
   counter-reset: annotation-counter annotation-messages-counter;
   padding: 26px;
-  position: relative;
   display: flex;
+  position: relative;
   &.is_score_visible {
     .scoreRow.pregradingScore,
     .scoreRow.censoringScore:not(.current) {
@@ -215,7 +216,6 @@ img[src^='/test/math.svg'] {
     width: 100%;
     padding-bottom: 10px;
     white-space: pre-wrap;
-    position: relative;
   }
   .answerRichText {
     img {
@@ -291,7 +291,7 @@ img[src^='/test/math.svg'] {
   }
   .fa-comment {
     position: absolute;
-    right: -12px;
+    right: 0;
     line-height: 25px;
     font-size: 13px;
     background-color: @SaBackground;
