@@ -16,7 +16,6 @@
 
   chai.config.truncateThreshold = 0
   chai.config.includeStack = true
-  chai.config.showDiff = true
   mocha.setup('bdd')
   const expect = chai.expect
   const assert = chai.assert
