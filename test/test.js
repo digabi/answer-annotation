@@ -24,58 +24,7 @@
   annotationsEditing.setupAnnotationDisplaying($answerContainer)
 
   let currentTestIndex = 0
-
   let saves = []
-  function setAnswer(content, title, isAutograded) {
-    currentTestIndex++
-    const $newContainer = $('<div>')
-      .attr('id', 'answer-' + currentTestIndex)
-      .addClass('answer-wrapper')
-      .html(`
-<div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${ isAutograded ? 'autograded' : '' }">
-  <div class="answer-text-container">
-    <div class="originalAnswer" style="display: none">${content}</div>
-    <div class="answerText answerRichText is_pregrading">${content}</div>
-    <div class="answer-annotations">
-    <div class="is_pregrading">
-      <table class="annotation-messages"></table>
-    </div>
-  </div>
-</div>`)
-    $newContainer.prepend(`<h2>${title}</h2>`)
-    $answerContainer.append($newContainer)
-    annotationsEditing.setupAnnotationEditing(
-      $newContainer.find('.answerText'),
-      (answerId, annotations) => {
-        saves.push({ answerId, annotations })
-      },
-      $obj => $obj
-    )
-  }
-
-  function getAnswerElem($answer) {
-    return $answer.find('#answer-' + currentTestIndex)
-  }
-
-  function getAnnotationContent($answer) {
-    return getAnswerElem($answer)
-      .find('.answerAnnotation')
-      .toArray()
-      .map(e => e.textContent)
-  }
-
-  function getAnnotationStyle($answer) {
-    return getAnswerElem($answer)
-      .find('.rect, .line')
-      .toArray()
-      .map(e => _.pick(e.style, ['left', 'top', 'right', 'bottom']))
-  }
-
-  const createAndgetContainer = function(ctx, answerContent, isAutograded = false) {
-    saves = []
-    setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
-    return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
-  }
 
   describe('When selecting richText', () => {
     const annotations = [
@@ -389,6 +338,57 @@
   })
 
   mocha.run()
+
+  function setAnswer(content, title, isAutograded) {
+    currentTestIndex++
+    const $newContainer = $('<div>')
+      .attr('id', 'answer-' + currentTestIndex)
+      .addClass('answer-wrapper')
+      .html(`
+<div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${ isAutograded ? 'autograded' : '' }">
+  <div class="answer-text-container">
+    <div class="originalAnswer" style="display: none">${content}</div>
+    <div class="answerText answerRichText is_pregrading">${content}</div>
+    <div class="answer-annotations">
+    <div class="is_pregrading">
+      <table class="annotation-messages"></table>
+    </div>
+  </div>
+</div>`)
+    $newContainer.prepend(`<h2>${title}</h2>`)
+    $answerContainer.append($newContainer)
+    annotationsEditing.setupAnnotationEditing(
+      $newContainer.find('.answerText'),
+      (answerId, annotations) => {
+        saves.push({ answerId, annotations })
+      },
+      $obj => $obj
+    )
+  }
+
+  function getAnswerElem($answer) {
+    return $answer.find('#answer-' + currentTestIndex)
+  }
+
+  function getAnnotationContent($answer) {
+    return getAnswerElem($answer)
+      .find('.answerAnnotation')
+      .toArray()
+      .map(e => e.textContent)
+  }
+
+  function getAnnotationStyle($answer) {
+    return getAnswerElem($answer)
+      .find('.rect, .line')
+      .toArray()
+      .map(e => _.pick(e.style, ['left', 'top', 'right', 'bottom']))
+  }
+
+  function createAndgetContainer(ctx, answerContent, isAutograded = false) {
+    saves = []
+    setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
+    return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
+  }
 
   function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
     const range = document.createRange()
