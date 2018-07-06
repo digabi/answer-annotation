@@ -270,14 +270,10 @@
         width: 0.5,
         message: 'msg'
       }
-      annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(
-          this,
-          `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`
-        ),
-        [annotation]
-      )
-      expect(getAnnotationStyle($answerContainer)).to.eql([
+
+      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
           top: '25%',
@@ -297,14 +293,9 @@
         y2: 0.5,
         message: 'Horizontal line annotation'
       }
-      annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(
-          this,
-          `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`
-        ),
-        [annotation]
-      )
-      expect(getAnnotationStyle($answerContainer)).to.eql([
+      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
           top: '50%',
@@ -324,20 +315,40 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(
-          this,
-          `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`
-        ),
-        [annotation]
-      )
-      expect(getAnnotationStyle($answerContainer)).to.eql([
+      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '50%',
           top: '25%',
           right: '50%',
           bottom: '25%'
         }
+      ])
+    })
+
+    it('should sort cross references correctly for mixed annotations', function() {
+      const annotation = {
+        type: 'line',
+        attachmentIndex: 0,
+        x1: 0.5,
+        y1: 0.25,
+        x2: 0.5,
+        y2: 0.75,
+        message: 'Vertical line annotation'
+      }
+      const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
+      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      expect(getAnnotationStyle($wrapper)).to.eql([
+        {
+          left: '50%',
+          top: '25%',
+          right: '50%',
+          bottom: '25%'
+        }
+      ])
+      expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([
+        [ '', 'Vertical line annotation' ]
       ])
     })
   })
@@ -382,17 +393,21 @@
       .map(e => e.textContent)
   }
 
-  function getAnnotationStyle($answer) {
-    return getAnswerElem($answer)
+  function getAnnotationStyle($wrapper) {
+    return $wrapper
       .find('.rect, .line')
       .toArray()
       .map(e => _.pick(e.style, ['left', 'top', 'right', 'bottom']))
   }
 
   function createAndgetContainer(ctx, answerContent, isAutograded = false) {
+    return createAndgetWrapper(ctx, answerContent, isAutograded).find('.answerRichText')
+  }
+
+  function createAndgetWrapper(ctx, answerContent, isAutograded = false) {
     saves = []
     setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
-    return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
+    return $answerContainer.find('#answer-' + currentTestIndex)
   }
 
   function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
@@ -410,6 +425,10 @@
         .keyup()
     }
     $container.find('button').mousedown()
+  }
+
+  function tableToMatrix(table) {
+    return Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.innerText))
   }
 })
 
