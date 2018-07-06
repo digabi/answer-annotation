@@ -200,7 +200,7 @@
         var selectionStartOffset = getPopupOffset(range)
 
         var $answerText = $(range.startContainer).closest('.answerText')
-        var annotationPos = calculatePosition($answerText, range)
+        var annotationPos = answerAnnotationsRendering.calculatePosition($answerText, range)
 
         if (isCensor() && !$answerText.hasClass('is_censor')) {
           // render annotations to censor answer text element even if event cought via double click
@@ -222,10 +222,7 @@
 
         // Merge and render annotation to show what range it will contain if annotation gets added
         // Merged annotation not saved yet, so on cancel previous state is rendered
-        var mergedAnnotations = answerAnnotationsRendering.mergeAnnotation(
-          answerAnnotationsRendering.get($answerText),
-          annotationPos
-        )
+        var mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
         answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
 
         return openPopup($answerText, annotationPos, renderedMessages, selectionStartOffset)
@@ -274,31 +271,10 @@
       }
 
       function add($answerText, newAnnotation) {
-        var annotations = answerAnnotationsRendering.get($answerText)
-          ? answerAnnotationsRendering.mergeAnnotation(answerAnnotationsRendering.get($answerText), newAnnotation)
-          : [newAnnotation]
+        var data = answerAnnotationsRendering.get($answerText)
+        var annotations = data ? answerAnnotationsRendering.mergeAnnotation($answerText, newAnnotation) : [newAnnotation]
         $answerText.data('annotations', annotations)
         saveAnnotation(getAnswerId($answerText), annotations)
-      }
-
-      function calculatePosition($answerText, range) {
-        var answerNodes = answerAnnotationsRendering.allNodesUnder($answerText.get(0))
-        var charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
-        var charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
-        return {
-          startIndex: charactersBefore,
-          length: charactersUntilEnd - charactersBefore
-        }
-
-        function charactersBeforeContainer(rangeContainer, offset) {
-          var containerIsTag = rangeContainer === $answerText.get(0)
-          var container = containerIsTag ? rangeContainer.childNodes[offset] : rangeContainer
-          var offsetInside = containerIsTag ? 0 : offset
-          var nodesBeforeContainer = _.takeWhile(answerNodes, function(node) {
-            return node !== container
-          })
-          return offsetInside + _.sum(nodesBeforeContainer.map(answerAnnotationsRendering.toNodeLength))
-        }
       }
     }
   }

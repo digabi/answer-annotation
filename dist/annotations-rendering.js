@@ -23,7 +23,36 @@
     renderAbittiAnnotations: renderAbittiAnnotations,
     createRangeFromMetadata: createRangeFromMetadata,
     renderShape: renderShape,
-    wrapAttachment: wrapAttachment
+    wrapAttachment: wrapAttachment,
+    calculatePosition: calculatePosition,
+    getImageStartIndex: getImageStartIndex
+  }
+
+  function getImageStartIndex($image, $answerText) {
+    var range = document.createRange()
+    var referenceNode = $image.get(0)
+    range.selectNode(referenceNode)
+    return calculatePosition($answerText, range).startIndex
+  }
+
+  function calculatePosition($answerText, range) {
+    var answerNodes = allNodesUnder($answerText.get(0))
+    var charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
+    var charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
+    return {
+      startIndex: charactersBefore,
+      length: charactersUntilEnd - charactersBefore
+    }
+
+    function charactersBeforeContainer(rangeContainer, offset) {
+      var containerIsTag = rangeContainer === $answerText.get(0)
+      var container = containerIsTag ? rangeContainer.childNodes[offset] : rangeContainer
+      var offsetInside = containerIsTag ? 0 : offset
+      var nodesBeforeContainer = _.takeWhile(answerNodes, function(node) {
+        return node !== container
+      })
+      return offsetInside + _.sum(nodesBeforeContainer.map(toNodeLength))
+    }
   }
 
   function toNodeLength(node) {
@@ -265,7 +294,8 @@
     )
   }
 
-  function mergeAnnotation(annotations, newAnnotation) {
+  function mergeAnnotation($answerText, newAnnotation) {
+    var annotations = getAnnotations($answerText)
     var parted = getOverlappingAnnotations(annotations, newAnnotation)
 
     if (parted.overlapping.length > 0) {
@@ -288,7 +318,9 @@
     return _.sortBy(
       parted.nonOverlapping,
       function(a) {
-        return a.startIndex
+        return isNaN(a.startIndex)
+          ? getImageStartIndex(findAttachment($answerText, a.attachmentIndex), $answerText)
+          : a.startIndex
       },
       function(a) {
         return a.y || a.y1

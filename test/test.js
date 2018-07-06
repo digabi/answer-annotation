@@ -127,21 +127,19 @@
 
     it('New annotation overlapping other annotations should be merged', function() {
       const newAnn = { message: 'great3', startIndex: 4, length: 10 }
-      const mergedAnnotation = annotationsRendering.mergeAnnotation(
-        [
-          {
-            message: 'great1',
-            startIndex: 0,
-            length: 5
-          },
-          {
-            message: 'great2',
-            startIndex: 7,
-            length: 1
-          }
-        ],
-        newAnn
-      )
+      var $elem = $('<div>').data('annotations', [
+        {
+          message: 'great1',
+          startIndex: 0,
+          length: 5
+        },
+        {
+          message: 'great2',
+          startIndex: 7,
+          length: 1
+        }
+      ])
+      const mergedAnnotation = annotationsRendering.mergeAnnotation($elem, newAnn)
       expect(mergedAnnotation).to.deep.include({
         startIndex: 0,
         length: 14,
@@ -260,6 +258,17 @@
   })
 
   describe('When annotating image', () => {
+    let $wrapper
+    beforeEach(done => {
+      $wrapper = createAndgetWrapper(
+        this,
+        `Lorem ipsum dolor sit amet. <br> <img src="sample_screenshot.jpg"><br> More text on another line<br>
+ <img src="sample_screenshot.jpg"></br> Even more text on third line.`,
+        false
+      )
+      setTimeout(done, 100)
+    })
+
     it('should render rect annotation on an image', function() {
       const annotation = {
         type: 'rect',
@@ -271,11 +280,6 @@
         message: 'msg'
       }
 
-      const $wrapper = createAndgetWrapper(
-        this,
-        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
-        false
-      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -297,11 +301,6 @@
         y2: 0.5,
         message: 'Horizontal line annotation'
       }
-      const $wrapper = createAndgetWrapper(
-        this,
-        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
-        false
-      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -323,11 +322,6 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      const $wrapper = createAndgetWrapper(
-        this,
-        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
-        false
-      )
       setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
@@ -340,30 +334,69 @@
     })
 
     it('should sort cross references correctly for mixed annotations', function() {
-      const annotation = {
-        type: 'line',
-        attachmentIndex: 0,
-        x1: 0.5,
-        y1: 0.25,
-        x2: 0.5,
-        y2: 0.75,
-        message: 'Vertical line annotation'
-      }
-      const $wrapper = createAndgetWrapper(
-        this,
-        `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`,
-        false
-      )
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
-      expect(getAnnotationStyle($wrapper)).to.eql([
+      const annotations = [
         {
-          left: '50%',
-          top: '25%',
-          right: '50%',
-          bottom: '25%'
+          length: 5,
+          message: 'msg 1',
+          startIndex: 6
+        },
+        {
+          type: 'line',
+          attachmentIndex: 1,
+          x1: 0.5,
+          y1: 0.25,
+          x2: 0.5,
+          y2: 0.75,
+          message: 'msg 4'
         }
+      ]
+      const $container = $wrapper.find('.answerRichText')
+      const container = $container.get(0)
+      setDataAndRenderAnnotations($container, annotations)
+      const firstNode = container.childNodes[8]
+      createAnnotation($container, firstNode, firstNode, 0, 5, 'msg 3')
+      const secondNode = container.childNodes[17]
+      createAnnotation($container, secondNode, secondNode, 0, 5, 'msg 5')
+
+      createImageAnnotation($container, 0, { x1: 0, y1: 174.7890625, x2: 94.5, y2: 349.578125 }, 'msg 2')
+      expect(_.last(saves)).to.eql({
+        answerId: '18',
+        annotations: [
+          { length: 5, message: 'msg 1', startIndex: 6 },
+          {
+            type: 'rect',
+            attachmentIndex: 0,
+            x: 0,
+            y: 0.5,
+            width: 0.25,
+            height: 0.5,
+            message: 'msg 2'
+          },
+          { startIndex: 30, length: 5, message: 'msg 3' },
+          {
+            type: 'line',
+            attachmentIndex: 1,
+            x1: 0.5,
+            y1: 0.25,
+            x2: 0.5,
+            y2: 0.75,
+            message: 'msg 4'
+          },
+          { startIndex: 59, length: 5, message: 'msg 5' }
+        ]
+      })
+
+      expect(getAnnotationStyle($wrapper)).to.eql([
+        { left: '0%', top: '50%', right: '75%', bottom: '0%' },
+        { left: '50%', top: '25%', right: '50%', bottom: '25%' }
       ])
-      expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([['', 'Vertical line annotation']])
+      expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([
+        ['', 'msg 1'],
+        ['', 'msg 2'],
+        ['', 'msg 3'],
+        ['', 'msg 4'],
+        ['', 'msg 5']
+      ])
     })
   })
 
@@ -422,6 +455,22 @@
   function setDataAndRenderAnnotations($answerText, annotations) {
     $answerText.data('annotations', annotations)
     annotationsRendering.renderGivenAnnotations($answerText, annotations)
+  }
+
+  function createImageAnnotation($container, imageIndex = 1, dimensions, comment) {
+    const $lastImg = $container.find('img').eq(imageIndex)
+    const rect = $lastImg.get(0).getBoundingClientRect()
+    $lastImg
+      .trigger({ type: 'mousedown', clientX: rect.left + dimensions.x1, clientY: rect.top + dimensions.y1 })
+      .trigger({ type: 'mousemove', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2 })
+      .trigger({ type: 'mouseup', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2 })
+    if (comment) {
+      $container
+        .find('.add-annotation-text')
+        .val(comment)
+        .keyup()
+    }
+    $container.find('button').mousedown()
   }
 
   function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
