@@ -45,7 +45,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      annotationsRendering.renderGivenAnnotations(
+      setDataAndRenderAnnotations(
         $container,
         [{
         message: 'great1',
@@ -61,7 +61,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      annotationsRendering.renderGivenAnnotations(
+      setDataAndRenderAnnotations(
         $container,
         [{
         message: 'great1',
@@ -82,7 +82,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
       )
-      annotationsRendering.renderGivenAnnotations(
+      setDataAndRenderAnnotations(
         $container,
         imageAnnotations
       )
@@ -95,7 +95,7 @@
         { message: 'great2', startIndex: 20, length: 9 }
       ]
       const $container = createAndgetContainer(this, `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`)
-      annotationsRendering.renderGivenAnnotations(
+      setDataAndRenderAnnotations(
         $container,
         imageAnnotations
       )
@@ -105,7 +105,7 @@
     it(`Selecting single image shouldn't throw an error`, function() {
       const imageAnnotation = [{ message: 'great1', startIndex: 2, length: 1 }]
       const annFn = () =>
-        annotationsRendering.renderGivenAnnotations(
+        setDataAndRenderAnnotations(
           createAndgetContainer(
             this,
             `bi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
@@ -121,7 +121,7 @@
         { message: 'great1', startIndex: 23, length: 1 }
       ]
       const annFn = () =>
-        annotationsRendering.renderGivenAnnotations(
+        setDataAndRenderAnnotations(
           createAndgetContainer(
             this,
             `answer rich <img alt="math1" src="math.svg"> Text<br>Morbi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
@@ -276,7 +276,7 @@
       }
 
       const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
-      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
@@ -298,7 +298,7 @@
         message: 'Horizontal line annotation'
       }
       const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
-      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
@@ -320,7 +320,7 @@
         message: 'Vertical line annotation'
       }
       const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
-      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '50%',
@@ -342,7 +342,7 @@
         message: 'Vertical line annotation'
       }
       const $wrapper = createAndgetWrapper(this, `Lorem ipsum dolor sit amet. </br> <img src="sample_screenshot.jpg"></br> More text on another line.`, false)
-      annotationsRendering.renderGivenAnnotations($wrapper.find('.answerRichText'), [annotation])
+      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '50%',
@@ -408,6 +408,11 @@
     saves = []
     setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
     return $answerContainer.find('#answer-' + currentTestIndex)
+  }
+
+  function setDataAndRenderAnnotations($answerText, annotations) {
+    $answerText.data('annotations', annotations)
+    annotationsRendering.renderGivenAnnotations($answerText, annotations)
   }
 
   function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
