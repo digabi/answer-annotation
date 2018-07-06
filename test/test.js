@@ -71,6 +71,12 @@
       .map(e => _.pick(e.style, ['left', 'top', 'right', 'bottom']))
   }
 
+  const createAndgetContainer = function(ctx, answerContent, isAutograded = false) {
+    saves = []
+    setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
+    return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
+  }
+
   describe('When selecting richText', () => {
     const annotations = [
       {
@@ -84,11 +90,6 @@
         length: 1
       }
     ]
-    const createAndgetContainer = function(ctx, answerContent, isAutograded = false) {
-      saves = []
-      setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
-      return $answerContainer.find('#answer-' + currentTestIndex + ' .answerRichText')
-    }
 
     it('Surrounding range from first three rows contains correct text', function() {
       const answer = createAndgetContainer(
@@ -301,6 +302,9 @@
         }
       ])
     })
+  })
+
+  describe('When annotating image', () => {
 
     it('should render rect annotation on an image', function() {
       const annotation = {
