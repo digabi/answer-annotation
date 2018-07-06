@@ -41,33 +41,35 @@
     })
 
     it('First annotation should contain correct text', function() {
+      const $container = createAndgetContainer(
+        this,
+        `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
+      )
       annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(
-          this,
-          `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
-        ),
+        $container,
         [{
         message: 'great1',
         startIndex: 0,
         length: 5
       }]
       )
-      expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
+      expect(getAnnotationContent($container)).to.include.members(['answe'])
     })
 
     it('First annotation should contain correct text', function() {
+      const $container = createAndgetContainer(
+        this,
+        `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
+      )
       annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(
-          this,
-          `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
-        ),
+        $container,
         [{
         message: 'great1',
         startIndex: 0,
         length: 5
       }]
       )
-      expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
+      expect(getAnnotationContent($container)).to.include.members(['answe'])
     })
 
     it('Multiple annotations should be in correct place', function() {
@@ -76,14 +78,15 @@
         { message: 'great2', startIndex: 19, length: 10 },
         { message: 'great3', startIndex: 30, length: 1 }
       ]
+      const $container = createAndgetContainer(
+        this,
+        `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
+      )
       annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(
-          this,
-          `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
-        ),
+        $container,
         imageAnnotations
       )
-      expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'orem ipsum', '+'])
+      expect(getAnnotationContent($container)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
     it('Selecting text after image should work', function() {
@@ -91,11 +94,12 @@
         { message: 'great1', startIndex: 11, length: 7 },
         { message: 'great2', startIndex: 20, length: 9 }
       ]
+      const $container = createAndgetContainer(this, `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`)
       annotationsRendering.renderGivenAnnotations(
-        createAndgetContainer(this, `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`),
+        $container,
         imageAnnotations
       )
-      expect(getAnnotationContent($answerContainer)).to.include.members(['  Text', 'rem ipsum'])
+      expect(getAnnotationContent($container)).to.include.members(['  Text', 'rem ipsum'])
     })
 
     it(`Selecting single image shouldn't throw an error`, function() {
@@ -382,12 +386,8 @@
     )
   }
 
-  function getAnswerElem($answer) {
-    return $answer.find('#answer-' + currentTestIndex)
-  }
-
-  function getAnnotationContent($answer) {
-    return getAnswerElem($answer)
+  function getAnnotationContent($container) {
+    return $container
       .find('.answerAnnotation')
       .toArray()
       .map(e => e.textContent)
