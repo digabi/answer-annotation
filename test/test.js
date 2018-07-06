@@ -27,19 +27,6 @@
   let saves = []
 
   describe('When selecting richText', () => {
-    const annotations = [
-      {
-        message: 'great1',
-        startIndex: 0,
-        length: 5
-      },
-      {
-        message: 'great2',
-        startIndex: 7,
-        length: 1
-      }
-    ]
-
     it('Surrounding range from first three rows contains correct text', function() {
       const answer = createAndgetContainer(
         this,
@@ -60,7 +47,11 @@
           this,
           `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
         ),
-        [annotations[0]]
+        [{
+        message: 'great1',
+        startIndex: 0,
+        length: 5
+      }]
       )
       expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
@@ -71,7 +62,11 @@
           this,
           `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
         ),
-        [annotations[0]]
+        [{
+        message: 'great1',
+        startIndex: 0,
+        length: 5
+      }]
       )
       expect(getAnnotationContent($answerContainer)).to.include.members(['answe'])
     })
@@ -135,7 +130,18 @@
 
     it('New annotation overlapping other annotations should be merged', function() {
       const newAnn = { message: 'great3', startIndex: 4, length: 10 }
-      const mergedAnnotation = annotationsRendering.mergeAnnotation(annotations, newAnn)
+      const mergedAnnotation = annotationsRendering.mergeAnnotation([
+      {
+        message: 'great1',
+        startIndex: 0,
+        length: 5
+      },
+      {
+        message: 'great2',
+        startIndex: 7,
+        length: 1
+      }
+    ], newAnn)
       expect(mergedAnnotation).to.deep.include({
         startIndex: 0,
         length: 14,
