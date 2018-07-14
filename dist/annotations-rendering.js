@@ -197,30 +197,32 @@
   function renderShape(shape, $element) {
     // Note: Render as SVG if we start needing anything more complicated.
     var type = shape.type
-    var style
-
-    if (type === 'rect') {
-      style = {
-        left: pct(shape.x),
-        top: pct(shape.y),
-        right: pct(1 - (shape.x + shape.width)),
-        bottom: pct(1 - (shape.y + shape.height))
-      }
-    } else if (type === 'line') {
-      style = {
-        left: pct(shape.x1),
-        top: pct(shape.y1),
-        right: pct(1 - shape.x2),
-        bottom: pct(1 - shape.y2)
-      }
-    } else {
-      throw new Error('Invalid shape: ' + type)
-    }
 
     return ($element || $('<div class="answerAnnotation" />'))
-      .css(style)
+      .css(getShapeStyles(type, shape))
       .toggleClass('line', type === 'line')
       .toggleClass('rect', type === 'rect')
+  }
+
+  function getShapeStyles(type, shape) {
+    switch (type) {
+      case 'rect':
+        return {
+          left: pct(shape.x),
+          top: pct(shape.y),
+          right: pct(1 - (shape.x + shape.width)),
+          bottom: pct(1 - (shape.y + shape.height))
+        }
+      case 'line':
+        return {
+          left: pct(shape.x1),
+          top: pct(shape.y1),
+          right: pct(1 - shape.x2),
+          bottom: pct(1 - shape.y2)
+        }
+      default:
+        throw new Error('Invalid shape: ' + type)
+    }
   }
 
   function pct(n) {

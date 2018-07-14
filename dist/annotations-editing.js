@@ -54,14 +54,13 @@
         .filter(function(range) {
           if (selectionHasNothingToUnderline(range)) {
             return false
-          } else {
-            var $container = $(range.commonAncestorContainer)
-            return (
-              !$container.hasClass('add-annotation-popup') &&
-              ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0) &&
-              !$container.parents('.answer').hasClass('autograded')
-            )
           }
+          var $container = $(range.commonAncestorContainer)
+          return (
+            !$container.hasClass('add-annotation-popup') &&
+            ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0) &&
+            !$container.parents('.answer').hasClass('autograded')
+          )
         })
         .flatMapLatest(openPopupFromRange)
         .onValue(addAnnotation)
@@ -406,13 +405,11 @@
   }
 
   function getBrowserTextSelection() {
-    if (typeof window.getSelection !== 'undefined') {
-      return window.getSelection()
-    } else if (typeof document.selection !== 'undefined' && document.selection.type === 'Text') {
-      return document.selection
-    } else {
-      return undefined
-    }
+    return typeof window.getSelection !== 'undefined'
+      ? window.getSelection()
+      : typeof document.selection !== 'undefined' && document.selection.type === 'Text'
+        ? document.selection
+        : undefined
   }
 
   function hasTextSelectedInAnswerText() {
