@@ -23,7 +23,36 @@
     renderAbittiAnnotations: renderAbittiAnnotations,
     createRangeFromMetadata: createRangeFromMetadata,
     renderShape: renderShape,
-    wrapAttachment: wrapAttachment
+    wrapAttachment: wrapAttachment,
+    calculatePosition: calculatePosition,
+    getImageStartIndex: getImageStartIndex
+  }
+
+  function getImageStartIndex($image, $answerText) {
+    var range = document.createRange()
+    var referenceNode = $image.get(0)
+    range.selectNode(referenceNode)
+    return calculatePosition($answerText, range).startIndex
+  }
+
+  function calculatePosition($answerText, range) {
+    var answerNodes = allNodesUnder($answerText.get(0))
+    var charactersBefore = charactersBeforeContainer(range.startContainer, range.startOffset)
+    var charactersUntilEnd = charactersBeforeContainer(range.endContainer, range.endOffset)
+    return {
+      startIndex: charactersBefore,
+      length: charactersUntilEnd - charactersBefore
+    }
+
+    function charactersBeforeContainer(rangeContainer, offset) {
+      var containerIsTag = rangeContainer === $answerText.get(0)
+      var container = containerIsTag ? rangeContainer.childNodes[offset] : rangeContainer
+      var offsetInside = containerIsTag ? 0 : offset
+      var nodesBeforeContainer = _.takeWhile(answerNodes, function(node) {
+        return node !== container
+      })
+      return offsetInside + _.sum(nodesBeforeContainer.map(toNodeLength))
+    }
   }
 
   function toNodeLength(node) {
@@ -197,30 +226,32 @@
   function renderShape(shape, $element) {
     // Note: Render as SVG if we start needing anything more complicated.
     var type = shape.type
-    var style
-
-    if (type === 'rect') {
-      style = {
-        left: pct(shape.x),
-        top: pct(shape.y),
-        right: pct(1 - (shape.x + shape.width)),
-        bottom: pct(1 - (shape.y + shape.height))
-      }
-    } else if (type === 'line') {
-      style = {
-        left: pct(shape.x1),
-        top: pct(shape.y1),
-        right: pct(1 - shape.x2),
-        bottom: pct(1 - shape.y2)
-      }
-    } else {
-      throw new Error('Invalid shape: ' + type)
-    }
 
     return ($element || $('<div class="answerAnnotation" />'))
-      .css(style)
+      .css(getShapeStyles(type, shape))
       .toggleClass('line', type === 'line')
       .toggleClass('rect', type === 'rect')
+  }
+
+  function getShapeStyles(type, shape) {
+    switch (type) {
+      case 'rect':
+        return {
+          left: pct(shape.x),
+          top: pct(shape.y),
+          right: pct(1 - (shape.x + shape.width)),
+          bottom: pct(1 - (shape.y + shape.height))
+        }
+      case 'line':
+        return {
+          left: pct(shape.x1),
+          top: pct(shape.y1),
+          right: pct(1 - shape.x2),
+          bottom: pct(1 - shape.y2)
+        }
+      default:
+        throw new Error('Invalid shape: ' + type)
+    }
   }
 
   function pct(n) {
@@ -263,7 +294,8 @@
     )
   }
 
-  function mergeAnnotation(annotations, newAnnotation) {
+  function mergeAnnotation($answerText, newAnnotation) {
+    var annotations = getAnnotations($answerText)
     var parted = getOverlappingAnnotations(annotations, newAnnotation)
 
     if (parted.overlapping.length > 0) {
@@ -286,7 +318,9 @@
     return _.sortBy(
       parted.nonOverlapping,
       function(a) {
-        return a.startIndex
+        return isNaN(a.startIndex)
+          ? getImageStartIndex(findAttachment($answerText, a.attachmentIndex), $answerText)
+          : a.startIndex
       },
       function(a) {
         return a.y || a.y1
