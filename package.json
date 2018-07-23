@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint . && mocha-chrome test/test.html",
-    "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --mocha '{\"reporter\":\"spec\"}'  test/test.html",
+    "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --reporter xunit test/test.html | awk -f test/clean-xunit-output.awk > test-result.xml || true",
     "browser-test": "open test/test.html",
     "server-test": "python -m SimpleHTTPServer &> /dev/null & open http://localhost:8000/test/test.html"
   },
