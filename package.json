@@ -9,8 +9,8 @@
   "description": "Annotating text and images with comments",
   "main": "index.js",
   "scripts": {
-    "test": "eslint . && mocha-chrome test/test.html",
-    "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --reporter xunit test/test.html | awk -f test/clean-xunit-output.awk > test-result.xml || true",
+    "test": "eslint . && mocha-chrome test/test.html --chrome-flags='[\"--disable-web-security\"]'",
+    "ci-test": "nyc --reporter lcov ./node_modules/.bin/mocha-chrome --chrome-flags='[\"--disable-web-security\"]' --reporter xunit test/test.html | awk -f test/clean-xunit-output.awk > test-result.xml || true",
     "browser-test": "open test/test.html",
     "server-test": "python -m SimpleHTTPServer &> /dev/null & open http://localhost:8000/test/test.html"
   },
