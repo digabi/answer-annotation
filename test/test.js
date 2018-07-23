@@ -257,9 +257,9 @@
     })
   })
 
-  describe('When annotating image', () => {
+  describe('When annotating image', function() {
     let $wrapper
-    beforeEach(done => {
+    beforeEach(function(done) {
       $wrapper = createAndgetWrapper(
         this,
         `Lorem ipsum dolor sit amet. <br> <img src="sample_screenshot.jpg"><br> More text on another line<br>
@@ -270,6 +270,7 @@
     })
 
     it('should render rect annotation on an image', function() {
+      updateLastTitle(this)
       const annotation = {
         type: 'rect',
         attachmentIndex: 0,
@@ -292,6 +293,7 @@
     })
 
     it('should render a horizontal line annotation on an image', function() {
+      updateLastTitle(this)
       const annotation = {
         type: 'line',
         attachmentIndex: 0,
@@ -313,6 +315,7 @@
     })
 
     it('should render a vertical line annotation on an image', function() {
+      updateLastTitle(this)
       const annotation = {
         type: 'line',
         attachmentIndex: 0,
@@ -334,6 +337,7 @@
     })
 
     it('should sort cross references correctly for mixed annotations', function() {
+      updateLastTitle(this)
       const annotations = [
         {
           length: 5,
@@ -492,5 +496,8 @@
 
   function tableToMatrix(table) {
     return Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.innerText))
+  }
+  function updateLastTitle(ctx) {
+    $('h2:last').text(ctx.test.title)
   }
 })
