@@ -363,7 +363,16 @@
       createAnnotation($container, secondNode, secondNode, 0, 5, 'msg 5')
 
       createImageAnnotation($container, 0, { x1: 0, y1: 174.7890625, x2: 94.5, y2: 349.578125 }, 'msg 2')
-      expect(_.last(saves)).to.eql({
+
+      // Firefox reports some values rounded differently from Chrome.
+      const mapLeafs = (f, x) =>
+        x instanceof Array
+          ? _.map(x, x => mapLeafs(f, x))
+          : x instanceof Object
+            ? _.mapValues(x, x => mapLeafs(f, x))
+            : f(x)
+
+      expect(mapLeafs(x => (typeof x === 'number' ? +x.toFixed(2) : x), _.last(saves))).to.eql({
         answerId: '18',
         annotations: [
           { length: 5, message: 'msg 1', startIndex: 6 },
@@ -390,7 +399,7 @@
         ]
       })
 
-      expect(getAnnotationStyle($wrapper)).to.eql([
+      expect(mapLeafs(x => x.replace(/\.[0-9]*/, ''), getAnnotationStyle($wrapper))).to.eql([
         { left: '0%', top: '50%', right: '75%', bottom: '0%' },
         { left: '50%', top: '25%', right: '50%', bottom: '25%' }
       ])
