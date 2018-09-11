@@ -413,6 +413,25 @@
     })
   })
 
+  describe('When entering comment', () => {
+    it('user input is escaped properly', () => {
+      const $container = createAndgetContainer(
+        this,
+        `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
+      )
+      const container = $container.get(0)
+
+      const code = '"/><script>window.bug = "injected"</script><input value="'
+
+      createAnnotation($container, container, container, 0, 1, code)
+
+      openAnnotationDialog($container, container, container, 0, 2)
+
+      expect(window.bug).to.eql(undefined)
+      expect($container.find('.add-annotation-text').val()).to.eql(code + ' / ')
+    })
+  })
+
   mocha.run()
 
   function setAnswer(content, title, isAutograded) {
@@ -486,7 +505,7 @@
     $container.find('button').mousedown()
   }
 
-  function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
+  function openAnnotationDialog($container, startContainer, endContainer, startOffset, endOffset) {
     const range = document.createRange()
     range.setStart(startContainer, startOffset)
     range.setEnd(endContainer, endOffset)
@@ -494,6 +513,10 @@
     selection.removeAllRanges()
     selection.addRange(range)
     $container.mouseup()
+  }
+
+  function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
+    openAnnotationDialog($container, startContainer, endContainer, startOffset, endOffset)
     if (comment) {
       $container
         .find('.add-annotation-text')

@@ -231,11 +231,10 @@
       function openPopup($answerText, annotation, message, offset) {
         var $popup = localize(
           $(
-            '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value="' +
-              message +
-              '"/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>'
+            '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>'
           )
         )
+        $popup.get(0).firstChild.value = message
         $answerText.append($popup)
         $popup.css({
           position: 'absolute',
