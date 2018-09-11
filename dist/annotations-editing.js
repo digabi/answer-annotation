@@ -272,7 +272,9 @@
 
       function add($answerText, newAnnotation) {
         var data = answerAnnotationsRendering.get($answerText)
-        var annotations = data ? answerAnnotationsRendering.mergeAnnotation($answerText, newAnnotation) : [newAnnotation]
+        var annotations = data
+          ? answerAnnotationsRendering.mergeAnnotation($answerText, newAnnotation)
+          : [newAnnotation]
         $answerText.data('annotations', annotations)
         saveAnnotation(getAnswerId($answerText), annotations)
       }
