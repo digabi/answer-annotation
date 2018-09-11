@@ -432,6 +432,51 @@
     })
   })
 
+  describe('With a second layer of annotations', function() {
+    it('everything doesn\'t break down on Firefox (manual test)', function() {
+      currentTestIndex++
+
+      const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.`
+
+      const $newContainer = $('<div>')
+        .attr('id', 'answer-' + currentTestIndex)
+        .addClass('answer-wrapper').html(`
+<div data-answer-id="${currentTestIndex}" class="answer selected hasComment" style="display: flex; flex-direction: column">
+  <div class="answer-text-container" style="position: relative; width: 100%">
+    <div class="originalAnswer" style="display: none">${content}</div>
+    <div class="answerText is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
+    <div class="answerText is_censor no-mouse" style="position: absolute; top: 0; left: 0">${content}</div>
+  </div>
+  <div class="answer-annotations">
+    <div class="is_pregrading">
+      <table class="annotation-messages"></table>
+    </div>
+    <div class="is_censor">
+      <table class="annotation-messages"></table>
+    </div>
+  </div>
+</div>`)
+      $newContainer.prepend(`<h2>${this.test.title}</h2>`)
+      $answerContainer.append($newContainer)
+
+      $('body').addClass('is_censor')
+
+      $newContainer
+        .find('.answerText.is_pregrading')
+        .data('annotations', [{ startIndex: 296, length: 57, message: 'Huuhaata!' }])
+
+      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'))
+
+      annotationsEditing.setupAnnotationEditing(
+        $newContainer,
+        (answerId, annotations) => {
+          saves.push({ answerId, annotations })
+        },
+        $obj => $obj
+      )
+    })
+  })
+
   mocha.run()
 
   function setAnswer(content, title, isAutograded) {
@@ -444,8 +489,9 @@
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     <div class="answer-annotations">
-    <div class="is_pregrading">
-      <table class="annotation-messages"></table>
+      <div class="is_pregrading">
+        <table class="annotation-messages"></table>
+      </div>
     </div>
   </div>
 </div>`)
