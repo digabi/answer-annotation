@@ -260,7 +260,7 @@
 
   function appendAnnotationIndex($element, message) {
     if (message) {
-      var $annotationIndex = $('<sup />').addClass('annotationMessageIndex unselectable')
+      var $annotationIndex = $('<sup />').addClass('annotationMessageIndex')
       return $element.append($annotationIndex)
     } else {
       return $element
