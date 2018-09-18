@@ -186,18 +186,20 @@
         }
       }
 
-      function getPopupOffset(range) {
-        var markerElement = document.createElement('span')
-        markerElement.appendChild(document.createTextNode('\uFEFF'))
-        range.insertNode(markerElement)
-        var $markerElement = $(markerElement)
-        var offset = $markerElement.position()
-        $markerElement.remove()
-        return offset
+      function getRangeRects(range) {
+        var container = $(range.startContainer).closest('.answer-text-container').get(0)
+        if (container) {
+          return {
+            boundingRect: range.getBoundingClientRect(),
+            containerRect: container.getBoundingClientRect(),
+          }
+        } else {
+          return undefined
+        }
       }
 
       function openPopupFromRange(range) {
-        var selectionStartOffset = getPopupOffset(range)
+        var rangeRects = getRangeRects(range)
 
         var $answerText = $(range.startContainer).closest('.answerText')
         var annotationPos = answerAnnotationsRendering.calculatePosition($answerText, range)
@@ -225,22 +227,30 @@
         var mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
         answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
 
-        return openPopup($answerText, annotationPos, renderedMessages, selectionStartOffset)
+        return openPopup($answerText, annotationPos, renderedMessages, rangeRects)
       }
 
-      function openPopup($answerText, annotation, message, offset) {
+      function openPopup($answerText, annotation, message, rangeRects) {
         var $popup = localize(
           $(
-            '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate"></button></div>'
+            '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
           )
         )
         $popup.get(0).firstChild.value = message
         $answerText.append($popup)
-        $popup.css({
-          position: 'absolute',
-          top: offset.top - $popup.outerHeight() - 4,
-          left: offset.left
-        })
+        if (rangeRects) {
+          $popup.css({
+            position: 'absolute',
+            top: rangeRects.boundingRect.bottom - rangeRects.containerRect.top + 10,
+            left: rangeRects.boundingRect.left - rangeRects.containerRect.left,
+          })
+        } else {
+          $popup.css({
+            position: 'absolute',
+            top: $popup.outerHeight() - 4,
+            left: 0,
+          })
+        }
         $popup.find('input').focus()
 
         return $popup
