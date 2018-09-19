@@ -154,11 +154,12 @@
               var $answerText = $attachmentWrapper.closest('.answerText')
               var attachmentWrapperPosition = $attachmentWrapper.position()
               var shapePosition = $shape.position()
-              var position = {
+              var popupCss = {
+                position: 'absolute',
+                top: attachmentWrapperPosition.top + shapePosition.top + $shape.height() + 4,
                 left: attachmentWrapperPosition.left + shapePosition.left,
-                top: attachmentWrapperPosition.top + shapePosition.top
               }
-              return openPopup($answerText, shape, '', position)
+              return openPopup($answerText, shape, '', popupCss)
             })
         })
         .onValue(addAnnotation)
@@ -186,20 +187,27 @@
         }
       }
 
-      function getRangeRects(range) {
+      function getPopupCss(range) {
         var container = $(range.startContainer).closest('.answer-text-container').get(0)
+        var boundingRect = range.getBoundingClientRect()
         if (container) {
+          var containerRect = container.getBoundingClientRect()
           return {
-            boundingRect: range.getBoundingClientRect(),
-            containerRect: container.getBoundingClientRect(),
+            position: 'absolute',
+            top: boundingRect.bottom - containerRect.top + 10,
+            left: boundingRect.left - containerRect.left,
           }
         } else {
-          return undefined
+          return {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }
         }
       }
 
       function openPopupFromRange(range) {
-        var rangeRects = getRangeRects(range)
+        var popupCss = getPopupCss(range)
 
         var $answerText = $(range.startContainer).closest('.answerText')
         var annotationPos = answerAnnotationsRendering.calculatePosition($answerText, range)
@@ -227,10 +235,10 @@
         var mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
         answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
 
-        return openPopup($answerText, annotationPos, renderedMessages, rangeRects)
+        return openPopup($answerText, annotationPos, renderedMessages, popupCss)
       }
 
-      function openPopup($answerText, annotation, message, rangeRects) {
+      function openPopup($answerText, annotation, message, popupCss) {
         var $popup = localize(
           $(
             '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
@@ -238,19 +246,7 @@
         )
         $popup.get(0).firstChild.value = message
         $answerText.append($popup)
-        if (rangeRects) {
-          $popup.css({
-            position: 'absolute',
-            top: rangeRects.boundingRect.bottom - rangeRects.containerRect.top + 10,
-            left: rangeRects.boundingRect.left - rangeRects.containerRect.left,
-          })
-        } else {
-          $popup.css({
-            position: 'absolute',
-            top: $popup.outerHeight() - 4,
-            left: 0,
-          })
-        }
+        $popup.css(popupCss)
         $popup.find('input').focus()
 
         return $popup
