@@ -485,7 +485,7 @@
       .attr('id', 'answer-' + currentTestIndex)
       .addClass('answer-wrapper').html(`
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${isAutograded ? 'autograded' : ''}">
-  <div class="answer-text-container">
+  <div class="answer-text-container" style="position: relative; width: 100%">
     <div class="originalAnswer" style="display: none">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     <div class="answer-annotations">
