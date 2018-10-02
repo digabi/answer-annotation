@@ -79,14 +79,27 @@
     removeAllAnnotationPopups()
     clearExistingAnnotations($answerText, $annotationList)
 
-    annotations.forEach(function(annotation, index) {
-      var $annotationElement = renderAnnotation(annotation, index, $answerText)
-
-      if (annotation.message && annotation.message.length > 0) {
-        appendAnnotationMessage($annotationList, annotation.message)
-      }
-      appendSidebarCommentIcon($annotationElement)
+    // Render text annotations first, since they expect to see an untouched DOM
+    // without image wrapper elements.
+    _.partition(annotations, function(annotation) {
+      return !_.has(annotation, 'type')
+    }).forEach(function(annotations) {
+      annotations.forEach(function(annotation) {
+        var index = _.indexOf(annotations, annotation)
+        var $annotationElement = renderAnnotation(annotation, index, $answerText)
+        appendSidebarCommentIcon($annotationElement)
+      })
     })
+
+    // Render annotation messages after, since they need to be in the same order
+    // in the DOM as in the annotations array.
+    annotations
+      .filter(function(annotation) {
+        return annotation.message && annotation.message.length > 0
+      })
+      .forEach(function(annotation) {
+        appendAnnotationMessage($annotationList, annotation.message)
+      })
   }
 
   function renderAnnotation(annotation, index, $answerText) {
