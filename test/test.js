@@ -433,7 +433,7 @@
   })
 
   describe('With a second layer of annotations', function() {
-    it('everything doesn\'t break down on Firefox (manual test)', function() {
+    it("everything doesn't break down on Firefox (manual test)", function() {
       currentTestIndex++
 
       const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.`
@@ -573,7 +573,7 @@
   }
 
   function tableToMatrix(table) {
-    return Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.innerText))
+    return Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.innerText.trim()))
   }
   function updateLastTitle(ctx) {
     $('h2:last').text(ctx.test.title)
