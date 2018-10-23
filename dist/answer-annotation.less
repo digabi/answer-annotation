@@ -247,19 +247,33 @@ img[src^='/test/math.svg'] {
     pointer-events: all;
     position: relative;
   }
-  .attachmentWrapper {
-    display: inline-block;
-    position: relative;
-    @lineWidth: 4px;
+  @lineWidth: 4px;
 
+  .is_pregrading {
     .rect,
     .line {
       position: absolute;
-      background-color: rgba(255, 0, 0, 0.25);
+      background-color: fade(@pregrading-annotation-color, 50%);
       border: 0 !important;
       min-width: @lineWidth;
       min-height: @lineWidth;
     }
+  }
+
+  .is_censor {
+    .rect,
+    .line {
+      position: absolute;
+      background-color: fade(@censor-annotation-color, 50%);
+      border: 0 !important;
+      min-width: @lineWidth;
+      min-height: @lineWidth;
+    }
+  }
+
+  .attachmentWrapper {
+    display: inline-block;
+    position: relative;
 
     .annotationMessageIndex {
       color: #f12228;

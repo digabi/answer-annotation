@@ -434,9 +434,13 @@
 
   describe('With a second layer of annotations', function() {
     it("everything doesn't break down on Firefox (manual test)", function() {
+      $('body')
+        .removeClass('is_pregrading')
+        .addClass('is_censor')
+
       currentTestIndex++
 
-      const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.`
+      const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. <img src="sample_screenshot.jpg"> Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.`
 
       const $newContainer = $('<div>')
         .attr('id', 'answer-' + currentTestIndex)
@@ -444,8 +448,8 @@
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment" style="display: flex; flex-direction: column">
   <div class="answer-text-container" style="position: relative; width: 100%">
     <div class="originalAnswer" style="display: none">${content}</div>
-    <div class="answerText is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
-    <div class="answerText is_censor no-mouse" style="position: absolute; top: 0; left: 0">${content}</div>
+    <div class="answerText answerRichText is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
+    <div class="answerText answerRichText is_censor no-mouse" style="position: absolute; top: 0; left: 0">${content}</div>
   </div>
   <div class="answer-annotations">
     <div class="is_pregrading">
@@ -459,11 +463,18 @@
       $newContainer.prepend(`<h2>${this.test.title}</h2>`)
       $answerContainer.append($newContainer)
 
-      $('body').addClass('is_censor')
-
-      $newContainer
-        .find('.answerText.is_pregrading')
-        .data('annotations', [{ startIndex: 296, length: 57, message: 'Huuhaata!' }])
+      $newContainer.find('.answerText.is_pregrading').data('annotations', [
+        { startIndex: 296, length: 57, message: 'Huuhaata!' },
+        {
+          type: 'rect',
+          attachmentIndex: 0,
+          x: 0.25,
+          y: 0.25,
+          height: 0.5,
+          width: 0.5,
+          message: 'msg'
+        }
+      ])
 
       annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'))
 
