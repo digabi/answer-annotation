@@ -83,8 +83,8 @@
     // without image wrapper elements.
     _.partition(annotations, function(annotation) {
       return !_.has(annotation, 'type')
-    }).forEach(function(annotations) {
-      annotations.forEach(function(annotation) {
+    }).forEach(function(annotationsForType) {
+      annotationsForType.forEach(function(annotation) {
         var index = _.indexOf(annotations, annotation)
         var $annotationElement = renderAnnotation(annotation, index, $answerText)
         appendSidebarCommentIcon($annotationElement)
