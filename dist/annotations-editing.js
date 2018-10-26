@@ -86,15 +86,29 @@
         })
 
       $containerElement
-        .asEventStream('mousedown', 'img')
+        .asEventStream('mousedown', 'img, .attachmentWrapper')
         .doAction(function() {
           isMouseDown = true
         })
         .flatMapLatest(function(se) {
-          var $image = $(se.currentTarget).on('dragstart', _.stubFalse)
-          var $answerText = $image.closest('.answerText')
-          var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment($image)
-          var attachmentIndex = $answerText.find('img').index($image)
+          var $target = $(se.currentTarget)
+          // We have attached `mousedown` to `.attachmentWrapper` as well, so
+          // the target isn't necessarily the image itself.
+          var $image = $target.is('img') ? $target : $target.find('img')
+          var attachmentIndex = $image
+            .on('dragstart', _.stubFalse) // Disable dragging of the image in legacy browsers.
+            .closest('.answerText')
+            .find('img')
+            .index($image)
+          // The event will come from the topmost `.answerText`, which isn't
+          // necessarily the correct one. So we need to find the correct
+          // `.answerText` to add the annotation to.
+          var $answerText = $containerElement.is('.answerText')
+            ? $containerElement
+            : $containerElement.find('.answerText' + (isCensor() ? '.is_censor' : '.is_pregrading'))
+          var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
+            $answerText.find('img:eq(' + attachmentIndex + ')')
+          )
           var $shape
 
           var bbox = $attachmentWrapper[0].getBoundingClientRect()

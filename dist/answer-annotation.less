@@ -87,13 +87,18 @@ body #mocha .test a.replay {
     img {
       max-width: 100%;
       max-height: 1000px;
+    }
+    img,
+    .attachmentWrapper,
+    .rect,
+    .line {
       cursor: crosshair;
       -moz-user-drag: -moz-none;
       -khtml-user-drag: none;
       -webkit-user-drag: none;
       -o-user-drag: none;
       user-drag: none;
-      pointer-events: all;
+      .unselectable();
     }
     img[src='/math.svg?latex='],
     img[src=''] {
