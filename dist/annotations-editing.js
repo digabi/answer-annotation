@@ -94,18 +94,15 @@
           var $target = $(se.currentTarget)
           // We have attached `mousedown` to `.attachmentWrapper` as well, so
           // the target isn't necessarily the image itself.
-          var $image = $target.is('img') ? $target : $target.find('img')
-          var attachmentIndex = $image
-            .on('dragstart', _.stubFalse) // Disable dragging of the image in legacy browsers.
-            .closest('.answerText')
-            .find('img')
-            .index($image)
+          var $image = $target.is('img') ? $target : $target.find('img').on('dragstart', _.stubFalse) // Disable dragging of the image in legacy browsers.
+          var $targetAnswerText = $image.closest('.answerText')
+          var attachmentIndex = $targetAnswerText.find('img').index($image)
           // The event will come from the topmost `.answerText`, which isn't
           // necessarily the correct one. So we need to find the correct
           // `.answerText` to add the annotation to.
-          var $answerText = $containerElement.is('.answerText')
-            ? $containerElement
-            : $containerElement.find('.answerText' + (isCensor() ? '.is_censor' : '.is_pregrading'))
+          var $answerText = $targetAnswerText
+            .parent()
+            .children('.answerText' + (isCensor() ? '.is_censor' : '.is_pregrading'))
           var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
             $answerText.find('img:eq(' + attachmentIndex + ')')
           )
