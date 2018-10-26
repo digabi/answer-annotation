@@ -157,7 +157,7 @@
               var popupCss = {
                 position: 'absolute',
                 top: attachmentWrapperPosition.top + shapePosition.top + $shape.height() + 4,
-                left: attachmentWrapperPosition.left + shapePosition.left,
+                left: attachmentWrapperPosition.left + shapePosition.left
               }
               return openPopup($answerText, shape, '', popupCss)
             })
@@ -188,20 +188,22 @@
       }
 
       function getPopupCss(range) {
-        var container = $(range.startContainer).closest('.answer-text-container').get(0)
+        var container = $(range.startContainer)
+          .closest('.answer-text-container')
+          .get(0)
         var boundingRect = range.getBoundingClientRect()
         if (container) {
           var containerRect = container.getBoundingClientRect()
           return {
             position: 'absolute',
             top: boundingRect.bottom - containerRect.top + 10,
-            left: boundingRect.left - containerRect.left,
+            left: boundingRect.left - containerRect.left
           }
         } else {
           return {
             position: 'absolute',
             top: 0,
-            left: 0,
+            left: 0
           }
         }
       }
