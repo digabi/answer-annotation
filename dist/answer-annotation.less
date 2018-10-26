@@ -1,63 +1,23 @@
-// Test styles
-body #mocha .test a.replay {
-  position: static;
-  display: inline-block;
-}
-.testAnswerContainer {
-  flex-wrap: wrap;
-}
-.answer-text-container {
-  margin: 10px;
-}
-.answer-wrapper {
-  width: 450px;
-  margin: 10px;
-}
-
-// Copied from sa-yo
-@background-highlight-color: #e1f0ff;
-@text-color-on-highlight: #000;
-@SaBackground: #fafafa;
-@base-brand-blue: rgb(53, 155, 183);
-@pregrading-annotation-color: #f12228;
-@censor-annotation-color: #1c87b1;
-.abitti-small-font() {
-  font-size: 14px;
-}
-.popup-glow() {
+.popup {
   box-shadow: 0 0 7px 0 rgba(74, 144, 226, 0.5);
-}
-.popup() {
-  .popup-glow();
   position: absolute;
-  padding: 3px;
+  padding: 8px 12px;
   background: @popup-background;
   color: @text-color;
   border-radius: 5px;
   z-index: 300;
-}
-@popup-background: #fff;
-@text-color: #263d43;
-@base-error-text: rgb(194, 0, 25);
-.fa-icon() {
   font-size: 16px;
-  padding-left: 3px;
-  opacity: 0.9;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  display: -ms-flex;
+  display: flex;
 }
-// Library styles
-
-@arpa-invalid-choice-background: #ffc8c8;
-@arpa-score-input-field-background: #fff;
-@arpa-layout-width: 1280px;
-
-@fa-check-circle: '\f058';
-@fa-exclamation-circle: '\f06a';
 
 .answer {
   counter-reset: annotation-counter annotation-messages-counter;
   padding: 26px;
   position: relative;
-  display: flex;
 
   &.hasComment {
     .comment {
@@ -83,17 +43,17 @@ body #mocha .test a.replay {
     position: relative;
   }
   .answerRichText {
-    white-space: normal;
-    img {
-      max-width: 100%;
-      max-height: 1000px;
+    img,
+    .attachmentWrapper,
+    .rect,
+    .line {
       cursor: crosshair;
       -moz-user-drag: -moz-none;
       -khtml-user-drag: none;
       -webkit-user-drag: none;
       -o-user-drag: none;
       user-drag: none;
-      pointer-events: all;
+      .unselectable();
     }
     img[src='/math.svg?latex='],
     img[src=''] {
@@ -160,7 +120,6 @@ body #mocha .test a.replay {
     right: -12px;
     line-height: 25px;
     font-size: 13px;
-    background-color: @SaBackground;
     color: @base-brand-blue;
   }
   .is_pregrading {
@@ -172,7 +131,7 @@ body #mocha .test a.replay {
     }
     .rect,
     .line {
-      background-color: fade(@pregrading-annotation-color, 50%);
+      background-color: fade(@pregrading-annotation-color, 25%);
     }
   }
   .is_censor {
@@ -184,7 +143,7 @@ body #mocha .test a.replay {
     }
     .rect,
     .line {
-      background-color: fade(@censor-annotation-color, 50%);
+      background-color: fade(@censor-annotation-color, 25%);
     }
   }
   .annotationPlaceholder {
@@ -197,7 +156,7 @@ body #mocha .test a.replay {
       content: '-';
     }
     td {
-      .abitti-small-font();
+      font-size: 14px;
       padding-bottom: 5px;
       line-height: 17px;
       margin: 0;
@@ -213,25 +172,13 @@ body #mocha .test a.replay {
     }
   }
 
-  .annotation-popup() {
-    .popup();
-    font-size: 16px;
-    font-weight: 400;
-    white-space: nowrap;
-    overflow: hidden;
-  }
   .add-annotation-popup {
     pointer-events: all;
-    .annotation-popup();
-    padding: 8px 0 8px 12px;
     span {
       border-bottom: 1px solid @base-error-text;
       line-height: 15px;
-      display: block;
     }
     input {
-      position: relative;
-      left: 0;
       padding-left: 24px;
       width: 280px;
     }
@@ -240,31 +187,26 @@ body #mocha .test a.replay {
       width: 90px;
       height: 30px;
       line-height: 30px;
-      position: relative;
-      left: -12px;
+      margin-left: 6px;
     }
     .fa-comment {
-      position: relative;
-      top: -1px;
-      left: -273px;
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      width: 1em;
     }
   }
   .remove-annotation-popup {
-    .annotation-popup();
     display: none;
-    position: absolute;
-    top: -36px;
-    padding-left: 12px;
-    padding-right: 12px;
     font-style: italic;
-    line-height: 15px;
     z-index: 2;
+    transform: translateY(-100%);
+    cursor: auto;
     i {
-      .fa-icon();
+      font-size: 16px;
+      padding-left: 3px;
       opacity: 0.7;
-      display: inline-block;
       vertical-align: middle;
-      width: 16px;
     }
   }
   .remove-annotation-area {
@@ -272,9 +214,6 @@ body #mocha .test a.replay {
     font-style: normal;
   }
   .annotation-message {
-    padding: 8px 0;
-    vertical-align: middle;
-    display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     max-width: 360px;
@@ -322,6 +261,7 @@ body #mocha .test a.replay {
     }
   }
 }
+
 .answer-annotations {
   margin-top: 20px;
   display: flex;
@@ -335,11 +275,13 @@ body #mocha .test a.replay {
     color: @text-color;
   }
 }
+
 .answer-length {
   font-size: 16px;
   color: #6d6d6d;
   margin-bottom: 15px;
 }
+
 .no-mouse {
   pointer-events: none !important;
 }
