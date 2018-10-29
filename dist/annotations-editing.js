@@ -26,8 +26,8 @@
 
     function setupAnnotationRemoval($answers) {
       $answers.on('mousedown', '.remove-annotation-area', function(event) {
-        event.preventDefault()
         removeAnnotation($(event.target).closest('.answerAnnotation'))
+        return false
       })
 
       function removeAnnotation($annotationElem) {
@@ -89,6 +89,7 @@
         .asEventStream('mousedown', 'img, .attachmentWrapper')
         .doAction(function() {
           isMouseDown = true
+          return false
         })
         .flatMapLatest(function(se) {
           var $target = $(se.currentTarget)
