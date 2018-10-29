@@ -255,7 +255,7 @@
       function openPopup($answerText, annotation, message, popupCss) {
         var $popup = localize(
           $(
-            '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
+            '<div class="popup add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
           )
         )
         $popup.get(0).firstChild.value = message
@@ -362,7 +362,9 @@
     }
 
     function popupWithMessage($annotation, message) {
-      var $messageContainer = $('<span class="remove-annotation-popup"><span class="annotation-message"></span></span>')
+      var $messageContainer = $(
+        '<span class="popup remove-annotation-popup"><span class="annotation-message"></span></span>'
+      )
       $messageContainer.find('.annotation-message').text(message || '-')
       if (isAllowedToRemoveAnnotation($annotation)) {
         $messageContainer.append('<i class="fa fa-times-circle remove-annotation-area"></i>')

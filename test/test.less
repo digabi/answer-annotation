@@ -1,0 +1,71 @@
+@popup-background: #fff;
+@text-color: #333;
+@base-error-text: rgb(240, 60, 60);
+
+@background-highlight-color: #e1f0ff;
+@text-color-on-highlight: #000;
+@SaBackground: #fafafa;
+@base-brand-blue: rgb(53, 155, 183);
+@pregrading-annotation-color: #f12228;
+@censor-annotation-color: #1c87b1;
+
+body #mocha .test a.replay {
+  position: static;
+  display: inline-block;
+}
+
+.testAnswerContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.answer-text-container {
+  margin: 10px;
+}
+
+.answer-wrapper {
+  width: 450px;
+  margin: 10px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+input[type='text'] {
+  background: white;
+  border: 2px solid #e6e6e6;
+  padding: 3px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #333333;
+  &:focus {
+    box-shadow: 0 0 5px rgba(0, 110, 210, 0.4) !important;
+    outline: none;
+    border-color: rgba(0, 110, 210, 0.7) !important;
+  }
+}
+
+button {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 25px;
+  text-align: center;
+  background: #006ed2;
+  color: white;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+  width: 220px;
+  height: 40px;
+  line-height: 40px;
+  margin-bottom: 30px;
+  margin-right: 10px;
+}
+
+@import '../dist/answer-annotation.less';
