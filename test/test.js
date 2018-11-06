@@ -372,7 +372,7 @@
             ? _.mapValues(x, x => mapLeafs(f, x))
             : f(x)
 
-      expect(mapLeafs(x => (typeof x === 'number' ? +x.toFixed(2) : x), _.last(saves))).to.eql({
+      expect(mapLeafs(x => (_.isNumber(x) ? _.round(x, 2) : x), _.last(saves))).to.eql({
         answerId: '18',
         annotations: [
           { length: 5, message: 'msg 1', startIndex: 6 },
@@ -380,9 +380,9 @@
             type: 'rect',
             attachmentIndex: 0,
             x: 0,
-            y: 0.5,
-            width: 0.25,
-            height: 0.5,
+            y: 0.47,
+            width: 0.24,
+            height: 0.47,
             message: 'msg 2'
           },
           { startIndex: 30, length: 5, message: 'msg 3' },
@@ -400,7 +400,7 @@
       })
 
       expect(mapLeafs(x => x.replace(/\.[0-9]*/, ''), getAnnotationStyle($wrapper))).to.eql([
-        { left: '0%', top: '50%', right: '75%', bottom: '0%' },
+        { left: '0%', top: '47%', right: '76%', bottom: '5%' },
         { left: '50%', top: '25%', right: '50%', bottom: '25%' }
       ])
       expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([

@@ -26,8 +26,8 @@
 
     function setupAnnotationRemoval($answers) {
       $answers.on('mousedown', '.remove-annotation-area', function(event) {
-        event.preventDefault()
         removeAnnotation($(event.target).closest('.answerAnnotation'))
+        return false
       })
 
       function removeAnnotation($annotationElem) {
@@ -86,15 +86,27 @@
         })
 
       $containerElement
-        .asEventStream('mousedown', 'img')
+        .asEventStream('mousedown', 'img, .attachmentWrapper')
         .doAction(function() {
           isMouseDown = true
+          return false
         })
         .flatMapLatest(function(se) {
-          var $image = $(se.currentTarget).on('dragstart', _.stubFalse)
-          var $answerText = $image.closest('.answerText')
-          var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment($image)
-          var attachmentIndex = $answerText.find('img').index($image)
+          var $target = $(se.currentTarget)
+          // We have attached `mousedown` to `.attachmentWrapper` as well, so
+          // the target isn't necessarily the image itself.
+          var $image = $target.is('img') ? $target : $target.find('img')
+          var $targetAnswerText = $image.on('dragstart', false).closest('.answerText')
+          var attachmentIndex = $targetAnswerText.find('img').index($image)
+          // The event will come from the topmost `.answerText`, which isn't
+          // necessarily the correct one. So we need to find the correct
+          // `.answerText` to add the annotation to.
+          var $answerText = $targetAnswerText
+            .parent()
+            .children('.answerText' + (isCensor() ? '.is_censor' : '.is_pregrading'))
+          var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
+            $answerText.find('img:eq(' + attachmentIndex + ')')
+          )
           var $shape
 
           var bbox = $attachmentWrapper[0].getBoundingClientRect()
@@ -157,7 +169,7 @@
               var popupCss = {
                 position: 'absolute',
                 top: attachmentWrapperPosition.top + shapePosition.top + $shape.height() + 4,
-                left: attachmentWrapperPosition.left + shapePosition.left,
+                left: attachmentWrapperPosition.left + shapePosition.left
               }
               return openPopup($answerText, shape, '', popupCss)
             })
@@ -188,20 +200,22 @@
       }
 
       function getPopupCss(range) {
-        var container = $(range.startContainer).closest('.answer-text-container').get(0)
+        var container = $(range.startContainer)
+          .closest('.answer-text-container')
+          .get(0)
         var boundingRect = range.getBoundingClientRect()
         if (container) {
           var containerRect = container.getBoundingClientRect()
           return {
             position: 'absolute',
             top: boundingRect.bottom - containerRect.top + 10,
-            left: boundingRect.left - containerRect.left,
+            left: boundingRect.left - containerRect.left
           }
         } else {
           return {
             position: 'absolute',
             top: 0,
-            left: 0,
+            left: 0
           }
         }
       }
@@ -241,7 +255,7 @@
       function openPopup($answerText, annotation, message, popupCss) {
         var $popup = localize(
           $(
-            '<div class="add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
+            '<div class="popup add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
           )
         )
         $popup.get(0).firstChild.value = message
@@ -348,7 +362,9 @@
     }
 
     function popupWithMessage($annotation, message) {
-      var $messageContainer = $('<span class="remove-annotation-popup"><span class="annotation-message"></span></span>')
+      var $messageContainer = $(
+        '<span class="popup remove-annotation-popup"><span class="annotation-message"></span></span>'
+      )
       $messageContainer.find('.annotation-message').text(message || '-')
       if (isAllowedToRemoveAnnotation($annotation)) {
         $messageContainer.append('<i class="fa fa-times-circle remove-annotation-area"></i>')
