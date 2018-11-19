@@ -87,3 +87,9 @@ typings/
 .env
 
 .idea/
+
+*~
+*.swp
+/dist/*.js
+/dist/*.js.map
+/dist-umd

@@ -1,18 +1,18 @@
 {
+  "extends": [
+    "eslint:recommended",
+    "plugin:promise/recommended",
+    "plugin:import/errors",
+    "plugin:prettier/recommended"
+  ],
   "parserOptions": {
-    "ecmaVersion": 5,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
-    }
+    "ecmaVersion": 2018,
+    "sourceType": "module"
   },
-  "extends": "eslint:recommended",
   "env": {
     "browser": true,
-    "mocha": true,
-    "jquery": true
+    "es6": true,
+    "node": true
   },
-  "rules": {
-    "no-undef": "off"
-  }
+  "plugins": ["promise"]
 }

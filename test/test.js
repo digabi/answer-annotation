@@ -1,19 +1,27 @@
 // eslint-disable-next-line no-extra-semi
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['mocha', 'chai', '../dist/annotations-rendering', '../dist/annotations-editing', 'jquery'], factory)
+    define([
+      'mocha',
+      'chai',
+      '../dist-umd/annotations-rendering',
+      '../dist-umd/annotations-editing',
+      'jquery',
+      'lodash'
+    ], factory)
   } else if (typeof exports === 'object') {
     module.exports = factory(
       require('mocha'),
       require('chai'),
-      require('./dist/annotations-rendering'),
-      require('./dist/annotations-editing'),
-      require('jquery')
+      require('./dist-umd/annotations-rendering'),
+      require('./dist-umd/annotations-editing'),
+      require('jquery'),
+      require('lodash')
     )
   } else {
-    factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery)
+    factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery, root._)
   }
-})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $) {
+})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _) {
   'use strict'
 
   chai.config.truncateThreshold = 0
@@ -369,8 +377,8 @@
         x instanceof Array
           ? _.map(x, x => mapLeafs(f, x))
           : x instanceof Object
-            ? _.mapValues(x, x => mapLeafs(f, x))
-            : f(x)
+          ? _.mapValues(x, x => mapLeafs(f, x))
+          : f(x)
 
       expect(mapLeafs(x => (_.isNumber(x) ? _.round(x, 2) : x), _.last(saves))).to.eql({
         answerId: '18',
