@@ -24,7 +24,7 @@
     "watch:tsc": "tsc -p src -w --preserveWatchOutput",
     "watch:umd": "rollup -c -w",
     "watch": "concurrently --prefix \"[{name}]\" --names \"TSC,UMD\" -c \"bgBlue.bold\" \"npm run watch:tsc\" \"npm run watch:umd\"",
-    "prepare": " npm run build"
+    "prepare": "npm run clean && npm run build"
   },
   "devDependencies": {
     "baconjs": "^1.0.0",
