@@ -1,6 +1,13 @@
 {
   "name": "@digabi/answer-annotation",
   "version": "6.0.0",
+  "author": "",
+  "license": "(GPL-3.0 OR MIT)",
+  "files": [
+    "src/",
+    "dist/",
+    "dist-umd/"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/digabi/answer-annotation"
@@ -19,8 +26,6 @@
     "watch": "concurrently --prefix \"[{name}]\" --names \"TSC,UMD\" -c \"bgBlue.bold\" \"npm run watch:tsc\" \"npm run watch:umd\"",
     "prepare": " npm run build"
   },
-  "author": "",
-  "license": "(GPL-3.0 OR MIT)",
   "devDependencies": {
     "baconjs": "^1.0.0",
     "chai": "^4.2.0",
