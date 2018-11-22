@@ -1,13 +1,11 @@
 {
   "name": "@digabi/answer-annotation",
-  "version": "6.0.0-dev1",
-  "private": true,
+  "version": "6.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/digabi/answer-annotation"
   },
   "description": "Annotating text and images with comments",
-  "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist/*.js dist/*.js.map dist-umd/",
     "test": "npm run build && eslint . && mocha-chrome test/test.html --chrome-flags='[\"--disable-web-security\"]'",
@@ -22,7 +20,7 @@
     "prepare": " npm run build"
   },
   "author": "",
-  "license": "ISC",
+  "license": "(GPL-3.0 OR MIT)",
   "devDependencies": {
     "baconjs": "^1.0.0",
     "chai": "^4.2.0",

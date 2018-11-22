@@ -9,18 +9,16 @@ EOF
     exit 2
 fi
 
-npm test
 VERSION=$1
-npm version ${VERSION}
+
+npm version ${VERSION} -m "Release %s"
 
 cat <<EOF
-
 Updated package.json and created the version tag.
 
 Check your version history, if all is fine, push with :
 
     git push --follow-tags
+    npm publish
 
 EOF
-
-

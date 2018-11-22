@@ -6,6 +6,11 @@ Utils for annotating answers for Finnish Matriculation Examination Board.
 
 ![example](sample-image.png)
 
+There are two separate builds:
+
+* `dist`: ES2017 code, ES modules
+* `dist/umd`: ES5 code, UMD bundles
+
 # Tests & playground
 
 http://digabi.github.io/answer-annotation/test/static-test.html
