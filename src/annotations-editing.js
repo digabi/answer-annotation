@@ -4,26 +4,26 @@ import * as Bacon from 'baconjs'
 import * as answerAnnotationsRendering from './annotations-rendering'
 
 $.fn.asEventStream = Bacon.$.asEventStream
-var ESC = 27
-var ENTER = 13
-var isMouseDown = false
+const ESC = 27
+const ENTER = 13
+let isMouseDown = false
 
 export function setupAnnotationEditing($containerElement, saveAnnotation, localize) {
   setupAnnotationAddition($containerElement)
   setupAnnotationRemoval($containerElement)
 
   function setupAnnotationRemoval($answers) {
-    $answers.on('mousedown', '.remove-annotation-area', function(event) {
+    $answers.on('mousedown', '.remove-annotation-area', event => {
       removeAnnotation($(event.target).closest('.answerAnnotation'))
       return false
     })
 
     function removeAnnotation($annotationElem) {
       // eslint-disable-line no-shadow
-      var $answerText = $annotationElem.closest('.answerText')
-      var annotationIndex = Number($annotationElem.data('index'))
-      var annotations = answerAnnotationsRendering.get($answerText)
-      var updatedAnnotations = _.without(annotations, annotations[annotationIndex])
+      const $answerText = $annotationElem.closest('.answerText')
+      const annotationIndex = Number($annotationElem.data('index'))
+      const annotations = answerAnnotationsRendering.get($answerText)
+      const updatedAnnotations = _.without(annotations, annotations[annotationIndex])
       $answerText.data('annotations', updatedAnnotations)
       saveAnnotation(getAnswerId($answerText), updatedAnnotations)
       answerAnnotationsRendering.renderAnnotationsForElement($answerText)
@@ -35,15 +35,15 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     $containerElement
       .asEventStream('mouseup')
       .filter(hasTextSelectedInAnswerText)
-      .map(function() {
+      .map(() => {
         $('.remove-annotation-popup').remove()
         return getBrowserTextSelection().getRangeAt(0)
       })
-      .filter(function(range) {
+      .filter(range => {
         if (selectionHasNothingToUnderline(range)) {
           return false
         }
-        var $container = $(range.commonAncestorContainer)
+        const $container = $(range.commonAncestorContainer)
         return (
           !$container.hasClass('add-annotation-popup') &&
           ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0) &&
@@ -55,76 +55,70 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
 
     $containerElement
       .asEventStream('mousedown')
-      .filter(function(e) {
-        return !$(e.target).closest('.add-annotation-text').length && !$(e.target).closest('.annotation-message').length
-      })
-      .merge(
-        $containerElement.asEventStream('keyup').filter(function(e) {
-          return e.keyCode === ESC
-        })
+      .filter(
+        e => !$(e.target).closest('.add-annotation-text').length && !$(e.target).closest('.annotation-message').length
       )
-      .onValue(function() {
+      .merge($containerElement.asEventStream('keyup').filter(e => e.keyCode === ESC))
+      .onValue(() => {
         getBrowserTextSelection().removeAllRanges()
         // Render annotations for all answers that have popup open. This clears the popup and annotation that was merged for rendering before opening popup.
-        $('.add-annotation-popup').each(function(index, popup) {
+        $('.add-annotation-popup').each((index, popup) => {
           answerAnnotationsRendering.renderAnnotationsForElement($(popup).closest('.answerText'))
         })
       })
 
     $containerElement
       .asEventStream('mousedown', 'img, .attachmentWrapper')
-      .filter(function(e) {
-        return e.button === 0
-      })
-      .doAction(function() {
+      .filter(e => e.button === 0)
+      .doAction(() => {
         isMouseDown = true
         return false
       })
-      .flatMapLatest(function(se) {
-        var $target = $(se.currentTarget)
+      .flatMapLatest(se => {
+        const $target = $(se.currentTarget)
         // We have attached `mousedown` to `.attachmentWrapper` as well, so
         // the target isn't necessarily the image itself.
-        var $image = $target.is('img') ? $target : $target.find('img')
-        var $targetAnswerText = $image.on('dragstart', false).closest('.answerText')
-        var attachmentIndex = $targetAnswerText.find('img').index($image)
+        const $image = $target.is('img') ? $target : $target.find('img')
+        const $targetAnswerText = $image.on('dragstart', false).closest('.answerText')
+        const attachmentIndex = $targetAnswerText.find('img').index($image)
         // The event will come from the topmost `.answerText`, which isn't
         // necessarily the correct one. So we need to find the correct
         // `.answerText` to add the annotation to.
-        var $answerText = $targetAnswerText
+        const $answerText = $targetAnswerText
           .parent()
           .children('.answerText' + (isCensor() ? '.is_censor' : '.is_pregrading'))
-        var $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
-          $answerText.find('img:eq(' + attachmentIndex + ')')
+        const $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
+          $answerText.find(`img:eq(${attachmentIndex})`)
         )
-        var $shape
+        let $shape
 
-        var bbox = $attachmentWrapper[0].getBoundingClientRect()
-        var startX = clamp((se.clientX - bbox.left) / bbox.width)
-        var startY = clamp((se.clientY - bbox.top) / bbox.height)
+        const bbox = $attachmentWrapper[0].getBoundingClientRect()
+        const startX = clamp((se.clientX - bbox.left) / bbox.width)
+        const startY = clamp((se.clientY - bbox.top) / bbox.height)
 
-        var lineThresholdPx = 10
+        const lineThresholdPx = 10
 
-        var mouseUpE = $(window)
+        const mouseUpE = $(window)
           .asEventStream('mouseup')
-          .doAction(function() {
+          .doAction(() => {
             isMouseDown = false
           })
 
         return $(window)
           .asEventStream('mousemove')
           .takeUntil(mouseUpE)
-          .flatMapLatest(function(e) {
-            var currentX = clamp((e.clientX - bbox.left) / bbox.width)
-            var currentY = clamp((e.clientY - bbox.top) / bbox.height)
-            var isVerticalLine = Math.abs(se.clientX - e.clientX) <= lineThresholdPx
-            var isHorizontalLine = Math.abs(se.clientY - e.clientY) <= lineThresholdPx
-            var type = isVerticalLine || isHorizontalLine ? 'line' : 'rect'
+          .flatMapLatest(e => {
+            const currentX = clamp((e.clientX - bbox.left) / bbox.width)
+            const currentY = clamp((e.clientY - bbox.top) / bbox.height)
+            const isVerticalLine = Math.abs(se.clientX - e.clientX) <= lineThresholdPx
+            const isHorizontalLine = Math.abs(se.clientY - e.clientY) <= lineThresholdPx
+            const type = isVerticalLine || isHorizontalLine ? 'line' : 'rect'
 
             switch (type) {
               case 'rect': {
                 return {
                   type: 'rect',
-                  attachmentIndex: attachmentIndex,
+                  attachmentIndex,
                   x: Math.min(startX, currentX),
                   y: Math.min(startY, currentY),
                   width: Math.abs(currentX - startX),
@@ -134,7 +128,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
               case 'line': {
                 return {
                   type: 'line',
-                  attachmentIndex: attachmentIndex,
+                  attachmentIndex,
                   x1: isVerticalLine ? startX : Math.min(startX, currentX),
                   y1: isHorizontalLine ? startY : Math.min(startY, currentY),
                   x2: isVerticalLine ? startX : Math.max(startX, currentX),
@@ -143,19 +137,19 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
               }
             }
           })
-          .doAction(function(shape) {
-            var doAppend = $shape == null
+          .doAction(shape => {
+            const doAppend = $shape == null
             $shape = answerAnnotationsRendering.renderShape(shape, $shape)
             if (doAppend) {
               $attachmentWrapper.append($shape)
             }
           })
           .last()
-          .flatMapLatest(function(shape) {
-            var $answerText = $attachmentWrapper.closest('.answerText')
-            var attachmentWrapperPosition = $attachmentWrapper.position()
-            var shapePosition = $shape.position()
-            var popupCss = {
+          .flatMapLatest(shape => {
+            const $answerText = $attachmentWrapper.closest('.answerText')
+            const attachmentWrapperPosition = $attachmentWrapper.position()
+            const shapePosition = $shape.position()
+            const popupCss = {
               position: 'absolute',
               top: attachmentWrapperPosition.top + shapePosition.top + $shape.height() + 4,
               left: attachmentWrapperPosition.left + shapePosition.left
@@ -170,31 +164,26 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     }
 
     function selectionHasNothingToUnderline(range) {
-      var contents = range.cloneContents()
-      var hasImages = _.includes(
-        _.toArray(contents.childNodes).map(function(x) {
-          return x.tagName
-        }),
-        'IMG'
-      )
+      const contents = range.cloneContents()
+      let hasImages = _.includes(_.toArray(contents.childNodes).map(x => x.tagName), 'IMG')
       return contents.textContent.length === 0 && !hasImages
     }
 
     function preventDragSelectionFromOverlappingCensorAnswerText($containerElem) {
       if (isCensor()) {
-        $containerElem.on('mousedown mouseup', function(e) {
+        $containerElem.on('mousedown mouseup', e => {
           $('.answerText.is_censor .answerAnnotation').toggleClass('no-mouse', e.type === 'mousedown')
         })
       }
     }
 
     function getPopupCss(range) {
-      var container = $(range.startContainer)
+      const container = $(range.startContainer)
         .closest('.answer-text-container')
         .get(0)
-      var boundingRect = range.getBoundingClientRect()
+      const boundingRect = range.getBoundingClientRect()
       if (container) {
-        var containerRect = container.getBoundingClientRect()
+        const containerRect = container.getBoundingClientRect()
         return {
           position: 'absolute',
           top: boundingRect.bottom - containerRect.top + 10,
@@ -210,10 +199,10 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     }
 
     function openPopupFromRange(range) {
-      var popupCss = getPopupCss(range)
+      const popupCss = getPopupCss(range)
 
-      var $answerText = $(range.startContainer).closest('.answerText')
-      var annotationPos = answerAnnotationsRendering.calculatePosition($answerText, range)
+      let $answerText = $(range.startContainer).closest('.answerText')
+      const annotationPos = answerAnnotationsRendering.calculatePosition($answerText, range)
 
       if (isCensor() && !$answerText.hasClass('is_censor')) {
         // render annotations to censor answer text element even if event cought via double click
@@ -222,27 +211,25 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
           .find('.answerText.is_censor')
       }
 
-      var messages = answerAnnotationsRendering.getOverlappingMessages(
+      const messages = answerAnnotationsRendering.getOverlappingMessages(
         $answerText,
         annotationPos.startIndex,
         annotationPos.length
       )
-      var renderedMessages = messages.reduceRight(function(msg, str) {
-        return str + ' / ' + msg
-      }, '')
+      const renderedMessages = messages.reduceRight((msg, str) => `${str} / ${msg}`, '')
 
       getBrowserTextSelection().removeAllRanges()
 
       // Merge and render annotation to show what range it will contain if annotation gets added
       // Merged annotation not saved yet, so on cancel previous state is rendered
-      var mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
+      const mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
       answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
 
       return openPopup($answerText, annotationPos, renderedMessages, popupCss)
     }
 
     function openPopup($answerText, annotation, message, popupCss) {
-      var $popup = localize(
+      const $popup = localize(
         $(
           '<div class="popup add-annotation-popup"><input class="add-annotation-text" type="text" value=""/><i class="fa fa-comment"></i><button data-i18n="arpa.annotate">Merkitse</button></div>'
         )
@@ -255,18 +242,14 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       return $popup
         .find('button')
         .asEventStream('mousedown')
-        .merge(
-          $popup.asEventStream('keyup').filter(function(e) {
-            return e.keyCode === ENTER
-          })
-        )
-        .map(function() {
-          var message = $('.add-annotation-text')
+        .merge($popup.asEventStream('keyup').filter(e => e.keyCode === ENTER))
+        .map(() => {
+          const message = $('.add-annotation-text')
             .val()
             .trim()
           return {
-            $answerText: $answerText,
-            annotation: _.assign({}, annotation, { message: message })
+            $answerText,
+            annotation: _.assign({}, annotation, { message })
           }
         })
     }
@@ -279,8 +262,10 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     }
 
     function add($answerText, newAnnotation) {
-      var data = answerAnnotationsRendering.get($answerText)
-      var annotations = data ? answerAnnotationsRendering.mergeAnnotation($answerText, newAnnotation) : [newAnnotation]
+      const data = answerAnnotationsRendering.get($answerText)
+      const annotations = data
+        ? answerAnnotationsRendering.mergeAnnotation($answerText, newAnnotation)
+        : [newAnnotation]
       $answerText.data('annotations', annotations)
       saveAnnotation(getAnswerId($answerText), annotations)
     }
@@ -288,9 +273,9 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
 }
 
 export function setupAnnotationDisplaying($answers) {
-  var fadeOutDelayTimeout = void 0
-  $answers.on('mouseenter', '.answerAnnotation', function(event) {
-    var $annotation = $(event.target)
+  let fadeOutDelayTimeout = void 0
+  $answers.on('mouseenter', '.answerAnnotation', event => {
+    const $annotation = $(event.target)
     if (isMouseDown || addAnnotationPopupIsVisible() || hasTextSelectedInAnswerText()) {
       return
     }
@@ -306,15 +291,15 @@ export function setupAnnotationDisplaying($answers) {
       renderRemovePopup(event)
     }
   })
-  $answers.on('mouseleave', '.answerAnnotation', function(event) {
-    fadeOutDelayTimeout = setTimeout(function() {
+  $answers.on('mouseleave', '.answerAnnotation', event => {
+    fadeOutDelayTimeout = setTimeout(() => {
       removeRemovePopup(event)
     }, 400)
   })
 
   function popupAlreadyShownForCurrentAnnotation(event) {
-    var mouseOverAnnotationElem = $(event.target).closest('.answerAnnotation')[0]
-    var popupsCurrentAnnotationElem = $('.remove-annotation-popup:visible').closest('.answerAnnotation')[0]
+    const mouseOverAnnotationElem = $(event.target).closest('.answerAnnotation')[0]
+    const popupsCurrentAnnotationElem = $('.remove-annotation-popup:visible').closest('.answerAnnotation')[0]
     return (
       event &&
       mouseOverAnnotationElem &&
@@ -332,24 +317,24 @@ export function setupAnnotationDisplaying($answers) {
   }
 
   function renderRemovePopup(event) {
-    var $annotation = $(event.currentTarget)
-    var $popup = popupWithMessage($annotation, $annotation.attr('data-message'))
+    const $annotation = $(event.currentTarget)
+    const $popup = popupWithMessage($annotation, $annotation.attr('data-message'))
     $annotation.append($popup)
-    var left = mouseOffsetX(event) - $popup.outerWidth() / 2
-    $popup.css({ left: left })
+    const left = mouseOffsetX(event) - $popup.outerWidth() / 2
+    $popup.css({ left })
     $popup.fadeIn()
   }
 
   function removeRemovePopup(event) {
-    var $annotation = $(event.target).closest('.answerAnnotation')
-    var popup = $annotation.find('.remove-annotation-popup')
-    popup.fadeOut(100, function() {
+    const $annotation = $(event.target).closest('.answerAnnotation')
+    const popup = $annotation.find('.remove-annotation-popup')
+    popup.fadeOut(100, () => {
       popup.remove()
     })
   }
 
   function popupWithMessage($annotation, message) {
-    var $messageContainer = $(
+    const $messageContainer = $(
       '<span class="popup remove-annotation-popup"><span class="annotation-message"></span></span>'
     )
     $messageContainer.find('.annotation-message').text(message || '-')
@@ -363,7 +348,7 @@ export function setupAnnotationDisplaying($answers) {
     return isPregradingAndScoringEnabled() || isCensorAndOwnAnnotation()
 
     function isPregradingAndScoringEnabled() {
-      var $body = $('body')
+      const $body = $('body')
       return $body.hasClass('is_pregrading') && !$body.hasClass('preview')
     }
 
@@ -373,8 +358,8 @@ export function setupAnnotationDisplaying($answers) {
   }
 
   function mouseOffsetX(mousemove) {
-    var annotation = mousemove.target
-    var annotationLeftOffsetFromPageEdge =
+    const annotation = mousemove.target
+    const annotationLeftOffsetFromPageEdge =
       $(annotation)
         .offsetParent()
         .offset().left + annotation.offsetLeft
@@ -399,14 +384,14 @@ function getBrowserTextSelection() {
 }
 
 function hasTextSelectedInAnswerText() {
-  var selection = getBrowserTextSelection()
+  const selection = getBrowserTextSelection()
   return (
     selection && selectionInAnswerText(selection) && (isRangeSelection(selection) || textSelectedInRange(selection))
   )
 
   function selectionInAnswerText(sel) {
     if (sel.type === 'None' || sel.type === 'Caret' || sel.rangeCount === 0) return false
-    var $startContainer = $(sel.getRangeAt(0).startContainer)
+    const $startContainer = $(sel.getRangeAt(0).startContainer)
     return (
       sel.rangeCount &&
       $startContainer.closest('.answerText').length === 1 &&
@@ -419,7 +404,7 @@ function hasTextSelectedInAnswerText() {
   }
 
   function textSelectedInRange(sel) {
-    var range = sel.getRangeAt(0)
+    const range = sel.getRangeAt(0)
     return (
       _.get(sel, 'rangeCount', 0) > 0 &&
       (range.toString().length > 0 || isParentContainer(range.startContainer) || isParentContainer(range.endContainer))
