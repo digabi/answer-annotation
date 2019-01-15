@@ -558,9 +558,9 @@
     const $lastImg = $container.find('img').eq(imageIndex)
     const rect = $lastImg.get(0).getBoundingClientRect()
     $lastImg
-      .trigger({ type: 'mousedown', clientX: rect.left + dimensions.x1, clientY: rect.top + dimensions.y1 })
-      .trigger({ type: 'mousemove', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2 })
-      .trigger({ type: 'mouseup', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2 })
+      .trigger({ type: 'mousedown', clientX: rect.left + dimensions.x1, clientY: rect.top + dimensions.y1, button: 0 })
+      .trigger({ type: 'mousemove', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2, button: 0 })
+      .trigger({ type: 'mouseup', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2, button: 0 })
     if (comment) {
       $container
         .find('.add-annotation-text')

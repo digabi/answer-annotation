@@ -74,7 +74,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     $containerElement
       .asEventStream('mousedown', 'img, .attachmentWrapper')
       .filter(function(e) {
-        return e.originalEvent.button === 0
+        return e.button === 0
       })
       .doAction(function() {
         isMouseDown = true
