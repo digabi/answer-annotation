@@ -441,8 +441,9 @@
   })
 
   describe('With a second layer of annotations', function() {
-    it("everything doesn't break down on Firefox (manual test)", function() {
-      $('body')
+    let $newContainer
+    before("everything doesn't break down on Firefox (manual test)", function() {
+      $('.testAnswerContainer')
         .removeClass('is_pregrading')
         .addClass('is_censor')
 
@@ -450,7 +451,7 @@
 
       const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. <img src="sample_screenshot.jpg"> Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.`
 
-      const $newContainer = $('<div>')
+      $newContainer = $('<div>')
         .attr('id', 'answer-' + currentTestIndex)
         .addClass('answer-wrapper').html(`
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment" style="display: flex; flex-direction: column">
@@ -483,8 +484,21 @@
           message: 'msg'
         }
       ])
+      $newContainer.find('.answerText.is_censor').data('annotations', [
+        { startIndex: 26, length: 57, message: 'Huuhaata2!' },
+        {
+          type: 'rect',
+          attachmentIndex: 0,
+          x: 0.2,
+          y: 0.2,
+          height: 0.2,
+          width: 0.2,
+          message: 'msg2'
+        }
+      ])
 
       annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'))
+      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_censor'))
 
       annotationsEditing.setupAnnotationEditing(
         $newContainer,
@@ -493,6 +507,21 @@
         },
         $obj => $obj
       )
+    })
+    it('pregrading annotations can be toggled', () => {
+      const $censor = $newContainer.find('.answerText.is_censor')
+      const $pregrading = $newContainer.find('.answerText.is_pregrading')
+      expect($censor.find('div.answerAnnotation:visible')).to.have.length(1)
+      expect($censor.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('2px')
+      expect($pregrading.find('div.answerAnnotation:visible')).to.have.length(1)
+      expect($pregrading.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('1px')
+      const $body = $('body')
+      $body.addClass('hide_annotations')
+      expect($censor.find('div.answerAnnotation:visible')).to.have.length(1)
+      expect($censor.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('2px')
+      expect($pregrading.find('div.answerAnnotation:visible')).to.have.length(0)
+      expect($pregrading.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('0px')
+      $body.removeClass('hide_annotations')
     })
   })
 
