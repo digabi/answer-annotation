@@ -7,7 +7,8 @@
       '../dist-umd/annotations-rendering',
       '../dist-umd/annotations-editing',
       'jquery',
-      'lodash'
+      'lodash',
+      './expectedMarkup'
     ], factory)
   } else if (typeof exports === 'object') {
     module.exports = factory(
@@ -16,16 +17,26 @@
       require('./dist-umd/annotations-rendering'),
       require('./dist-umd/annotations-editing'),
       require('jquery'),
-      require('lodash')
+      require('lodash'),
+      require('./expectedMarkup')
     )
   } else {
-    factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery, root._)
+    factory(
+      root.mocha,
+      root.chai,
+      root.annotationsRendering,
+      root.annotationsEditing,
+      root.jQuery,
+      root._,
+      root.expectedMarkup
+    )
   }
-})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _) {
+})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _, expectedMarkup) {
   'use strict'
 
   chai.config.truncateThreshold = 0
   chai.config.includeStack = true
+  chai.config.showDiff = true
   mocha.setup('bdd')
   const expect = chai.expect
   const assert = chai.assert
@@ -522,6 +533,14 @@
       expect($pregrading.find('div.answerAnnotation:visible')).to.have.length(0)
       expect($pregrading.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('0px')
       $body.removeClass('hide_pregrading_annotations')
+    })
+
+    it('DOM contains needed elements', () => {
+      expect(
+        $('.testAnswerContainer')
+          .html()
+          .replace(/\s+/g, ' ')
+      ).to.equal(expectedMarkup.replace(/\s+/g, ' '))
     })
   })
 
