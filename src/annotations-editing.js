@@ -165,7 +165,10 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
 
     function selectionHasNothingToUnderline(range) {
       const contents = range.cloneContents()
-      let hasImages = _.includes(_.toArray(contents.childNodes).map(x => x.tagName), 'IMG')
+      let hasImages = _.includes(
+        _.toArray(contents.childNodes).map(x => x.tagName),
+        'IMG'
+      )
       return contents.textContent.length === 0 && !hasImages
     }
 
