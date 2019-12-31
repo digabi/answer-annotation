@@ -301,15 +301,3 @@ function getOverlappingAnnotations(annotations, newAnnotation) {
   })
   return { overlapping: partitioned[0], nonOverlapping: partitioned[1] }
 }
-
-export function renderAbittiAnnotations(answers, getAbittiAnnotations, readOnly) {
-  if (readOnly === true) {
-    $('body').addClass('preview')
-  }
-  _.forEach($(answers), elem => {
-    const $elem = $(elem)
-    const annotations = getAbittiAnnotations($elem)
-    $elem.data('annotations', annotations)
-    renderAnnotationsForElement($elem)
-  })
-}
