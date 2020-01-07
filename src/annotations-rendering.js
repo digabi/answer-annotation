@@ -41,8 +41,9 @@ export function allNodesUnder(el, documentObject) {
   return a
 }
 
-export function renderAnnotationsForElement($answerText) {
-  renderGivenAnnotations($answerText, getAnnotations($answerText))
+export function renderAnnotationsForElement($answerText, annotations) {
+  $answerText.data('annotations', annotations || [])
+  renderGivenAnnotations($answerText, annotations)
 }
 
 export function renderGivenAnnotations($answerText, annotations) {
@@ -252,7 +253,6 @@ function appendSidebarCommentIcon($annotation) {
 function getAnnotations($answerText) {
   return $answerText.data('annotations') || []
 }
-
 export { getAnnotations as get }
 
 export function getOverlappingMessages($answerText, start, length) {
