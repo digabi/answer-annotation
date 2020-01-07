@@ -42,8 +42,12 @@ export function allNodesUnder(el, documentObject) {
 }
 
 export function renderAnnotationsForElement($answerText, annotations) {
-  $answerText.data('annotations', annotations || $answerText.data('annotations') || [])
-  renderGivenAnnotations($answerText, annotations)
+  if (annotations) {
+    $answerText.data('annotations', annotations)
+    renderGivenAnnotations($answerText, annotations)
+  } else {
+    renderGivenAnnotations($answerText, $answerText.data('annotations') || [])
+  }
 }
 
 export function renderGivenAnnotations($answerText, annotations) {
