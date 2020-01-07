@@ -24,9 +24,8 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       const annotationIndex = Number($annotationElem.data('index'))
       const annotations = answerAnnotationsRendering.get($answerText)
       const updatedAnnotations = _.without(annotations, annotations[annotationIndex])
-      $answerText.data('annotations', updatedAnnotations)
       saveAnnotation(getAnswerId($answerText), updatedAnnotations)
-      answerAnnotationsRendering.renderAnnotationsForElement($answerText)
+      answerAnnotationsRendering.renderAnnotationsForElement($answerText, updatedAnnotations)
     }
   }
 
@@ -259,18 +258,13 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
 
     function addAnnotation(annotationData) {
       if (annotationData.annotation.length > 0 || annotationData.annotation.type != null) {
-        add(annotationData.$answerText, annotationData.annotation)
-        answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText)
+        const data = answerAnnotationsRendering.get(annotationData.$answerText)
+        const annotations = data
+          ? answerAnnotationsRendering.mergeAnnotation(annotationData.$answerText, annotationData.annotation)
+          : [annotationData.annotation]
+        saveAnnotation(getAnswerId(annotationData.$answerText), annotations)
+        answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText, annotations)
       }
-    }
-
-    function add($answerText, newAnnotation) {
-      const data = answerAnnotationsRendering.get($answerText)
-      const annotations = data
-        ? answerAnnotationsRendering.mergeAnnotation($answerText, newAnnotation)
-        : [newAnnotation]
-      $answerText.data('annotations', annotations)
-      saveAnnotation(getAnswerId($answerText), annotations)
     }
   }
 }

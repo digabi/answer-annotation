@@ -483,7 +483,7 @@
       $newContainer.prepend(`<h2>${this.test.title}</h2>`)
       $answerContainer.append($newContainer)
 
-      $newContainer.find('.answerText.is_pregrading').data('annotations', [
+      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'), [
         { startIndex: 296, length: 57, message: 'Huuhaata!' },
         {
           type: 'rect',
@@ -495,7 +495,7 @@
           message: 'msg'
         }
       ])
-      $newContainer.find('.answerText.is_censor').data('annotations', [
+      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_censor'), [
         { startIndex: 26, length: 57, message: 'Huuhaata2!' },
         {
           type: 'rect',
@@ -507,9 +507,6 @@
           message: 'msg2'
         }
       ])
-
-      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'))
-      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_censor'))
 
       annotationsEditing.setupAnnotationEditing(
         $newContainer,
