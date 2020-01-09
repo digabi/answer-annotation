@@ -66,7 +66,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      setDataAndRenderAnnotations($container, [
+      annotationsRendering.renderAnnotationsForElement($container, [
         {
           message: 'great1',
           startIndex: 0,
@@ -81,7 +81,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      setDataAndRenderAnnotations($container, [
+      annotationsRendering.renderAnnotationsForElement($container, [
         {
           message: 'great1',
           startIndex: 0,
@@ -101,7 +101,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
       )
-      setDataAndRenderAnnotations($container, imageAnnotations)
+      annotationsRendering.renderAnnotationsForElement($container, imageAnnotations)
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
@@ -114,14 +114,14 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`
       )
-      setDataAndRenderAnnotations($container, imageAnnotations)
+      annotationsRendering.renderAnnotationsForElement($container, imageAnnotations)
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'rem ipsum'])
     })
 
     it(`Selecting single image shouldn't throw an error`, function() {
       const imageAnnotation = [{ message: 'great1', startIndex: 2, length: 1 }]
       const annFn = () =>
-        setDataAndRenderAnnotations(
+        annotationsRendering.renderAnnotationsForElement(
           createAndgetContainer(this, `bi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`),
           imageAnnotation
         )
@@ -134,7 +134,7 @@
         { message: 'great1', startIndex: 23, length: 1 }
       ]
       const annFn = () =>
-        setDataAndRenderAnnotations(
+        annotationsRendering.renderAnnotationsForElement(
           createAndgetContainer(
             this,
             `answer rich <img alt="math1" src="math.svg"> Text<br>Morbi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
@@ -300,7 +300,7 @@
         message: 'msg'
       }
 
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
+      annotationsRendering.renderAnnotationsForElement($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
@@ -322,7 +322,7 @@
         y2: 0.5,
         message: 'Horizontal line annotation'
       }
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
+      annotationsRendering.renderAnnotationsForElement($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
@@ -344,7 +344,7 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
+      annotationsRendering.renderAnnotationsForElement($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '50%',
@@ -375,7 +375,7 @@
       ]
       const $container = $wrapper.find('.answerRichText')
       const container = $container.get(0)
-      setDataAndRenderAnnotations($container, annotations)
+      annotationsRendering.renderAnnotationsForElement($container, annotations)
       const firstNode = container.childNodes[8]
       createAnnotation($container, firstNode, firstNode, 0, 5, 'msg 3')
       const secondNode = container.childNodes[17]
@@ -592,11 +592,6 @@
     saves = []
     setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
     return $answerContainer.find('#answer-' + currentTestIndex)
-  }
-
-  function setDataAndRenderAnnotations($answerText, annotations) {
-    $answerText.data('annotations', annotations)
-    annotationsRendering.renderGivenAnnotations($answerText, annotations)
   }
 
   function createImageAnnotation($container, imageIndex = 1, dimensions, comment) {
