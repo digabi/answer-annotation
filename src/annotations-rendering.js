@@ -173,7 +173,7 @@ function removeAllAnnotationPopups() {
 }
 
 function clearExistingAnnotations($answerText, $annotationList) {
-  const $originalAnswerText = $answerText.closest('.answer-text-container').find('.originalAnswer')
+  const $originalAnswerText = $answerText.prevAll('.originalAnswer')
   $answerText.html($originalAnswerText.html())
   $annotationList.empty()
 }
