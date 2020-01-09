@@ -305,3 +305,19 @@ function getOverlappingAnnotations(annotations, newAnnotation) {
   })
   return { overlapping: partitioned[0], nonOverlapping: partitioned[1] }
 }
+
+export function renderInitialAnnotationsForElement($answerText, pregradingAnnotations, censoringAnnotations) {
+  const $pregrading = $answerText.clone().addClass('is_pregrading')
+  $answerText.after('\n', $pregrading)
+  renderAnnotationsForElement($pregrading, pregradingAnnotations)
+  if (censoringAnnotations) {
+    const $censoring = $answerText
+      .clone()
+      .addClass('is_censor')
+      .addClass('no-mouse')
+    $pregrading.after('\n', $censoring)
+    renderAnnotationsForElement($censoring, censoringAnnotations)
+  }
+  $answerText.addClass('originalAnswer')
+  $answerText.removeClass('answerText').removeClass('answerRichText')
+}
