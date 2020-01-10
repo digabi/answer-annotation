@@ -34,6 +34,10 @@
 })(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _, expectedMarkup) {
   'use strict'
 
+  function isCensor() {
+    return $('body').hasClass('is_censor')
+  }
+
   chai.config.truncateThreshold = 0
   chai.config.includeStack = true
   chai.config.showDiff = true
@@ -41,7 +45,7 @@
   const expect = chai.expect
   const assert = chai.assert
   const $answerContainer = $('.testAnswerContainer')
-  annotationsEditing.setupAnnotationDisplaying($answerContainer)
+  annotationsEditing.setupAnnotationDisplaying($answerContainer, isCensor())
 
   let currentTestIndex = 0
   let saves = []
@@ -513,7 +517,8 @@
         (answerId, annotations) => {
           saves.push({ answerId, annotations })
         },
-        $obj => $obj
+        $obj => $obj,
+        isCensor()
       )
     })
     it('pregrading annotations can be toggled', () => {
@@ -566,7 +571,8 @@
       (answerId, annotations) => {
         saves.push({ answerId, annotations })
       },
-      $obj => $obj
+      $obj => $obj,
+      isCensor()
     )
   }
 
