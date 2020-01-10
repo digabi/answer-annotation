@@ -8,7 +8,7 @@ const ESC = 27
 const ENTER = 13
 let isMouseDown = false
 
-export function setupAnnotationEditing($containerElement, saveAnnotation, localize) {
+export function setupAnnotationEditing($containerElement, saveAnnotation, localize, isCensor) {
   setupAnnotationAddition($containerElement)
   setupAnnotationRemoval($containerElement)
 
@@ -85,7 +85,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         // `.answerText` to add the annotation to.
         const $answerText = $targetAnswerText
           .parent()
-          .children('.answerText' + (isCensor() ? '.is_censor' : '.is_pregrading'))
+          .children('.answerText' + (isCensor ? '.is_censor' : '.is_pregrading'))
         const $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
           $answerText.find(`img:eq(${attachmentIndex})`)
         )
@@ -172,7 +172,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     }
 
     function preventDragSelectionFromOverlappingCensorAnswerText($containerElem) {
-      if (isCensor()) {
+      if (isCensor) {
         $containerElem.on('mousedown mouseup', e => {
           $('.answerText.is_censor .answerAnnotation').toggleClass('no-mouse', e.type === 'mousedown')
         })
@@ -206,7 +206,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       let $answerText = $(range.startContainer).closest('.answerText')
       const annotationPos = answerAnnotationsRendering.calculatePosition($answerText, range)
 
-      if (isCensor() && !$answerText.hasClass('is_censor')) {
+      if (isCensor && !$answerText.hasClass('is_censor')) {
         // render annotations to censor answer text element even if event cought via double click
         $answerText = $(range.startContainer)
           .closest('.answer')
@@ -269,7 +269,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
   }
 }
 
-export function setupAnnotationDisplaying($answers) {
+export function setupAnnotationDisplaying($answers, isCensor) {
   let fadeOutDelayTimeout = void 0
   $answers.on('mouseenter', '.answerAnnotation', event => {
     const $annotation = $(event.target)
@@ -350,7 +350,7 @@ export function setupAnnotationDisplaying($answers) {
     }
 
     function isCensorAndOwnAnnotation() {
-      return isCensor() && $annotation.closest('.answerText').hasClass('is_censor')
+      return isCensor && $annotation.closest('.answerText').hasClass('is_censor')
     }
   }
 
@@ -362,10 +362,6 @@ export function setupAnnotationDisplaying($answers) {
         .offset().left + annotation.offsetLeft
     return mousemove.pageX - annotationLeftOffsetFromPageEdge
   }
-}
-
-function isCensor() {
-  return $('body').hasClass('is_censor')
 }
 
 function getAnswerId($answerText) {
