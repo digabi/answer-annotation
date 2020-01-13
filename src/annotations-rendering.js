@@ -41,8 +41,13 @@ export function allNodesUnder(el, documentObject) {
   return a
 }
 
-export function renderAnnotationsForElement($answerText) {
-  renderGivenAnnotations($answerText, getAnnotations($answerText))
+export function renderAnnotationsForElement($answerText, annotations) {
+  if (annotations) {
+    $answerText.data('annotations', annotations)
+    renderGivenAnnotations($answerText, annotations)
+  } else {
+    renderGivenAnnotations($answerText, $answerText.data('annotations') || [])
+  }
 }
 
 export function renderGivenAnnotations($answerText, annotations) {
@@ -75,16 +80,15 @@ function renderAnnotation(annotation, index, $answerText) {
     case 'line':
     case 'rect': {
       const $wrappedAttachment = wrapAttachment(findAttachment($answerText, annotation.attachmentIndex))
-      const $shape = appendAnnotationIndex(renderShape(annotation), message)
-        .attr('data-message', message)
-        .attr('data-index', index)
+      const $shape = renderShape(annotation)
+      appendAnnotationIndex($shape, message, index)
       return $wrappedAttachment.append($shape)
     }
     default: {
       const annotationRange = createRangeFromMetadata($answerText, annotation)
-      return appendAnnotationIndex(surroundWithAnnotationSpan(annotationRange, 'answerAnnotation'), message)
-        .attr('data-message', message)
-        .attr('data-index', index)
+      const $annotationSpan = surroundWithAnnotationSpan(annotationRange, 'answerAnnotation')
+      appendAnnotationIndex($annotationSpan, message, index)
+      return $annotationSpan
     }
   }
 }
@@ -169,7 +173,7 @@ function removeAllAnnotationPopups() {
 }
 
 function clearExistingAnnotations($answerText, $annotationList) {
-  const $originalAnswerText = $answerText.closest('.answer-text-container').find('.originalAnswer')
+  const $originalAnswerText = $answerText.prevAll('.originalAnswer')
   $answerText.html($originalAnswerText.html())
   $annotationList.empty()
 }
@@ -230,12 +234,10 @@ function pct(n) {
   return n * 100 + '%'
 }
 
-function appendAnnotationIndex($element, message) {
+function appendAnnotationIndex($element, message, index) {
+  $element.attr('data-message', message).attr('data-index', index)
   if (message) {
-    const $annotationIndex = $('<sup />').addClass('annotationMessageIndex')
-    return $element.append($annotationIndex)
-  } else {
-    return $element
+    $element.append($('<sup />').addClass('annotationMessageIndex'))
   }
 }
 
@@ -255,7 +257,6 @@ function appendSidebarCommentIcon($annotation) {
 function getAnnotations($answerText) {
   return $answerText.data('annotations') || []
 }
-
 export { getAnnotations as get }
 
 export function getOverlappingMessages($answerText, start, length) {
@@ -305,14 +306,18 @@ function getOverlappingAnnotations(annotations, newAnnotation) {
   return { overlapping: partitioned[0], nonOverlapping: partitioned[1] }
 }
 
-export function renderAbittiAnnotations(answers, getAbittiAnnotations, readOnly) {
-  if (readOnly === true) {
-    $('body').addClass('preview')
+export function renderInitialAnnotationsForElement($answerText, pregradingAnnotations, censoringAnnotations) {
+  const $pregrading = $answerText.clone().addClass('is_pregrading')
+  $answerText.after('\n', $pregrading)
+  renderAnnotationsForElement($pregrading, pregradingAnnotations)
+  if (censoringAnnotations) {
+    const $censoring = $answerText
+      .clone()
+      .addClass('is_censor')
+      .addClass('no-mouse')
+    $pregrading.after('\n', $censoring)
+    renderAnnotationsForElement($censoring, censoringAnnotations)
   }
-  _.forEach($(answers), elem => {
-    const $elem = $(elem)
-    const annotations = getAbittiAnnotations($elem)
-    $elem.data('annotations', annotations)
-    renderAnnotationsForElement($elem)
-  })
+  $answerText.addClass('originalAnswer')
+  $answerText.removeClass('answerText').removeClass('answerRichText')
 }

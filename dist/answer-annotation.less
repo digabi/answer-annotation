@@ -38,6 +38,9 @@
     white-space: pre-wrap;
     position: relative;
   }
+  .originalAnswer {
+    display: none;
+  }
   .answerRichText {
     img,
     .attachmentWrapper,
@@ -225,9 +228,9 @@
     overflow: hidden;
   }
 }
-&.is_inspection #answers,
-&.is_censor #answers,
-&.is_answer_view #answers {
+body.is_inspection,
+body.is_censor,
+body.is_answer_view {
   .answer-text-container {
     position: relative;
     .answerText.is_pregrading {

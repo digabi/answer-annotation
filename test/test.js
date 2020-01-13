@@ -7,7 +7,8 @@
       '../dist-umd/annotations-rendering',
       '../dist-umd/annotations-editing',
       'jquery',
-      'lodash'
+      'lodash',
+      './expectedMarkup'
     ], factory)
   } else if (typeof exports === 'object') {
     module.exports = factory(
@@ -16,21 +17,35 @@
       require('./dist-umd/annotations-rendering'),
       require('./dist-umd/annotations-editing'),
       require('jquery'),
-      require('lodash')
+      require('lodash'),
+      require('./expectedMarkup')
     )
   } else {
-    factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery, root._)
+    factory(
+      root.mocha,
+      root.chai,
+      root.annotationsRendering,
+      root.annotationsEditing,
+      root.jQuery,
+      root._,
+      root.expectedMarkup
+    )
   }
-})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _) {
+})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _, expectedMarkup) {
   'use strict'
+
+  function isCensor() {
+    return $('body').hasClass('is_censor')
+  }
 
   chai.config.truncateThreshold = 0
   chai.config.includeStack = true
+  chai.config.showDiff = true
   mocha.setup('bdd')
   const expect = chai.expect
   const assert = chai.assert
   const $answerContainer = $('.testAnswerContainer')
-  annotationsEditing.setupAnnotationDisplaying($answerContainer)
+  annotationsEditing.setupAnnotationDisplaying($answerContainer, isCensor())
 
   let currentTestIndex = 0
   let saves = []
@@ -55,7 +70,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      setDataAndRenderAnnotations($container, [
+      annotationsRendering.renderAnnotationsForElement($container, [
         {
           message: 'great1',
           startIndex: 0,
@@ -70,7 +85,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
       )
-      setDataAndRenderAnnotations($container, [
+      annotationsRendering.renderAnnotationsForElement($container, [
         {
           message: 'great1',
           startIndex: 0,
@@ -90,7 +105,7 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
       )
-      setDataAndRenderAnnotations($container, imageAnnotations)
+      annotationsRendering.renderAnnotationsForElement($container, imageAnnotations)
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
@@ -103,14 +118,14 @@
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br>`
       )
-      setDataAndRenderAnnotations($container, imageAnnotations)
+      annotationsRendering.renderAnnotationsForElement($container, imageAnnotations)
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'rem ipsum'])
     })
 
     it(`Selecting single image shouldn't throw an error`, function() {
       const imageAnnotation = [{ message: 'great1', startIndex: 2, length: 1 }]
       const annFn = () =>
-        setDataAndRenderAnnotations(
+        annotationsRendering.renderAnnotationsForElement(
           createAndgetContainer(this, `bi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`),
           imageAnnotation
         )
@@ -123,7 +138,7 @@
         { message: 'great1', startIndex: 23, length: 1 }
       ]
       const annFn = () =>
-        setDataAndRenderAnnotations(
+        annotationsRendering.renderAnnotationsForElement(
           createAndgetContainer(
             this,
             `answer rich <img alt="math1" src="math.svg"> Text<br>Morbi<br><img alt="math2" src="math.svg">+<img alt="math3" src="math.svg">`
@@ -289,7 +304,7 @@
         message: 'msg'
       }
 
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
+      annotationsRendering.renderAnnotationsForElement($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
@@ -311,7 +326,7 @@
         y2: 0.5,
         message: 'Horizontal line annotation'
       }
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
+      annotationsRendering.renderAnnotationsForElement($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '25%',
@@ -333,7 +348,7 @@
         y2: 0.75,
         message: 'Vertical line annotation'
       }
-      setDataAndRenderAnnotations($wrapper.find('.answerRichText'), [annotation])
+      annotationsRendering.renderAnnotationsForElement($wrapper.find('.answerRichText'), [annotation])
       expect(getAnnotationStyle($wrapper)).to.eql([
         {
           left: '50%',
@@ -364,7 +379,7 @@
       ]
       const $container = $wrapper.find('.answerRichText')
       const container = $container.get(0)
-      setDataAndRenderAnnotations($container, annotations)
+      annotationsRendering.renderAnnotationsForElement($container, annotations)
       const firstNode = container.childNodes[8]
       createAnnotation($container, firstNode, firstNode, 0, 5, 'msg 3')
       const secondNode = container.childNodes[17]
@@ -456,7 +471,7 @@
         .addClass('answer-wrapper').html(`
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment" style="display: flex; flex-direction: column">
   <div class="answer-text-container" style="position: relative; width: 100%">
-    <div class="originalAnswer" style="display: none">${content}</div>
+    <div class="originalAnswer">${content}</div>
     <div class="answerText answerRichText is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
     <div class="answerText answerRichText is_censor no-mouse" style="position: absolute; top: 0; left: 0">${content}</div>
   </div>
@@ -472,7 +487,7 @@
       $newContainer.prepend(`<h2>${this.test.title}</h2>`)
       $answerContainer.append($newContainer)
 
-      $newContainer.find('.answerText.is_pregrading').data('annotations', [
+      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'), [
         { startIndex: 296, length: 57, message: 'Huuhaata!' },
         {
           type: 'rect',
@@ -484,7 +499,7 @@
           message: 'msg'
         }
       ])
-      $newContainer.find('.answerText.is_censor').data('annotations', [
+      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_censor'), [
         { startIndex: 26, length: 57, message: 'Huuhaata2!' },
         {
           type: 'rect',
@@ -497,15 +512,13 @@
         }
       ])
 
-      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_pregrading'))
-      annotationsRendering.renderAnnotationsForElement($newContainer.find('.answerText.is_censor'))
-
       annotationsEditing.setupAnnotationEditing(
         $newContainer,
         (answerId, annotations) => {
           saves.push({ answerId, annotations })
         },
-        $obj => $obj
+        $obj => $obj,
+        isCensor()
       )
     })
     it('pregrading annotations can be toggled', () => {
@@ -523,6 +536,14 @@
       expect($pregrading.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('0px')
       $body.removeClass('hide_pregrading_annotations')
     })
+
+    it('DOM contains needed elements', () => {
+      expect(
+        $('.testAnswerContainer')
+          .html()
+          .replace(/\s+/g, ' ')
+      ).to.equal(expectedMarkup.replace(/\s+/g, ' '))
+    })
   })
 
   mocha.run()
@@ -534,7 +555,7 @@
       .addClass('answer-wrapper').html(`
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${isAutograded ? 'autograded' : ''}">
   <div class="answer-text-container" style="position: relative; width: 100%">
-    <div class="originalAnswer" style="display: none">${content}</div>
+    <div class="originalAnswer">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
     <div class="answer-annotations">
       <div class="is_pregrading">
@@ -550,7 +571,8 @@
       (answerId, annotations) => {
         saves.push({ answerId, annotations })
       },
-      $obj => $obj
+      $obj => $obj,
+      isCensor()
     )
   }
 
@@ -576,11 +598,6 @@
     saves = []
     setAnswer(answerContent, ctx && ctx.test.title, isAutograded)
     return $answerContainer.find('#answer-' + currentTestIndex)
-  }
-
-  function setDataAndRenderAnnotations($answerText, annotations) {
-    $answerText.data('annotations', annotations)
-    annotationsRendering.renderGivenAnnotations($answerText, annotations)
   }
 
   function createImageAnnotation($container, imageIndex = 1, dimensions, comment) {
