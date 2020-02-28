@@ -472,8 +472,8 @@
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment" style="display: flex; flex-direction: column">
   <div class="answer-text-container" style="position: relative; width: 100%">
     <div class="originalAnswer">${content}</div>
-    <div class="answerText answerRichText is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
-    <div class="answerText answerRichText is_censor no-mouse" style="position: absolute; top: 0; left: 0">${content}</div>
+    <div class="answerText answerRichText annotatable is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
+    <div class="answerText answerRichText annotatable is_censor no-mouse" style="position: absolute; top: 0; left: 0">${content}</div>
   </div>
   <div class="answer-annotations">
     <div class="is_pregrading">
@@ -556,7 +556,7 @@
 <div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${isAutograded ? 'autograded' : ''}">
   <div class="answer-text-container" style="position: relative; width: 100%">
     <div class="originalAnswer">${content}</div>
-    <div class="answerText answerRichText is_pregrading">${content}</div>
+    <div class="answerText answerRichText annotatable is_pregrading">${content}</div>
     <div class="answer-annotations">
       <div class="is_pregrading">
         <table class="annotation-messages"></table>

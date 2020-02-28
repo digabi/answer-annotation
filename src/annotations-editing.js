@@ -46,7 +46,8 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         return (
           !$container.hasClass('add-annotation-popup') &&
           ($container.hasClass('answerText') || $container.parents('div.answerText').toArray().length > 0) &&
-          !$container.parents('.answer').hasClass('autograded')
+          !$container.parents('.answer').hasClass('autograded') &&
+          ($container.hasClass('annotatable') || $container.parents('.answerText').hasClass('annotatable'))
         )
       })
       .flatMapLatest(openPopupFromRange)
