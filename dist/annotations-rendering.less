@@ -1,0 +1,144 @@
+.answer {
+  counter-reset: annotation-counter annotation-messages-counter;
+  padding: 26px;
+  position: relative;
+  .originalAnswer {
+    display: none;
+  }
+  .attachmentWrapper {
+    display: inline-block;
+    position: relative;
+    @lineWidth: 4px;
+    max-width: 100%;
+    .rect,
+    .line {
+      position: absolute;
+      border: none !important;
+      z-index: 1;
+      min-width: @lineWidth;
+      min-height: @lineWidth;
+    }
+
+    .annotationMessageIndex {
+      color: #f12228;
+      top: -1em;
+      left: 100%;
+      margin: 0 !important;
+      line-height: 1em;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+    }
+  }
+  .annotationMessageIndex {
+    position: absolute;
+    top: 100%;
+    margin-top: -23px;
+    margin-left: -0.3em;
+    pointer-events: none;
+  }
+  .annotationMessageIndex::after {
+    counter-increment: annotation-counter;
+    content: counter(annotation-counter) ')';
+    font-size: 10px;
+  }
+  .fa-comment {
+    position: absolute;
+    right: -12px;
+    line-height: 25px;
+    font-size: 13px;
+    color: @base-brand-blue;
+  }
+  .is_pregrading {
+    .answerAnnotation {
+      border-bottom: 1px solid @pregrading-annotation-color;
+    }
+    .annotationMessageIndex {
+      color: @pregrading-annotation-color;
+    }
+    .rect,
+    .line {
+      background-color: fade(@pregrading-annotation-color, 25%);
+    }
+  }
+  .is_censor {
+    .answerAnnotation {
+      border-bottom: 2px solid @censor-annotation-color;
+    }
+    .annotationMessageIndex {
+      color: @censor-annotation-color;
+    }
+    .rect,
+    .line {
+      background-color: fade(@censor-annotation-color, 25%);
+    }
+  }
+}
+body.is_inspection,
+body.is_censor,
+body.is_answer_view {
+  .answer-text-container {
+    position: relative;
+    .answerText.is_pregrading {
+      top: -2px;
+      color: transparent;
+      .annotationMessageIndex {
+        margin-top: -21px;
+      }
+      img[src^='/math.svg'],
+      img[src^='/screenshot'] {
+        visibility: hidden;
+      }
+    }
+    .answerText.is_censor {
+      position: absolute;
+      top: 0;
+      left: 0;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      .answerAnnotation {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    }
+  }
+}
+.answer-annotations {
+  margin-top: 20px;
+  display: flex;
+  .header {
+    font-weight: 600;
+  }
+  .is_censor,
+  .is_pregrading {
+    width: 50%;
+    padding-right: 22px;
+    color: @text-color;
+  }
+}
+.answer-length {
+  font-size: 16px;
+  color: #6d6d6d;
+  margin-bottom: 15px;
+}
+.no-mouse {
+  pointer-events: none !important;
+}
+.hide_pregrading_annotations .is_pregrading {
+  .attachmentWrapper {
+    .answerAnnotation {
+      display: none;
+    }
+  }
+  span.answerAnnotation {
+    border: none !important;
+  }
+  sup.annotationMessageIndex {
+    display: none;
+  }
+  .fa.fa-comment {
+    display: none;
+  }
+}
