@@ -29,16 +29,18 @@
     }
   }
   .annotationMessageIndex {
-    position: absolute;
-    top: 100%;
-    margin-top: -23px;
-    margin-left: -0.3em;
-    pointer-events: none;
+    position: relative;
+    vertical-align: super;
+    bottom: .2em;
   }
   .annotationMessageIndex::after {
     counter-increment: annotation-counter;
     content: counter(annotation-counter) ')';
-    font-size: 10px;
+    font-size: 75%;
+    pointer-events: none;
+    position: absolute;
+    line-height: 1;
+    font-weight: bold;
   }
   .fa-comment {
     position: absolute;
