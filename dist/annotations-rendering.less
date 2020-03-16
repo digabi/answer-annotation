@@ -21,26 +21,31 @@
 
     .annotationMessageIndex {
       color: #f12228;
-      top: -1em;
       left: 100%;
-      margin: 0 !important;
-      line-height: 1em;
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+      &::after {
+        line-height: 1;
+        left: 100%;
+        bottom: 100%;
+      }
     }
   }
   .annotationMessageIndex {
     position: relative;
-    vertical-align: super;
-    bottom: .2em;
-  }
-  .annotationMessageIndex::after {
-    counter-increment: annotation-counter;
-    content: counter(annotation-counter) ')';
-    font-size: 75%;
-    pointer-events: none;
-    position: absolute;
-    line-height: 1;
-    font-weight: bold;
+    vertical-align: baseline;
+    top: initial;
+    line-height: 0;
+    white-space: nowrap;
+    &::after {
+      counter-increment: annotation-counter;
+      content: counter(annotation-counter) ')';
+      font-size: 75%;
+      pointer-events: none;
+      position: absolute;
+      width: auto;
+      right: 0;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+    }
   }
   .fa-comment {
     position: absolute;
@@ -50,7 +55,7 @@
     color: @base-brand-blue;
   }
   .is_pregrading {
-    .answerAnnotation {
+    & > .answerAnnotation {
       border-bottom: 1px solid @pregrading-annotation-color;
     }
     .annotationMessageIndex {
@@ -82,8 +87,8 @@ body.is_answer_view {
     .answerText.is_pregrading {
       top: -2px;
       color: transparent;
-      .annotationMessageIndex {
-        margin-top: -21px;
+      > .answerAnnotation .annotationMessageIndex {
+        bottom: -2px
       }
       img[src^='/math.svg'],
       img[src^='/screenshot'] {
