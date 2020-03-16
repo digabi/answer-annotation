@@ -30,8 +30,10 @@
   }
   .annotationMessageIndex {
     position: relative;
-    vertical-align: super;
-    bottom: .2em;
+    vertical-align: baseline;
+    top: initial;
+    line-height: 0;
+    white-space: nowrap;
   }
   .annotationMessageIndex::after {
     counter-increment: annotation-counter;
@@ -39,8 +41,10 @@
     font-size: 75%;
     pointer-events: none;
     position: absolute;
-    line-height: 1;
-    font-weight: bold;
+    right: 0;
+    width: auto;
+    line-height: 0;
+    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
   }
   .fa-comment {
     position: absolute;
