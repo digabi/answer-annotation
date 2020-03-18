@@ -20,6 +20,7 @@
     }
 
     .annotationMessageIndex {
+      position: absolute;
       color: #f12228;
       left: 100%;
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
@@ -87,8 +88,8 @@ body.is_answer_view {
     .answerText.is_pregrading {
       top: -2px;
       color: transparent;
-      > .answerAnnotation .annotationMessageIndex {
-        bottom: -2px
+      > .answerAnnotation .annotationMessageIndex::after {
+        margin-top: 2px;
       }
       img[src^='/math.svg'],
       img[src^='/screenshot'] {
