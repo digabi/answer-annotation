@@ -1,0 +1,55 @@
+// Include for pages that render annotation messages by them selves
+.answer {
+  &.hasComment {
+    .comment {
+      display: block;
+    }
+
+    .addCommentToAnswer {
+      display: none;
+    }
+  }
+  .answerText {
+    width: 100%;
+    padding-bottom: 10px;
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .answerRichText {
+    img[src='/math.svg?latex='],
+    img[src=''] {
+      display: none;
+    }
+    img[src^='/math.svg'] {
+      vertical-align: middle;
+      margin: 4px;
+      padding: 3px 10px;
+      border: 1px solid transparent;
+    }
+    img[src^='/screenshot'] {
+      margin: 4px;
+    }
+  }
+  .annotation-messages {
+    margin-top: 8px;
+    margin-bottom: 10px;
+    &:empty:after {
+      content: '-';
+    }
+    td {
+      font-size: 14px;
+      padding-bottom: 5px;
+      line-height: 17px;
+      margin: 0;
+    }
+    .index {
+      text-align: right;
+      vertical-align: top;
+      padding-right: 6px;
+      &::before {
+        counter-increment: annotation-messages-counter;
+        content: counter(annotation-messages-counter) ') ';
+      }
+    }
+  }
+}

@@ -1,0 +1,103 @@
+// Include for pages that allow making annotations or have interactive tooltips
+
+.popup {
+  box-shadow: 0 0 7px 0 rgba(74, 144, 226, 0.5);
+  position: absolute;
+  padding: 8px 12px;
+  background: @popup-background;
+  color: @text-color;
+  border-radius: 5px;
+  z-index: 300;
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  display: -ms-flex;
+  display: flex;
+}
+.answer {
+  &.selected {
+    background: @background-highlight-color;
+    color: @text-color-on-highlight;
+  }
+  .answerRichText {
+    img,
+    .attachmentWrapper,
+    .rect,
+    .line {
+      cursor: crosshair;
+      -moz-user-drag: -moz-none;
+      -khtml-user-drag: none;
+      -webkit-user-drag: none;
+      -o-user-drag: none;
+      user-drag: none;
+      .unselectable();
+    }
+  }
+  .answerAnnotation {
+    pointer-events: all;
+    position: relative;
+  }
+  .unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+  .add-annotation-popup {
+    pointer-events: all;
+    span {
+      border-bottom: 1px solid @base-error-text;
+      line-height: 15px;
+    }
+    input {
+      padding-left: 24px;
+      width: 280px;
+    }
+    button {
+      margin: 0;
+      width: 90px;
+      height: 30px;
+      line-height: 30px;
+      margin-left: 6px;
+    }
+    .fa-comment {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      width: 1em;
+    }
+  }
+  .remove-annotation-popup {
+    display: none;
+    font-style: italic;
+    z-index: 2;
+    transform: translateY(-100%);
+    cursor: auto;
+    i {
+      font-size: 16px;
+      padding-left: 3px;
+      opacity: 0.7;
+      vertical-align: middle;
+    }
+  }
+  .remove-annotation-area {
+    cursor: pointer;
+    font-style: normal;
+  }
+  .annotation-message {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 360px;
+    text-overflow: ellipsis;
+    .unselectable;
+  }
+  .annotation-remove {
+    padding: 8px 0 8px 6px;
+    vertical-align: middle;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
