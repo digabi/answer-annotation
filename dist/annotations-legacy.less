@@ -1,5 +1,5 @@
 // Include for pages that render annotation messages by them selves
-.answer {
+.legacyAnswer {
   padding: 26px;
 
   &.hasComment {
@@ -18,7 +18,7 @@
     position: relative;
   }
   .answerRichText {
-    img[src='/math.svg?latex='],
+    img[src*='math.svg?latex='],
     img[src=''] {
       display: none;
     }
