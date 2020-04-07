@@ -469,7 +469,7 @@
       $newContainer = $('<div>')
         .attr('id', 'answer-' + currentTestIndex)
         .addClass('answer-wrapper').html(`
-<div data-answer-id="${currentTestIndex}" class="answer selected hasComment" style="display: flex; flex-direction: column">
+<div data-answer-id="${currentTestIndex}" class="answer legacyAnswer selected hasComment" style="display: flex; flex-direction: column">
   <div class="answer-text-container" style="position: relative; width: 100%">
     <div class="originalAnswer">${content}</div>
     <div class="answerText answerRichText is_pregrading" style="position: relative; color: transparent; top: -2px">${content}</div>
@@ -553,7 +553,9 @@
     const $newContainer = $('<div>')
       .attr('id', 'answer-' + currentTestIndex)
       .addClass('answer-wrapper').html(`
-<div data-answer-id="${currentTestIndex}" class="answer selected hasComment ${isAutograded ? 'autograded' : ''}">
+<div data-answer-id="${currentTestIndex}" class="answer legacyAnswer selected hasComment ${
+      isAutograded ? 'autograded' : ''
+    }">
   <div class="answer-text-container" style="position: relative; width: 100%">
     <div class="originalAnswer">${content}</div>
     <div class="answerText answerRichText is_pregrading">${content}</div>
