@@ -318,12 +318,17 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     const $popup = popupWithMessage($annotation, $annotation.attr('data-message'))
     $annotation.append($popup)
 
-    // Limit remove popup's left position based on the annotation document offset
+    // Calculate limits for preventing overflow on either side
+    const { left } = event.currentTarget.getBoundingClientRect()
     const pageMargin = 8
-    const leftLimit = $annotation.offset().left
-    const left = Math.max(mouseOffsetX(event) - $popup.outerWidth() / 2, -leftLimit + pageMargin)
+    const leftLimit = -left + pageMargin;
+    const rightLimit = ($(window).width() - left) - $popup.outerWidth() - pageMargin;
 
-    $popup.css({ left })
+    const css = {
+      left: Math.min(Math.max(mouseOffsetLeft(event) - $popup.outerWidth() / 2, leftLimit), rightLimit)
+    }
+
+    $popup.css(css)
     $popup.fadeIn()
   }
 
@@ -359,7 +364,7 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     }
   }
 
-  function mouseOffsetX(mousemove) {
+  function mouseOffsetLeft(mousemove) {
     const annotation = mousemove.target
     const annotationLeftOffsetFromPageEdge =
       $(annotation)
