@@ -319,7 +319,7 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     $annotation.append($popup)
 
     // Calculate limits for preventing overflow on either side
-    const { left } = event.currentTarget.getBoundingClientRect()
+    const left = inlineLeftOffset(event.currentTarget)
     const pageMargin = 8
     const leftLimit = -left + pageMargin;
     const rightLimit = ($(window).width() - left) - $popup.outerWidth() - pageMargin;
@@ -364,12 +364,16 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     }
   }
 
+  function inlineLeftOffset(element) {
+    return $(element)
+      .offsetParent()
+      .offset().left + element.offsetLeft
+  }
+
   function mouseOffsetLeft(mousemove) {
     const annotation = mousemove.target
-    const annotationLeftOffsetFromPageEdge =
-      $(annotation)
-        .offsetParent()
-        .offset().left + annotation.offsetLeft
+    const annotationLeftOffsetFromPageEdge = inlineLeftOffset(annotation)
+
     return mousemove.pageX - annotationLeftOffsetFromPageEdge
   }
 }
