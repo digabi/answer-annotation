@@ -317,7 +317,12 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     const $annotation = $(event.currentTarget)
     const $popup = popupWithMessage($annotation, $annotation.attr('data-message'))
     $annotation.append($popup)
-    const left = mouseOffsetX(event) - $popup.outerWidth() / 2
+
+    // Limit remove popup's left position based on the annotation document offset
+    const pageMargin = 8
+    const leftLimit = $annotation.offset().left
+    const left = Math.max(mouseOffsetX(event) - $popup.outerWidth() / 2, -leftLimit + pageMargin)
+
     $popup.css({ left })
     $popup.fadeIn()
   }
