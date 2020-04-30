@@ -74,7 +74,7 @@
     font-style: italic;
     z-index: 2;
     transform: translateY(-100%);
-    max-width: 80vw;
+    max-width: calc(100vw - 16px);
     cursor: auto;
     i {
       font-size: 16px;
@@ -87,15 +87,18 @@
     cursor: pointer;
     font-style: normal;
     position: absolute;
-    top: 13px;
+    top: 10px;
     right: 6px;
   }
   .annotation-message {
     display: inline-block;
-    white-space: normal;
+    white-space: nowrap;
     width: max-content;
     max-width: 100%;
     padding-right: 14px; /* Leaves space for remove button */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
     .unselectable;
   }
   .annotation-remove {
