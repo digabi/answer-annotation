@@ -317,8 +317,18 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     const $annotation = $(event.currentTarget)
     const $popup = popupWithMessage($annotation, $annotation.attr('data-message'))
     $annotation.append($popup)
-    const left = mouseOffsetX(event) - $popup.outerWidth() / 2
-    $popup.css({ left })
+
+    // Calculate limits for preventing overflow on either side
+    const left = inlineLeftOffset(event.currentTarget)
+    const pageMargin = 8
+    const leftLimit = -left + pageMargin
+    const rightLimit = $(window).width() - left - $popup.outerWidth() - pageMargin
+
+    const css = {
+      left: Math.min(Math.max(mouseOffsetLeft(event) - $popup.outerWidth() / 2, leftLimit), rightLimit)
+    }
+
+    $popup.css(css)
     $popup.fadeIn()
   }
 
@@ -354,12 +364,18 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     }
   }
 
-  function mouseOffsetX(mousemove) {
-    const annotation = mousemove.target
-    const annotationLeftOffsetFromPageEdge =
-      $(annotation)
+  function inlineLeftOffset(element) {
+    return (
+      $(element)
         .offsetParent()
-        .offset().left + annotation.offsetLeft
+        .offset().left + element.offsetLeft
+    )
+  }
+
+  function mouseOffsetLeft(mousemove) {
+    const annotation = mousemove.target
+    const annotationLeftOffsetFromPageEdge = inlineLeftOffset(annotation)
+
     return mousemove.pageX - annotationLeftOffsetFromPageEdge
   }
 }
