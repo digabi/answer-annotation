@@ -321,8 +321,8 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     // Calculate limits for preventing overflow on either side
     const left = inlineLeftOffset(event.currentTarget)
     const pageMargin = 8
-    const leftLimit = -left + pageMargin;
-    const rightLimit = ($(window).width() - left) - $popup.outerWidth() - pageMargin;
+    const leftLimit = -left + pageMargin
+    const rightLimit = $(window).width() - left - $popup.outerWidth() - pageMargin
 
     const css = {
       left: Math.min(Math.max(mouseOffsetLeft(event) - $popup.outerWidth() / 2, leftLimit), rightLimit)
@@ -365,9 +365,11 @@ export function setupAnnotationDisplaying($answers, isCensor) {
   }
 
   function inlineLeftOffset(element) {
-    return $(element)
-      .offsetParent()
-      .offset().left + element.offsetLeft
+    return (
+      $(element)
+        .offsetParent()
+        .offset().left + element.offsetLeft
+    )
   }
 
   function mouseOffsetLeft(mousemove) {
