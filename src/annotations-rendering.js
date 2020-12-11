@@ -237,7 +237,11 @@ function pct(n) {
 function appendAnnotationIndex($element, message, index) {
   $element.attr('data-message', message).attr('data-index', index)
   if (message) {
-    $element.append($('<sup />').addClass('annotationMessageIndex'))
+    $element.append(
+      $('<sup />')
+        .addClass('annotationMessageIndex')
+        .attr('data-message', message)
+    )
   }
 }
 
