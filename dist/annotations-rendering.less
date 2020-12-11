@@ -47,6 +47,9 @@
       bottom: 100%;
       line-height: 1;
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+      .show-annotation-messages-in-context & {
+        content: attr(data-message);
+      }
     }
   }
   .fa-comment {
