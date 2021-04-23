@@ -138,19 +138,30 @@ body.is_answer_view {
 .no-mouse {
   pointer-events: none !important;
 }
-.hide_pregrading_annotations .is_pregrading {
-  .attachmentWrapper {
-    .answerAnnotation {
+.hide_pregrading_annotations {
+  .answerText.is_pregrading {
+    .attachmentWrapper {
+      .answerAnnotation {
+        display: none;
+      }
+    }
+    span.answerAnnotation {
+      border: none !important;
+    }
+    sup.annotationMessageIndex {
       display: none;
     }
+    .fa.fa-comment {
+      display: none;
+    }
+    .remove-annotation-popup {
+      display: none !important;
+    }
   }
-  span.answerAnnotation {
-    border: none !important;
-  }
-  sup.annotationMessageIndex {
-    display: none;
-  }
-  .fa.fa-comment {
-    display: none;
+  .answer-annotations .is_pregrading {
+    visibility: hidden;
+    .annotation-messages {
+      display: none;
+    }
   }
 }
