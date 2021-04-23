@@ -7,8 +7,7 @@
       '../dist-umd/annotations-rendering',
       '../dist-umd/annotations-editing',
       'jquery',
-      'lodash',
-      './expectedMarkup'
+      'lodash'
     ], factory)
   } else if (typeof exports === 'object') {
     module.exports = factory(
@@ -17,21 +16,12 @@
       require('./dist-umd/annotations-rendering'),
       require('./dist-umd/annotations-editing'),
       require('jquery'),
-      require('lodash'),
-      require('./expectedMarkup')
+      require('lodash')
     )
   } else {
-    factory(
-      root.mocha,
-      root.chai,
-      root.annotationsRendering,
-      root.annotationsEditing,
-      root.jQuery,
-      root._,
-      root.expectedMarkup
-    )
+    factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery, root._)
   }
-})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _, expectedMarkup) {
+})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _) {
   'use strict'
 
   function isCensor() {
@@ -535,14 +525,6 @@
       expect($pregrading.find('div.answerAnnotation:visible')).to.have.length(0)
       expect($pregrading.find('span.answerAnnotation:visible').css('border-bottom-width')).to.equal('0px')
       $body.removeClass('hide_pregrading_annotations')
-    })
-
-    it('DOM contains needed elements', () => {
-      expect(
-        $('.testAnswerContainer')
-          .html()
-          .replace(/\s+/g, ' ')
-      ).to.equal(expectedMarkup.replace(/\s+/g, ' '))
     })
   })
 
