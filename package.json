@@ -27,7 +27,8 @@
     "prepare": "npm run clean && npm run build"
   },
   "devDependencies": {
-    "baconjs": "^1.0.0",
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "baconjs": "^3.0.17",
     "chai": "^4.2.0",
     "concurrently": "^5.0.2",
     "eslint": "^6.8.0",
@@ -35,7 +36,6 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
-    "@fortawesome/fontawesome-free": "^5.15.4",
     "i18next": "^12.0.0",
     "jquery": "^3.3.1",
     "less": "^3.8.1",
@@ -51,8 +51,8 @@
     "typescript": "^3.1.6"
   },
   "peerDependencies": {
-    "baconjs": "1.x",
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "baconjs": "1.x",
     "jquery": "3.x",
     "lodash": "4.x"
   }
