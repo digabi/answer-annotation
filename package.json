@@ -52,7 +52,7 @@
   },
   "peerDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "baconjs": "1.x",
+    "baconjs": "3.x",
     "jquery": "3.x",
     "lodash": "4.x"
   }
