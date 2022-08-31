@@ -275,7 +275,7 @@
     beforeEach(function(done) {
       $wrapper = createAndgetWrapper(
         this,
-        `Lorem ipsum dolor sit amet. <br> <img src="sample_screenshot.jpg"><br> More text on another line<br>
+        `Lorem ipsum dolor sit amet. <br> <img src="sample_screenshot_large.jpg"><br> More text on another line<br>
  <img src="sample_screenshot.jpg"></br> Even more text on third line.`,
         false
       )
@@ -389,31 +389,15 @@
         answerId: '18',
         annotations: [
           { length: 5, message: 'msg 1', startIndex: 6 },
-          {
-            type: 'rect',
-            attachmentIndex: 0,
-            x: 0,
-            y: 0.47,
-            width: 0.24,
-            height: 0.47,
-            message: 'msg 2'
-          },
+          { type: 'rect', attachmentIndex: 0, x: 0, y: 0.31, width: 0.13, height: 0.31, message: 'msg 2' },
           { startIndex: 30, length: 5, message: 'msg 3' },
-          {
-            type: 'line',
-            attachmentIndex: 1,
-            x1: 0.5,
-            y1: 0.25,
-            x2: 0.5,
-            y2: 0.75,
-            message: 'msg 4'
-          },
+          { type: 'line', attachmentIndex: 1, x1: 0.5, y1: 0.25, x2: 0.5, y2: 0.75, message: 'msg 4' },
           { startIndex: 59, length: 5, message: 'msg 5' }
         ]
       })
 
       expect(mapLeafs(x => x.replace(/\.[0-9]*/, ''), getAnnotationStyle($wrapper))).to.eql([
-        { left: '0%', top: '47%', right: '76%', bottom: '5%' },
+        { left: '0%', top: '31%', right: '87%', bottom: '37%' },
         { left: '50%', top: '25%', right: '50%', bottom: '25%' }
       ])
       expect(tableToMatrix($wrapper.find('.annotation-messages').get(0))).to.eql([
@@ -454,7 +438,7 @@
 
       currentTestIndex++
 
-      const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. <img src="sample_screenshot.jpg"> Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.`
+      const content = `Osaan tehtävistä liittyy aineistoa, jota on hyödynnettävä tehtävänannon mukaan. Lue tehtävät, silmäile aineistot läpi ja valitse tehtävistä yksi. <img src="sample_screenshot.jpg"> Tehtävät arvostellaan pistein 0–60. Kirjoita ehyt ja kielellisesti huoliteltu teksti. Sopiva pituus on 4–5 sivua. Tekstin tulee olla selvästi ja siististi kirjoitettu, mutta sitä ei tarvitse kirjoittaa puhtaaksi kuulakynällä tai musteella. Valmiit otsikot on lihavoitu. Muussa tapauksessa anna kirjoituksellesi oma otsikko. Merkitse kirjoitustehtävän numero otsikon eteen. Jos valitset aineistotehtävän, tekstisi pitää olla siten ehyt, että lukija voi ymmärtää tekstisi, vaikka ei tunnekaan aineistoa. Aineistotehtävissä tulee viitata aineistoon.<img src="sample_screenshot_large.jpg">`
 
       $newContainer = $('<div>')
         .attr('id', 'answer-' + currentTestIndex)
