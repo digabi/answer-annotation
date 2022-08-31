@@ -17,7 +17,7 @@
     "clean": "rm -rf dist/*.js dist/*.js.map dist-umd/",
     "test": "npm run build && eslint . && mocha-chrome test/test.html --chrome-flags='[\"--disable-web-security\"]'",
     "browser-test": "open test/test.html",
-    "server-test": "python -m SimpleHTTPServer &> /dev/null & open http://localhost:8000/test/test.html",
+    "server-test": "open http://localhost:8000/test/test.html & python3 -m http.server 8000",
     "build:tsc": "tsc -p src",
     "build:umd": "rollup -c",
     "build": "concurrently --prefix \"[{name}]\" --names \"TSC,UMD\" -c \"bgBlue.bold\" \"npm run build:tsc\" \"npm run build:umd\"",
