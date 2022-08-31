@@ -172,15 +172,11 @@
       expect(expectedSelectedImg).to.equal(imgInsideSpan)
 
       createAnnotation($container, container, container, 1, 2)
-      expect($container.find('.answerAnnotation:last img').length).to.equal(2)
+      expect($container.find('.answerAnnotation:last img').length).to.equal(1)
       expect(saves).to.eql([
         {
           answerId: String(currentTestIndex),
           annotations: [{ startIndex: 2, length: 1, message: '' }]
-        },
-        {
-          answerId: String(currentTestIndex),
-          annotations: [{ startIndex: 1, length: 2, message: '' }]
         }
       ])
     })

@@ -57,14 +57,19 @@ export function renderGivenAnnotations($answerText, annotations) {
 
   // Render text annotations first, since they expect to see an untouched DOM
   // without image wrapper elements.
-  _.partition(annotations, annotation => !_.has(annotation, 'type')).forEach(annotationsForType => {
+  const [textAnnotations, imageAnnotations] = _.partition(annotations, annotation => !_.has(annotation, 'type'))
+  const addAnnotations = annotationsForType => {
     annotationsForType.forEach(annotation => {
       const index = _.indexOf(annotations, annotation)
       const $annotationElement = renderAnnotation(annotation, index, $answerText)
       appendSidebarCommentIcon($annotationElement)
     })
+  }
+  addAnnotations(textAnnotations)
+  $answerText.find('img').each((index, img) => {
+    $(img).wrap('<span class="attachmentWrapper"/>')
   })
-
+  addAnnotations(imageAnnotations)
   // Render annotation messages after, since they need to be in the same order
   // in the DOM as in the annotations array.
   annotations
@@ -79,7 +84,7 @@ function renderAnnotation(annotation, index, $answerText) {
   switch (annotation.type) {
     case 'line':
     case 'rect': {
-      const $wrappedAttachment = wrapAttachment(findAttachment($answerText, annotation.attachmentIndex))
+      const $wrappedAttachment = findAttachment($answerText, annotation.attachmentIndex).parent()
       const $shape = renderShape(annotation)
       appendAnnotationIndex($shape, message, index)
       return $wrappedAttachment.append($shape)
@@ -95,12 +100,6 @@ function renderAnnotation(annotation, index, $answerText) {
 
 function findAttachment($answerText, attachmentIndex) {
   return $($answerText.find('img').get(attachmentIndex))
-}
-
-export function wrapAttachment($attachment) {
-  return $attachment.parent().hasClass('attachmentWrapper')
-    ? $attachment.parent()
-    : $attachment.wrap('<span class="attachmentWrapper"/>').parent()
 }
 
 export function createRangeFromMetadata($answerText, annotation, documentObject) {

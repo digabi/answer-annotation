@@ -67,7 +67,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       })
 
     $containerElement
-      .asEventStream('mousedown', 'img, .attachmentWrapper')
+      .asEventStream('mousedown', '.attachmentWrapper')
       .filter(e => e.button === 0)
       .doAction(() => {
         isMouseDown = true
@@ -86,9 +86,8 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         const $answerText = $targetAnswerText
           .parent()
           .children('.answerText' + (isCensor ? '.is_censor' : '.is_pregrading'))
-        const $attachmentWrapper = answerAnnotationsRendering.wrapAttachment(
-          $answerText.find(`img:eq(${attachmentIndex})`)
-        )
+        const $attachmentWrapper = $answerText.find(`img:eq(${attachmentIndex})`).parent()
+
         let $shape
 
         const bbox = $attachmentWrapper[0].getBoundingClientRect()
