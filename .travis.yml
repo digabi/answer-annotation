@@ -4,5 +4,5 @@ addons:
 group: beta
 language: node_js
 node_js:
-  - stable
+  - 16.14.0
 sudo: required
