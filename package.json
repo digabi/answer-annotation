@@ -30,7 +30,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "baconjs": "^3.0.17",
     "chai": "^4.2.0",
-    "concurrently": "^5.0.2",
+    "concurrently": "^7.4.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-import": "^2.25.4",
@@ -45,7 +45,7 @@
     "nyc": "^15.0.0",
     "prettier": "~1.19.1",
     "requirejs": "^2.3.6",
-    "rollup": "^1.27.14",
+    "rollup": "^2.79.0",
     "rollup-plugin-typescript": "^1.0.0",
     "tslib": "^1.9.3",
     "typescript": "^3.1.6"
