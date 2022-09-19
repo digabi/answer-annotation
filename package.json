@@ -27,7 +27,7 @@
     "prepare": "npm run clean && npm run build"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@fortawesome/fontawesome-free": "^6.2.0",
     "baconjs": "^3.0.17",
     "chai": "^4.2.0",
     "concurrently": "^7.4.0",
@@ -51,7 +51,7 @@
     "typescript": "^3.1.6"
   },
   "peerDependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@fortawesome/fontawesome-free": "^6.2.0",
     "baconjs": "3.x",
     "jquery": "3.x",
     "lodash": "4.x"
