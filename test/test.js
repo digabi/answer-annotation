@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-extra-semi
-;(function(root, factory) {
+;(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'mocha',
@@ -21,7 +21,7 @@
   } else {
     factory(root.mocha, root.chai, root.annotationsRendering, root.annotationsEditing, root.jQuery, root._)
   }
-})(this, function(mocha, chai, annotationsRendering, annotationsEditing, $, _) {
+})(this, function (mocha, chai, annotationsRendering, annotationsEditing, $, _) {
   'use strict'
 
   function isCensor() {
@@ -41,7 +41,7 @@
   let saves = []
 
   describe('When selecting richText', () => {
-    it('Surrounding range from first three rows contains correct text', function() {
+    it('Surrounding range from first three rows contains correct text', function () {
       const answer = createAndgetContainer(
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
@@ -55,7 +55,7 @@
       assert.equal($annotatedElement.text(), 'answer rich  Text')
     })
 
-    it('First annotation should contain correct text', function() {
+    it('First annotation should contain correct text', function () {
       const $container = createAndgetContainer(
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
@@ -70,7 +70,7 @@
       expect(getAnnotationContent($container)).to.include.members(['answe'])
     })
 
-    it('First annotation should contain correct text', function() {
+    it('First annotation should contain correct text', function () {
       const $container = createAndgetContainer(
         this,
         `answer rich <img alt="math1" src="math.svg"> Text<br>Lorem ipsum<br><br><br>`
@@ -85,7 +85,7 @@
       expect(getAnnotationContent($container)).to.include.members(['answe'])
     })
 
-    it('Multiple annotations should be in correct place', function() {
+    it('Multiple annotations should be in correct place', function () {
       const imageAnnotations = [
         { message: 'great1', startIndex: 11, length: 7 },
         { message: 'great2', startIndex: 19, length: 10 },
@@ -99,7 +99,7 @@
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'orem ipsum', '+'])
     })
 
-    it('Selecting text after image should work', function() {
+    it('Selecting text after image should work', function () {
       const imageAnnotations = [
         { message: 'great1', startIndex: 11, length: 7 },
         { message: 'great2', startIndex: 20, length: 9 }
@@ -112,7 +112,7 @@
       expect(getAnnotationContent($container)).to.include.members(['  Text', 'rem ipsum'])
     })
 
-    it(`Selecting single image shouldn't throw an error`, function() {
+    it(`Selecting single image shouldn't throw an error`, function () {
       const imageAnnotation = [{ message: 'great1', startIndex: 2, length: 1 }]
       const annFn = () =>
         annotationsRendering.renderAnnotationsForElement(
@@ -122,7 +122,7 @@
       expect(annFn).to.not.throw()
     })
 
-    it(`Selecting image after another image shouldn't throw errors`, function() {
+    it(`Selecting image after another image shouldn't throw errors`, function () {
       const imageAnnotations = [
         { message: 'great1', startIndex: 11, length: 7 },
         { message: 'great1', startIndex: 23, length: 1 }
@@ -138,7 +138,7 @@
       expect(annFn).to.not.throw()
     })
 
-    it('New annotation overlapping other annotations should be merged', function() {
+    it('New annotation overlapping other annotations should be merged', function () {
       const newAnn = { message: 'great3', startIndex: 4, length: 10 }
       var $elem = $('<div>').data('annotations', [
         {
@@ -160,7 +160,7 @@
       })
     })
 
-    it(`Selecting correct image`, function() {
+    it(`Selecting correct image`, function () {
       const $container = createAndgetContainer(
         this,
         `X<img alt="math5" src="math.svg"><br><img alt="math6" src="math.svg"><br><img alt="math7" src="math.svg"><br>`
@@ -181,7 +181,7 @@
       ])
     })
 
-    it(`Selecting image when it is first in answer`, function() {
+    it(`Selecting image when it is first in answer`, function () {
       const $container = createAndgetContainer(this, `<img alt="math1" src="math.svg">`)
       const container = $container.get(0)
       createAnnotation($container, container, container, 0, 1)
@@ -194,7 +194,7 @@
       ])
     })
 
-    it(`Selecting first and second image `, function() {
+    it(`Selecting first and second image `, function () {
       const $container = createAndgetContainer(
         this,
         `<img alt="math1" src="math.svg"><img alt="math2" src="math.svg"><img alt="math3" src="math.svg">`
@@ -210,7 +210,7 @@
       ])
     })
 
-    it(`Merges correctly`, function() {
+    it(`Merges correctly`, function () {
       const $container = createAndgetContainer(
         this,
         `ABCD<br><img alt="math1" src="math.svg"><img alt="math2" src="math.svg"><br>XYZ`
@@ -231,7 +231,7 @@
       ])
     })
 
-    it(`Annotates normal text`, function() {
+    it(`Annotates normal text`, function () {
       const $container = createAndgetContainer(this, `ABCD XYZ`)
       const container = $container.get(0)
       createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4)
@@ -244,7 +244,7 @@
       ])
     })
 
-    it(`Ignores autograded answers`, function() {
+    it(`Ignores autograded answers`, function () {
       const $container = createAndgetContainer(this, `ABCD XYZ`, true)
       const container = $container.get(0)
       createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4)
@@ -252,7 +252,7 @@
       expect(saves).to.eql([])
     })
 
-    it(`Saves comment`, function() {
+    it(`Saves comment`, function () {
       const $container = createAndgetContainer(this, `ABCD XYZ`)
       const container = $container.get(0)
       createAnnotation($container, container.childNodes[0], container.childNodes[0], 2, 4, 'comment text')
@@ -266,9 +266,9 @@
     })
   })
 
-  describe('When annotating image', function() {
+  describe('When annotating image', function () {
     let $wrapper
-    beforeEach(function(done) {
+    beforeEach(function (done) {
       $wrapper = createAndgetWrapper(
         this,
         `Lorem ipsum dolor sit amet. <br> <img src="sample_screenshot_large.jpg"><br> More text on another line<br>
@@ -278,7 +278,7 @@
       setTimeout(done, 100)
     })
 
-    it('should render rect annotation on an image', function() {
+    it('should render rect annotation on an image', function () {
       updateLastTitle(this)
       const annotation = {
         type: 'rect',
@@ -301,7 +301,7 @@
       ])
     })
 
-    it('should render a horizontal line annotation on an image', function() {
+    it('should render a horizontal line annotation on an image', function () {
       updateLastTitle(this)
       const annotation = {
         type: 'line',
@@ -323,7 +323,7 @@
       ])
     })
 
-    it('should render a vertical line annotation on an image', function() {
+    it('should render a vertical line annotation on an image', function () {
       updateLastTitle(this)
       const annotation = {
         type: 'line',
@@ -345,7 +345,7 @@
       ])
     })
 
-    it('should sort cross references correctly for mixed annotations', function() {
+    it('should sort cross references correctly for mixed annotations', function () {
       updateLastTitle(this)
       const annotations = [
         {
@@ -425,12 +425,10 @@
     })
   })
 
-  describe('With a second layer of annotations', function() {
+  describe('With a second layer of annotations', function () {
     let $newContainer
-    before("everything doesn't break down on Firefox (manual test)", function() {
-      $('.testAnswerContainer')
-        .removeClass('is_pregrading')
-        .addClass('is_censor')
+    before("everything doesn't break down on Firefox (manual test)", function () {
+      $('.testAnswerContainer').removeClass('is_pregrading').addClass('is_censor')
 
       currentTestIndex++
 
@@ -572,10 +570,7 @@
       .trigger({ type: 'mousemove', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2, button: 0 })
       .trigger({ type: 'mouseup', clientX: rect.left + dimensions.x2, clientY: rect.top + dimensions.y2, button: 0 })
     if (comment) {
-      $container
-        .find('.add-annotation-text')
-        .val(comment)
-        .keyup()
+      $container.find('.add-annotation-text').val(comment).keyup()
     }
     $container.find('button').mousedown()
   }
@@ -593,10 +588,7 @@
   function createAnnotation($container, startContainer, endContainer, startOffset, endOffset, comment) {
     openAnnotationDialog($container, startContainer, endContainer, startOffset, endOffset)
     if (comment) {
-      $container
-        .find('.add-annotation-text')
-        .val(comment)
-        .keyup()
+      $container.find('.add-annotation-text').val(comment).keyup()
     }
     $container.find('button').mousedown()
   }
