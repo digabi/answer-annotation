@@ -179,9 +179,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     }
 
     function getPopupCss(range) {
-      const container = $(range.startContainer)
-        .closest('.answer-text-container')
-        .get(0)
+      const container = $(range.startContainer).closest('.answer-text-container').get(0)
       const boundingRect = range.getBoundingClientRect()
       if (container) {
         const containerRect = container.getBoundingClientRect()
@@ -207,9 +205,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
 
       if (isCensor && !$answerText.hasClass('is_censor')) {
         // render annotations to censor answer text element even if event cought via double click
-        $answerText = $(range.startContainer)
-          .closest('.answer')
-          .find('.answerText.is_censor')
+        $answerText = $(range.startContainer).closest('.answer').find('.answerText.is_censor')
       }
 
       const messages = answerAnnotationsRendering.getOverlappingMessages(
@@ -245,9 +241,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         .asEventStream('mousedown')
         .merge($popup.asEventStream('keyup').filter(e => e.keyCode === ENTER))
         .map(() => {
-          const message = $('.add-annotation-text')
-            .val()
-            .trim()
+          const message = $('.add-annotation-text').val().trim()
           return {
             $answerText,
             annotation: _.assign({}, annotation, { message })
@@ -277,11 +271,7 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     }
     clearTimeout(fadeOutDelayTimeout)
     if (popupAlreadyShownForCurrentAnnotation(event)) {
-      $annotation
-        .find('.remove-annotation-popup')
-        .stop()
-        .show()
-        .css({ opacity: 1 })
+      $annotation.find('.remove-annotation-popup').stop().show().css({ opacity: 1 })
     } else {
       clearAllRemovePopups()
       renderRemovePopup(event)
@@ -364,11 +354,7 @@ export function setupAnnotationDisplaying($answers, isCensor) {
   }
 
   function inlineLeftOffset(element) {
-    return (
-      $(element)
-        .offsetParent()
-        .offset().left + element.offsetLeft
-    )
+    return $(element).offsetParent().offset().left + element.offsetLeft
   }
 
   function mouseOffsetLeft(mousemove) {
