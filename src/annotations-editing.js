@@ -8,7 +8,13 @@ const ESC = 27
 const ENTER = 13
 let isMouseDown = false
 
-export function setupAnnotationEditing($containerElement, saveAnnotation, localize, isCensor) {
+export function setupAnnotationEditing(
+  $containerElement,
+  saveAnnotation,
+  localize,
+  isCensor,
+  afterRenderingCb = () => {}
+) {
   setupAnnotationAddition($containerElement)
   setupAnnotationRemoval($containerElement)
 
@@ -25,7 +31,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       const annotations = answerAnnotationsRendering.get($answerText)
       const updatedAnnotations = _.without(annotations, annotations[annotationIndex])
       saveAnnotation(getAnswerId($answerText), updatedAnnotations)
-      answerAnnotationsRendering.renderAnnotationsForElement($answerText, updatedAnnotations)
+      answerAnnotationsRendering.renderAnnotationsForElement($answerText, updatedAnnotations, afterRenderingCb)
     }
   }
 
@@ -62,7 +68,11 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         getBrowserTextSelection().removeAllRanges()
         // Render annotations for all answers that have popup open. This clears the popup and annotation that was merged for rendering before opening popup.
         $('.add-annotation-popup').each((index, popup) => {
-          answerAnnotationsRendering.renderAnnotationsForElement($(popup).closest('.answerText'))
+          answerAnnotationsRendering.renderAnnotationsForElement(
+            $(popup).closest('.answerText'),
+            null,
+            afterRenderingCb
+          )
         })
       })
 
@@ -220,7 +230,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       // Merge and render annotation to show what range it will contain if annotation gets added
       // Merged annotation not saved yet, so on cancel previous state is rendered
       const mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
-      answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
+      answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations, afterRenderingCb)
 
       return openPopup($answerText, annotationPos, renderedMessages, popupCss)
     }
@@ -256,7 +266,11 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
           ? answerAnnotationsRendering.mergeAnnotation(annotationData.$answerText, annotationData.annotation)
           : [annotationData.annotation]
         saveAnnotation(getAnswerId(annotationData.$answerText), annotations)
-        answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText, annotations)
+        answerAnnotationsRendering.renderAnnotationsForElement(
+          annotationData.$answerText,
+          annotations,
+          afterRenderingCb
+        )
       }
     }
   }
