@@ -41,16 +41,16 @@ export function allNodesUnder(el, documentObject) {
   return a
 }
 
-export function renderAnnotationsForElement($answerText, annotations) {
+export function renderAnnotationsForElement($answerText, annotations, afterRenderingCb) {
   if (annotations) {
     $answerText.data('annotations', annotations)
-    renderGivenAnnotations($answerText, annotations)
+    renderGivenAnnotations($answerText, annotations, afterRenderingCb)
   } else {
-    renderGivenAnnotations($answerText, $answerText.data('annotations') || [])
+    renderGivenAnnotations($answerText, $answerText.data('annotations') || [], afterRenderingCb)
   }
 }
 
-export function renderGivenAnnotations($answerText, annotations) {
+export function renderGivenAnnotations($answerText, annotations, afterRenderingCb) {
   const $annotationList = findAnnotationListElem($answerText)
   removeAllAnnotationPopups()
   clearExistingAnnotations($answerText, $annotationList)
@@ -77,6 +77,7 @@ export function renderGivenAnnotations($answerText, annotations) {
     .forEach(annotation => {
       appendAnnotationMessage($annotationList, annotation.message)
     })
+  afterRenderingCb($answerText)
 }
 
 function renderAnnotation(annotation, index, $answerText) {
@@ -178,10 +179,18 @@ function clearExistingAnnotations($answerText, $annotationList) {
 }
 
 export function surroundWithAnnotationSpan(range, spanClass) {
-  if (!$(range.startContainer).parent().is('div')) {
+  if (
+    !$(range.startContainer)
+      .parent()
+      .is('div')
+  ) {
     range.setStartBefore($(range.startContainer).parent()[0])
   }
-  if (!$(range.endContainer).parent().is('div')) {
+  if (
+    !$(range.endContainer)
+      .parent()
+      .is('div')
+  ) {
     range.setEndAfter($(range.endContainer).parent()[0])
   }
   const annotationElement = document.createElement('span')
@@ -228,13 +237,19 @@ function pct(n) {
 function appendAnnotationIndex($element, message, index) {
   $element.attr('data-message', message).attr('data-index', index)
   if (message) {
-    $element.append($('<sup />').addClass('annotationMessageIndex').attr('data-message', message))
+    $element.append(
+      $('<sup />')
+        .addClass('annotationMessageIndex')
+        .attr('data-message', message)
+    )
   }
 }
 
 function appendAnnotationMessage($annotationList, message) {
   const msg = message || '-'
-  const $msg = $('<tr>').append($('<td>').addClass('index')).append($('<td>').text(msg))
+  const $msg = $('<tr>')
+    .append($('<td>').addClass('index'))
+    .append($('<td>').text(msg))
   $annotationList.append($msg)
 }
 
@@ -295,14 +310,22 @@ function getOverlappingAnnotations(annotations, newAnnotation) {
   return { overlapping: partitioned[0], nonOverlapping: partitioned[1] }
 }
 
-export function renderInitialAnnotationsForElement($answerText, pregradingAnnotations, censoringAnnotations) {
+export function renderInitialAnnotationsForElement(
+  $answerText,
+  pregradingAnnotations,
+  censoringAnnotations,
+  afterRenderingCb
+) {
   const $pregrading = $answerText.clone().addClass('is_pregrading')
   $answerText.after('\n', $pregrading)
-  renderAnnotationsForElement($pregrading, pregradingAnnotations)
+  renderAnnotationsForElement($pregrading, pregradingAnnotations, afterRenderingCb)
   if (censoringAnnotations) {
-    const $censoring = $answerText.clone().addClass('is_censor').addClass('no-mouse')
+    const $censoring = $answerText
+      .clone()
+      .addClass('is_censor')
+      .addClass('no-mouse')
     $pregrading.after('\n', $censoring)
-    renderAnnotationsForElement($censoring, censoringAnnotations)
+    renderAnnotationsForElement($censoring, censoringAnnotations, afterRenderingCb)
   }
   $answerText.addClass('originalAnswer')
   $answerText.removeClass('answerText').removeClass('answerRichText')

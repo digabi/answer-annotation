@@ -8,7 +8,13 @@ const ESC = 27
 const ENTER = 13
 let isMouseDown = false
 
-export function setupAnnotationEditing($containerElement, saveAnnotation, localize, isCensor) {
+export function setupAnnotationEditing(
+  $containerElement,
+  saveAnnotation,
+  localize,
+  isCensor,
+  afterRenderingCb = () => {}
+) {
   setupAnnotationAddition($containerElement)
   setupAnnotationRemoval($containerElement)
 
@@ -25,7 +31,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       const annotations = answerAnnotationsRendering.get($answerText)
       const updatedAnnotations = _.without(annotations, annotations[annotationIndex])
       saveAnnotation(getAnswerId($answerText), updatedAnnotations)
-      answerAnnotationsRendering.renderAnnotationsForElement($answerText, updatedAnnotations)
+      answerAnnotationsRendering.renderAnnotationsForElement($answerText, updatedAnnotations, afterRenderingCb)
     }
   }
 
@@ -62,7 +68,11 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         getBrowserTextSelection().removeAllRanges()
         // Render annotations for all answers that have popup open. This clears the popup and annotation that was merged for rendering before opening popup.
         $('.add-annotation-popup').each((index, popup) => {
-          answerAnnotationsRendering.renderAnnotationsForElement($(popup).closest('.answerText'))
+          answerAnnotationsRendering.renderAnnotationsForElement(
+            $(popup).closest('.answerText'),
+            null,
+            afterRenderingCb
+          )
         })
       })
 
@@ -179,7 +189,9 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
     }
 
     function getPopupCss(range) {
-      const container = $(range.startContainer).closest('.answer-text-container').get(0)
+      const container = $(range.startContainer)
+        .closest('.answer-text-container')
+        .get(0)
       const boundingRect = range.getBoundingClientRect()
       if (container) {
         const containerRect = container.getBoundingClientRect()
@@ -205,7 +217,9 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
 
       if (isCensor && !$answerText.hasClass('is_censor')) {
         // render annotations to censor answer text element even if event cought via double click
-        $answerText = $(range.startContainer).closest('.answer').find('.answerText.is_censor')
+        $answerText = $(range.startContainer)
+          .closest('.answer')
+          .find('.answerText.is_censor')
       }
 
       const messages = answerAnnotationsRendering.getOverlappingMessages(
@@ -220,7 +234,7 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
       // Merge and render annotation to show what range it will contain if annotation gets added
       // Merged annotation not saved yet, so on cancel previous state is rendered
       const mergedAnnotations = answerAnnotationsRendering.mergeAnnotation($answerText, annotationPos)
-      answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations)
+      answerAnnotationsRendering.renderGivenAnnotations($answerText, mergedAnnotations, afterRenderingCb)
 
       return openPopup($answerText, annotationPos, renderedMessages, popupCss)
     }
@@ -241,7 +255,9 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
         .asEventStream('mousedown')
         .merge($popup.asEventStream('keyup').filter(e => e.keyCode === ENTER))
         .map(() => {
-          const message = $('.add-annotation-text').val().trim()
+          const message = $('.add-annotation-text')
+            .val()
+            .trim()
           return {
             $answerText,
             annotation: _.assign({}, annotation, { message })
@@ -256,7 +272,11 @@ export function setupAnnotationEditing($containerElement, saveAnnotation, locali
           ? answerAnnotationsRendering.mergeAnnotation(annotationData.$answerText, annotationData.annotation)
           : [annotationData.annotation]
         saveAnnotation(getAnswerId(annotationData.$answerText), annotations)
-        answerAnnotationsRendering.renderAnnotationsForElement(annotationData.$answerText, annotations)
+        answerAnnotationsRendering.renderAnnotationsForElement(
+          annotationData.$answerText,
+          annotations,
+          afterRenderingCb
+        )
       }
     }
   }
@@ -271,7 +291,11 @@ export function setupAnnotationDisplaying($answers, isCensor) {
     }
     clearTimeout(fadeOutDelayTimeout)
     if (popupAlreadyShownForCurrentAnnotation(event)) {
-      $annotation.find('.remove-annotation-popup').stop().show().css({ opacity: 1 })
+      $annotation
+        .find('.remove-annotation-popup')
+        .stop()
+        .show()
+        .css({ opacity: 1 })
     } else {
       clearAllRemovePopups()
       renderRemovePopup(event)
@@ -354,7 +378,11 @@ export function setupAnnotationDisplaying($answers, isCensor) {
   }
 
   function inlineLeftOffset(element) {
-    return $(element).offsetParent().offset().left + element.offsetLeft
+    return (
+      $(element)
+        .offsetParent()
+        .offset().left + element.offsetLeft
+    )
   }
 
   function mouseOffsetLeft(mousemove) {
