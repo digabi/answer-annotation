@@ -179,18 +179,10 @@ function clearExistingAnnotations($answerText, $annotationList) {
 }
 
 export function surroundWithAnnotationSpan(range, spanClass) {
-  if (
-    !$(range.startContainer)
-      .parent()
-      .is('div')
-  ) {
+  if (!$(range.startContainer).parent().is('div')) {
     range.setStartBefore($(range.startContainer).parent()[0])
   }
-  if (
-    !$(range.endContainer)
-      .parent()
-      .is('div')
-  ) {
+  if (!$(range.endContainer).parent().is('div')) {
     range.setEndAfter($(range.endContainer).parent()[0])
   }
   const annotationElement = document.createElement('span')
@@ -237,19 +229,13 @@ function pct(n) {
 function appendAnnotationIndex($element, message, index) {
   $element.attr('data-message', message).attr('data-index', index)
   if (message) {
-    $element.append(
-      $('<sup />')
-        .addClass('annotationMessageIndex')
-        .attr('data-message', message)
-    )
+    $element.append($('<sup />').addClass('annotationMessageIndex').attr('data-message', message))
   }
 }
 
 function appendAnnotationMessage($annotationList, message) {
   const msg = message || '-'
-  const $msg = $('<tr>')
-    .append($('<td>').addClass('index'))
-    .append($('<td>').text(msg))
+  const $msg = $('<tr>').append($('<td>').addClass('index')).append($('<td>').text(msg))
   $annotationList.append($msg)
 }
 
@@ -320,10 +306,7 @@ export function renderInitialAnnotationsForElement(
   $answerText.after('\n', $pregrading)
   renderAnnotationsForElement($pregrading, pregradingAnnotations, afterRenderingCb)
   if (censoringAnnotations) {
-    const $censoring = $answerText
-      .clone()
-      .addClass('is_censor')
-      .addClass('no-mouse')
+    const $censoring = $answerText.clone().addClass('is_censor').addClass('no-mouse')
     $pregrading.after('\n', $censoring)
     renderAnnotationsForElement($censoring, censoringAnnotations, afterRenderingCb)
   }
