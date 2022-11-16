@@ -190,9 +190,9 @@
     to-fast-properties "^2.0.0"
 
 "@fortawesome/fontawesome-free@^6.2.0":
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-6.2.0.tgz#ba3510825b332816fe7190f28827f8cb33a298b5"
-  integrity sha512-CNR7qRIfCwWHNN7FnKUniva94edPdyQzil/zCwk3v6k4R6rR2Fr8i4s3PM7n/lyfPA6Zfko9z5WDzFxG9SW1uQ==
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-6.2.1.tgz#344baf6ff9eaad7a73cff067d8c56bfc11ae5304"
+  integrity sha512-viouXhegu/TjkvYQoiRZK3aax69dGXxgEjpvZW81wIJdxm5Fnvp3VVIP4VHKqX4SvFw6qpmkILkD4RJWAdrt7A==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -2920,9 +2920,9 @@ typedarray-to-buffer@^3.1.5:
     is-typedarray "^1.0.0"
 
 typescript@^4.8.3:
-  version "4.8.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.4.tgz#c464abca159669597be5f96b8943500b238e60e6"
-  integrity sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.3.tgz#3aea307c1746b8c384435d8ac36b8a2e580d85db"
+  integrity sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"
