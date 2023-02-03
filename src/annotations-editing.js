@@ -39,6 +39,7 @@ export function setupAnnotationEditing(
     preventDragSelectionFromOverlappingCensorAnswerText($containerElement)
     $containerElement
       .asEventStream('mouseup')
+      .merge($(document).asEventStream('selectionchange')) //Possibly asEventStream('contextmenu') needed as well with setTimeout
       .filter(hasTextSelectedInAnswerText)
       .map(() => {
         $('.remove-annotation-popup').remove()
