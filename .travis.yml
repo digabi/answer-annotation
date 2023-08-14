@@ -1,4 +1,4 @@
-dist: trusty
+dist: jammy
 addons:
   chrome: stable
 group: beta
