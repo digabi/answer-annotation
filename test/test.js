@@ -378,8 +378,8 @@
         x instanceof Array
           ? _.map(x, x => mapLeafs(f, x))
           : x instanceof Object
-          ? _.mapValues(x, x => mapLeafs(f, x))
-          : f(x)
+            ? _.mapValues(x, x => mapLeafs(f, x))
+            : f(x)
 
       expect(mapLeafs(x => (_.isNumber(x) ? _.round(x, 2) : x), _.last(saves))).to.eql({
         answerId: '18',

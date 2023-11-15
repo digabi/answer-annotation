@@ -387,8 +387,8 @@ function getBrowserTextSelection() {
   return typeof window.getSelection !== 'undefined'
     ? window.getSelection()
     : typeof document.selection !== 'undefined' && document.selection.type === 'Text'
-    ? document.selection
-    : undefined
+      ? document.selection
+      : undefined
 }
 
 function hasTextSelectedInAnswerText() {
